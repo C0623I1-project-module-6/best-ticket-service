@@ -24,13 +24,13 @@ public class Ticket {
 
     private String barcode;
 
-    private String isDelete;
+    private Boolean isDelete;
 
     @ManyToOne
     @JoinColumn(name = "ticketType_id", nullable = false)
     private TicketType ticketType;
 
-    public Ticket(String ticket_code, String seat, String time, String location, String promotion, String barcode, String isDelete, TicketType ticketType) {
+    public Ticket(String ticket_code, String seat, String time, String location, String promotion, String barcode, Boolean isDelete, TicketType ticketType) {
         this.ticket_code = ticket_code;
         this.seat = seat;
         this.time = time;
@@ -100,11 +100,11 @@ public class Ticket {
         this.barcode = barcode;
     }
 
-    public String getIsDelete() {
+    public Boolean getIsDelete() {
         return isDelete;
     }
 
-    public void setIsDelete(String isDelete) {
+    public void setIsDelete(Boolean isDelete) {
         this.isDelete = isDelete;
     }
 

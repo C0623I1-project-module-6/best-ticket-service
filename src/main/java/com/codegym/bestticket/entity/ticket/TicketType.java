@@ -15,15 +15,18 @@ public class TicketType {
 
     private Double price;
 
+    private Boolean isDelete;
+
     @OneToMany(mappedBy = "ticketType")
     private Set<Ticket> tickets;
 
     public TicketType() {
     }
 
-    public TicketType(String name, Double price, Set<Ticket> tickets) {
+    public TicketType(String name, Double price, Boolean isDelete, Set<Ticket> tickets) {
         this.name = name;
         this.price = price;
+        this.isDelete = isDelete;
         this.tickets = tickets;
     }
 
@@ -59,4 +62,11 @@ public class TicketType {
         this.tickets = tickets;
     }
 
+    public Boolean getDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(Boolean delete) {
+        isDelete = delete;
+    }
 }
