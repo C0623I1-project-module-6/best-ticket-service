@@ -14,12 +14,12 @@ import lombok.Setter;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Entity
 @Table(name = "contracts")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Contract {
 
     @Id
