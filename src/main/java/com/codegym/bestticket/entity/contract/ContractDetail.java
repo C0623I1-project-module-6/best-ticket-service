@@ -15,12 +15,12 @@ import lombok.Setter;
 
 import java.util.UUID;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Entity
 @Table(name = "contract_details")
+@NoArgsConstructor
+@AllArgsConstructor
 public class ContractDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
