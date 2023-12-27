@@ -21,7 +21,7 @@ public class Role {
     @Column(name = "name", length = 50)
     @Enumerated
     private ERole name;
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(mappedBy = "roles")
     private List<User> users;
 
 }
