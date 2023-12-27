@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,6 +25,10 @@ public class User {
     private String password;
     @OneToOne(mappedBy = "user")
     private Customer customer;
+    @OneToOne(mappedBy = "user")
+    private Organizer organizer;
+    @OneToMany(mappedBy = "user")
+    private List<BankAccount> bankAccounts;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
