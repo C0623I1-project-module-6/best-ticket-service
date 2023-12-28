@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "EVENT_TYPE")
 public class EventType {
     @Id
