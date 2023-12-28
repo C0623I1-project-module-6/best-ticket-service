@@ -33,6 +33,9 @@ public class Event {
     @Column(name="duration")
     private String duration;
 
+    @Column(name="is_deleted")
+    private Boolean is_deleted;
+
     @ManyToOne
     @JoinColumn(name = "event_type_id")
     private EventType eventType;
