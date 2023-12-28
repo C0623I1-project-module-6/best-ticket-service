@@ -25,22 +25,25 @@ import java.util.UUID;
 public class Contract {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "date")
-    private String Date;
+    private String date;
 
-    @Column(name = "amount")
     private Double amount;
 
-    @Column(name = "status")
     private String status;
 
-    @Column(name = "created_at")
     private Timestamp createdAt;
 
     @Column(name = "updated_at")
-    private UUID userId;
+    private Timestamp updatedAt;
+
+    @Column(name = "customer_id")
+    private UUID customerId;
+
+    @Column(name = "organizer_id")
+    private UUID organizerId;
 
 }
