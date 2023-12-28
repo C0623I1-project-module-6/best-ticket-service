@@ -1,5 +1,7 @@
 package com.codegym.bestticket.entity.user;
 
+import jakarta.persistence.Entity;
+
 import com.codegym.bestticket.constant.ERole;
 import jakarta.persistence.*;
 import lombok.*;

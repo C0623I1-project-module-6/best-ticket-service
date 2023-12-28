@@ -34,11 +34,10 @@ public class Ticket {
 
     private String barcode;
 
-    private String isDelete;
+    private Boolean isDelete;
 
     @ManyToOne
     @JoinColumn(name = "ticketType_id", nullable = false)
     private TicketType ticketType;
-
 
 }
