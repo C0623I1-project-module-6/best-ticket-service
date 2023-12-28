@@ -27,6 +27,3 @@ CREATE TABLE event_times
     FOREIGN KEY (event_id) REFERENCES events (id),
     FOREIGN KEY (time_id) REFERENCES times (id)
 );
-
-
-
