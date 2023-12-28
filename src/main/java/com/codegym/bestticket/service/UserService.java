@@ -1,4 +1,5 @@
 package com.codegym.bestticket.service;
 
-public interface IUserService {
+public interface UserService {
+
 }
