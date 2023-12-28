@@ -27,10 +27,9 @@ public class TicketTypeController {
 
     }
 
-
     @GetMapping("/id")
     public ResponseEntity<TicketTypeResponseDTO> getTicketTypeById(@RequestBody TicketTypeResponseDTO ticketTypeResponseDTO){
-        TicketTypeResponseDTO ticketTypeResponseDTO1 = ticketTypeService.getTicketTypeById1(ticketTypeResponseDTO);
+        TicketTypeResponseDTO ticketTypeResponseDTO1 = ticketTypeService.getTicketTypeById(ticketTypeResponseDTO);
         if (ticketTypeResponseDTO1 == null){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

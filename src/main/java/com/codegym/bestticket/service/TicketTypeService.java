@@ -10,6 +10,5 @@ public interface TicketTypeService {
 
     List<TicketTypeRequestDTO> getAllTicketType();
     TicketTypeResponseDTO getTicketTypeById(TicketTypeResponseDTO ticketTypeResponseDTO);
-    TicketTypeResponseDTO getTicketTypeById1(TicketTypeResponseDTO ticketTypeResponseDTO);
     TicketTypeRequestDTO createTicketType(TicketTypeRequestDTO ticketTypeRequestDTO);
 }

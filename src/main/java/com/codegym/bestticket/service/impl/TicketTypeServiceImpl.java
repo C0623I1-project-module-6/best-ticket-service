@@ -24,9 +24,6 @@ public class TicketTypeServiceImpl implements TicketTypeService {
     private final ITicketTypeRepository ticketTypeRepository;
 
 
-//    public TicketTypeServiceImpl(ITicketTypeRepository ticketTypeRepository) {
-//        this.ticketTypeRepository = ticketTypeRepository;
-//    }
 
     @Override
     public List<TicketTypeRequestDTO> getAllTicketType() {
@@ -43,17 +40,10 @@ public class TicketTypeServiceImpl implements TicketTypeService {
     }
 
 
-    @Override
-    public TicketTypeResponseDTO getTicketTypeById(TicketTypeResponseDTO ticketTypeResponseDTO) {
-//        TicketType ticketType = ticketTypeRepository.findById(ticketTypeResponseDTO.getId()).orElse(null);
-//        TicketTypeResponseDTO ticketTypeResponseDTO1 = new TicketTypeResponseDTO();
-//        BeanUtils.copyProperties(ticketType,ticketTypeResponseDTO1);
-//        return ticketTypeResponseDTO1;
-        return null;
-    }
+
 
     @Override
-    public TicketTypeResponseDTO getTicketTypeById1(TicketTypeResponseDTO ticketTypeResponseDTO) {
+    public TicketTypeResponseDTO getTicketTypeById(TicketTypeResponseDTO ticketTypeResponseDTO) {
         TicketType ticketType = ticketTypeRepository.findById(ticketTypeResponseDTO.getId()).orElse(null);
         TicketTypeResponseDTO ticketTypeResponseDTO1 =  TicketTypeResponseDTO.builder().build();
         BeanUtils.copyProperties(ticketType,ticketTypeResponseDTO1);
