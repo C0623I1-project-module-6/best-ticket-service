@@ -23,6 +23,15 @@ public class Event {
     @Column(name = "address")
     private String Address;
 
+    @Column(name="description")
+    private String description;
+
+    @Column(name = "image")
+    private String image;
+
+    @Column(name="duration")
+    private String duration;
+
     @ManyToOne
     @JoinColumn(name = "event_type_id")
     private EventType eventType;
