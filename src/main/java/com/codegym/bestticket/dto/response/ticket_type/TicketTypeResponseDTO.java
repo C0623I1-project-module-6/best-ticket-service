@@ -1,4 +1,4 @@
-package com.codegym.bestticket.dto.respone.ticket_type;
+package com.codegym.bestticket.dto.response.ticket_type;
 
 import com.codegym.bestticket.entity.ticket.TicketType;
 import lombok.Data;
@@ -11,5 +11,4 @@ public class TicketTypeResponseDTO {
     private String name;
     private Double price;
     private Boolean isDelete;
-    private TicketType ticketType;
 }
