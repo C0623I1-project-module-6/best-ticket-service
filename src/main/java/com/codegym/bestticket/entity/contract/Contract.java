@@ -31,13 +31,10 @@ public class Contract {
     @Column(name = "date")
     private String date;
 
-    @Column(name = "amount")
     private Double amount;
 
-    @Column(name = "status")
     private String status;
 
-    @Column(name = "created_at")
     private Timestamp createdAt;
 
     @Column(name = "updated_at")
