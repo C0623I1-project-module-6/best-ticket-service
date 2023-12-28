@@ -22,7 +22,7 @@ public class Event {
     private String name;
 
     @Column(name = "address")
-    private String Address;
+    private String address;
 
     @Column(name="description")
     private String description;
