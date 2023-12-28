@@ -1,11 +1,21 @@
 package com.codegym.bestticket.entity.ticket;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TicketType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,45 +28,5 @@ public class TicketType {
     @OneToMany(mappedBy = "ticketType")
     private Set<Ticket> tickets;
 
-    public TicketType() {
-    }
-
-    public TicketType(String name, Double price, Set<Ticket> tickets) {
-        this.name = name;
-        this.price = price;
-        this.tickets = tickets;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Set<Ticket> getTickets() {
-        return tickets;
-    }
-
-    public void setTickets(Set<Ticket> tickets) {
-        this.tickets = tickets;
-    }
 
 }
