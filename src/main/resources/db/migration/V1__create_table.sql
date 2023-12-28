@@ -32,7 +32,7 @@ create table bank_accounts
     account_number varchar(20),
     bank_name      varchar(100),
     branch         varchar(100),
-    user_id        binary(36),
+    user_id        binary(16),
     foreign key (user_id) references users (id)
 );
 
