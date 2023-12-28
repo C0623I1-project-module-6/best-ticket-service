@@ -27,16 +27,8 @@ public class TicketTypeController {
 
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<TicketTypeResponseDTO> getTicketTypeById(@PathVariable UUID id){
-//        TicketTypeResponseDTO ticketTypeResponseDTO = ticketTypeService.getTicketTypeById(id);
-//        if (ticketTypeResponseDTO == null){
-//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        }
-//        return new ResponseEntity<>(ticketTypeResponseDTO,HttpStatus.OK);
-//    }
 
-    @GetMapping("/getId")
+    @GetMapping("/id")
     public ResponseEntity<TicketTypeResponseDTO> getTicketTypeById(@RequestBody TicketTypeResponseDTO ticketTypeResponseDTO){
         TicketTypeResponseDTO ticketTypeResponseDTO1 = ticketTypeService.getTicketTypeById1(ticketTypeResponseDTO);
         if (ticketTypeResponseDTO1 == null){
