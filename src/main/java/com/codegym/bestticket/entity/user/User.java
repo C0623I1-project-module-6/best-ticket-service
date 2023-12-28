@@ -3,7 +3,6 @@ package com.codegym.bestticket.entity.user;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -26,7 +25,9 @@ public class User {
     @OneToOne(mappedBy = "user")
     private Customer customer;
     @OneToOne(mappedBy = "user")
-    private Organizer organizer;
+    private Enterprise organizer;
+    @OneToOne(mappedBy = "user")
+    private Individual individual;
     @OneToMany(mappedBy = "user")
     private List<BankAccount> bankAccounts;
     @ManyToMany(fetch = FetchType.LAZY)
