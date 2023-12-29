@@ -11,7 +11,6 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "EVENT")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
