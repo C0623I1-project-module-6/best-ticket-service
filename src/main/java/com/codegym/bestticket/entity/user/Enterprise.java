@@ -11,19 +11,21 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "organizers")
-public class Organizer {
+@Table(name = "enterprises")
+public class Enterprise {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @Column(name = "full_name", length = 50, nullable = false)
-    private String fullName;
-    @Column(name = "id_card",length = 50, nullable = false,unique = true)
-    private String idCard;
-    @Column(name = "phone_number",length = 15,nullable = false,unique = true)
+    @Column(name = "name", length = 50, nullable = false)
+    private String name;
+    @Column(name = "tax_code", length = 50, nullable = false, unique = true)
+    private String taxCode;
+    @Column(name = "phone_number", length = 15, nullable = false, unique = true)
     private String phoneNumber;
     @Column(name = "email", nullable = false, unique = true)
     private String email;
+    @Column(name = "is_delete")
+    private Boolean isDelete;
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;

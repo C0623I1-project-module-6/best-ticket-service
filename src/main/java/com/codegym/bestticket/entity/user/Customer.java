@@ -22,7 +22,7 @@ public class Customer {
     private String fullName;
     @Column(name = "gender", length = 15)
     private String gender;
-    @Column(name = "id_card", length = 50, nullable = false, unique = true)
+    @Column(name = "id_card", length = 50, unique = true)
     private String idCard;
     @Column(name = "date_of_birth", length = 15)
     private String dateOfBirth;

@@ -1,6 +1,11 @@
 package com.codegym.bestticket.entity.ticket;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,17 +21,20 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "ticket_types")
 public class TicketType {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String name;
 
     private Double price;
 
+//    @Column(name = "is_delete")
+//    private Boolean isDelete;
+
     @OneToMany(mappedBy = "ticketType")
     private Set<Ticket> tickets;
-
 
 }

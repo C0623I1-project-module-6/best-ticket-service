@@ -52,7 +52,6 @@ CREATE TABLE tickets
     location       VARCHAR(30),
     promotion      VARCHAR(5),
     barcode        VARCHAR(20),
-    is_delete      varchar(10),
     ticket_type_id binary(36),
     FOREIGN KEY (ticket_type_id)
         REFERENCES ticket_types (id)
