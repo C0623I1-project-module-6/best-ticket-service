@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -11,16 +12,30 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "EVENTS")
+
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column(name = "name")
     private String name;
 
     @Column(name = "address")
-    private String Address;
+    private String address;
+
+    @Column(name="description")
+    private String description;
+
+    @Column(name = "image")
+    private String image;
+
+    @Column(name="duration")
+    private String duration;
+
+    @Column(name="is_deleted")
+    private Boolean isDeleted;
 
     @ManyToOne
     @JoinColumn(name = "event_type_id")
