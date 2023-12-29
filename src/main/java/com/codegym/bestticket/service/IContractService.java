@@ -11,6 +11,4 @@ public interface IContractService {
     Optional<ContractDTO> findById(UUID id);
     void save(ContractDTO contractDTO);
     void remove(UUID id);
-
-    void update(ContractDTO contractDTO);
 }
