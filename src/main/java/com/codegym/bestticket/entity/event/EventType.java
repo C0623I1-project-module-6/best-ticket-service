@@ -11,7 +11,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "EVENT_TYPE")
 public class EventType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

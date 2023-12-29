@@ -13,7 +13,6 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "TIME")
 public class Time {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
