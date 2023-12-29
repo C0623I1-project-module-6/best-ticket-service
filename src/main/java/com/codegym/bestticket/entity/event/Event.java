@@ -13,6 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "EVENTS")
+
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

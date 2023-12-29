@@ -6,6 +6,8 @@ build/
 !**/src/test/**/build/
 Users
 
+application-dev.properties
+
 ### STS ###
 .apt_generated
 .classpath
