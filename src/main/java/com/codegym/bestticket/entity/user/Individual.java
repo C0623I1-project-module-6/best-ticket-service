@@ -22,7 +22,6 @@ public class Individual {
     private String idCard;
     @Column(name = "phone_number")
     private String phoneNumber;
-    @Column(name = "email")
     private String email;
     @Column(name = "is_delete")
     private Boolean isDelete;

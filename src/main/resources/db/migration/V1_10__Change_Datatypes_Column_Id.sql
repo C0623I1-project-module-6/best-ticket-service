@@ -84,4 +84,4 @@ ALTER TABLE users
     MODIFY COLUMN id BINARY(16);
 SET foreign_key_checks = 1;
 
-RENAME TABLE organizers TO enterprise;
+RENAME TABLE organizers TO enterprises;

@@ -18,14 +18,17 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @Column(name = "username", length = 50, nullable = false, unique = true)
-    private String username;
-    @Column(name = "password", length = 50, nullable = false)
+    @Column(nullable = false)
     private String password;
+    @Column(name = "phone_number", length = 15, nullable = false, unique = true)
+    private String phoneNumber;
+    @Column(nullable = false, unique = true)
+    private String email;
+
     @OneToOne(mappedBy = "user")
     private Customer customer;
     @OneToOne(mappedBy = "user")
-    private Enterprise organizer;
+    private Enterprise enterprise;
     @OneToOne(mappedBy = "user")
     private Individual individual;
     @OneToMany(mappedBy = "user")

@@ -1,4 +1,4 @@
-package com.codegym.bestticket.dto.response;
+package com.codegym.bestticket.dto.response.user;
 
 import lombok.Data;
 
