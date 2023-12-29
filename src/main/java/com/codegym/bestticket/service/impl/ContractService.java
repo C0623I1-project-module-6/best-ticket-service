@@ -55,12 +55,6 @@ public class ContractService implements IContractService {
 
     @Override
     public void remove(UUID id) {
-
-    }
-
-    @Override
-    public void update(ContractDTO contractDTO) {
-        Optional<ContractDTO> optionalContractDTO = findById(contractDTO.getId());
-        System.out.println(optionalContractDTO);
+        iContractRepository.deleteById(id);
     }
 }
