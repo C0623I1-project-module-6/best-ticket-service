@@ -27,12 +27,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDTO> findAll() {
-        return eventConverter.entitiesToDTOs(eventRepository.findAllByIs_deletedFalse());
+        return eventConverter.entitiesToDTOs(eventRepository.findAllByIsDeletedFalse());
     }
 
     @Override
     public EventDTO findEventById(UUID event_id) {
-        Event event = eventRepository.findByIdAndIs_deletedFalse(event_id);
+        Event event = eventRepository.findByIdAndIsDeletedFalse(event_id);
 
         if (event!=null) {
             return eventConverter.entityToDTO(event);
@@ -48,7 +48,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findById(event_id)
                 .orElseThrow(() -> new EntityNotFoundException("Event is not found"));
 
-        event.setIs_deleted(true);
+        event.setIsDeleted(true);
         eventRepository.save(event);
     }
 
@@ -79,8 +79,8 @@ public class EventServiceImpl implements EventService {
         if (eventDTO.getDuration() != null) {
             event.setDuration(eventDTO.getDuration());
         }
-        if (eventDTO.getIs_deleted() != null) {
-            event.setIs_deleted(eventDTO.getIs_deleted());
+        if (eventDTO.getIsDeleted() != null) {
+            event.setIsDeleted(eventDTO.getIsDeleted());
         }
         eventRepository.save(event);
         return eventConverter.entityToDTO(event);

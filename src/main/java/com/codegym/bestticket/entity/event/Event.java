@@ -12,7 +12,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "EVENT")
+@Table(name = "EVENTS")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class Event {
     private String duration;
 
     @Column(name="is_deleted")
-    private Boolean is_deleted;
+    private Boolean isDeleted;
 
     @ManyToOne
     @JoinColumn(name = "event_type_id")

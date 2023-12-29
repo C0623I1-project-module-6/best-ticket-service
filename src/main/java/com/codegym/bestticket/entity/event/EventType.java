@@ -12,7 +12,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "EVENT_TYPE")
+@Table(name = "EVENT_TYPES")
 public class EventType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -14,7 +14,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "TIME")
+@Table(name = "TIMES")
 public class Time {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
