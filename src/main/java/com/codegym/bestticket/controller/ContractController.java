@@ -34,23 +34,24 @@ public class ContractController {
         return new ResponseEntity<>(contractService.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/contract-detail")
-    public ResponseEntity<Optional<ContractDTO>> getContract(@RequestParam("id") UUID id) {
+    @GetMapping("/contract-detail/{id}")
+    public ResponseEntity<Optional<ContractDTO>> getContract(@PathVariable UUID id) {
         return new ResponseEntity<>(contractService.findById(id), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/{id}", produces = "application/json")
-    public ResponseEntity<UUID> getUID(@PathVariable("id") final UUID id) {
-        System.out.println("id is {}, " + id);
-        System.out.println(contractService.findById(id));
-        return new ResponseEntity<>(id, HttpStatus.OK);
-    }
+//    @GetMapping("/contract-detail/{id}")
+//    public ResponseEntity<ResponseDto> getContract(@PathVariable UUID id) {
+//        ResponseDto responseDto = ResponseDto.builder().build();
+//        responseDto.setData(contractService.findById(id));
+//        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+//    }
 
     @PostMapping("/update")
-    public ResponseEntity<ResponseDto> updateContract(@RequestBody ContractDTO contractDTO){
+    public ResponseEntity<ResponseDto> updateContract(@RequestBody ContractDTO contractDTO) {
         contractService.update(contractDTO);
         return new ResponseEntity<>(ResponseDto.builder().build(), HttpStatus.OK);
     }
+
     @PutMapping("/contract-detail/save/{id}")
     public ResponseEntity<String> updateContract(@PathVariable UUID id, @RequestBody ContractDTO contractDTO) {
         contractDTO.setId(id);
