@@ -1,16 +1,14 @@
 package com.codegym.bestticket.service.impl;
 
-import com.codegym.bestticket.converter.impl.EventConverterImpl;
+import com.codegym.bestticket.converter.event.impl.EventConverterImpl;
 import com.codegym.bestticket.dto.EventDTO;
 import com.codegym.bestticket.entity.event.Event;
-import com.codegym.bestticket.entity.event.EventType;
 import com.codegym.bestticket.repository.IEventRepository;
 import com.codegym.bestticket.service.EventService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service

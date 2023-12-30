@@ -21,18 +21,28 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<ResponseDto> register(@RequestBody RegisterDtoRequest registerDtoRequest) {
         if (registerDtoRequest == null) {
-            return new ResponseEntity<>(new ResponseDto("Request not found!!!", HttpStatus.BAD_REQUEST, null), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(
+                    new ResponseDto("Request not found!!!", HttpStatus.BAD_REQUEST, null), HttpStatus.BAD_REQUEST);
         }
         ResponseDto responseDto = iUserService.register(registerDtoRequest);
-        return new ResponseEntity<>(new ResponseDto("Register Successfully!!!", HttpStatus.CREATED, responseDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                new ResponseDto("Register Successfully!!!", HttpStatus.CREATED, responseDto.getData()), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDto> login(@RequestBody LoginDtoRequest loginDtoRequest) {
-        if (loginDtoRequest == null) {
-            return new ResponseEntity<>(new ResponseDto("Request not found!!!", HttpStatus.BAD_REQUEST, null), HttpStatus.BAD_REQUEST);
+        try {
+            if (loginDtoRequest == null) {
+                return new ResponseEntity<>(
+                        new ResponseDto("Request not found!!!", HttpStatus.BAD_REQUEST, null), HttpStatus.BAD_REQUEST);
+            }
+                iUserService.login(loginDtoRequest);
+                return new ResponseEntity<>(
+                        new ResponseDto("Login Successfully!!!", HttpStatus.OK), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(
+                    new ResponseDto("Login failed", HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
         }
-        ResponseDto responseDto = iUserService.login(loginDtoRequest);
-        return new ResponseEntity<>(new ResponseDto("Login successfully!!!", HttpStatus.OK,responseDto), HttpStatus.OK);
+
     }
 }

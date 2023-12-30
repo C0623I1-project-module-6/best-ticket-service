@@ -1,27 +1,32 @@
 package com.codegym.bestticket.service.impl;
 
+import com.codegym.bestticket.converter.user.UserConverter;
 import com.codegym.bestticket.dto.ResponseDto;
 import com.codegym.bestticket.dto.request.user.RegisterDtoRequest;
 import com.codegym.bestticket.dto.request.user.LoginDtoRequest;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.repository.IUserRepository;
 import com.codegym.bestticket.service.IUserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 public class UserService implements IUserService {
     private final IUserRepository iUserRepository;
+    private final UserConverter userConverter;
 
     @Override
     public ResponseDto register(RegisterDtoRequest registerDtoRequest) {
-        User user = new User();
-        BeanUtils.copyProperties(registerDtoRequest, user);
+        User user = userConverter.dtoToEntity(registerDtoRequest);
         iUserRepository.save(user);
+        userConverter.entityToDto(user);
         return new ResponseDto(user);
     }
 
@@ -30,17 +35,22 @@ public class UserService implements IUserService {
         String password = loginDtoRequest.getPassword();
         if (password != null) {
             User user = iUserRepository.findByPhoneNumber(loginDtoRequest.getPhoneNumber());
-            System.out.println(user);
             if (user != null) {
                 if (password.equals(user.getPassword())) {
-                   BeanUtils.copyProperties(loginDtoRequest, user);
-                   iUserRepository.save(user);
-                   return new ResponseDto(user);
+                    userConverter.entityToDto(user);
                 }
             }
         }
-        return new ResponseDto();
+        return new ResponseDto(HttpStatus.OK);
     }
+
+    @Override
+    public void remove(UUID id) {
+        User user= iUserRepository.findById(id)
+                .orElseThrow(()-> new EntityNotFoundException("User is not found"));
+        iUserRepository.delete(user);
+    }
+
 }
 
 

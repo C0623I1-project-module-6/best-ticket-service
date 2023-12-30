@@ -1,10 +1,9 @@
-package com.codegym.bestticket.converter.impl;
+package com.codegym.bestticket.converter.event.impl;
 
-import com.codegym.bestticket.converter.EventConverter;
+import com.codegym.bestticket.converter.event.EventConverter;
 import com.codegym.bestticket.dto.EventDTO;
 import com.codegym.bestticket.entity.event.Event;
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

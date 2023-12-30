@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Table(name = "enterprises")
-public class Enterprise {
+public class Organizer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;

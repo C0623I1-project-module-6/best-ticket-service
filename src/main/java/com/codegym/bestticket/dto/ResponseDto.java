@@ -17,6 +17,14 @@ public class ResponseDto {
     private HttpStatus status;
     private Object data;
 
+    public ResponseDto(String message) {
+        this.message = message;
+    }
+
+    public ResponseDto(HttpStatus status) {
+        this.status = status;
+    }
+
     public ResponseDto(Object data) {
         this.data = data;
     }

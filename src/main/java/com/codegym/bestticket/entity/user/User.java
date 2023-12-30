@@ -28,7 +28,7 @@ public class User {
     @OneToOne(mappedBy = "user")
     private Customer customer;
     @OneToOne(mappedBy = "user")
-    private Enterprise enterprise;
+    private Organizer enterprise;
     @OneToOne(mappedBy = "user")
     private Individual individual;
     @OneToMany(mappedBy = "user")
