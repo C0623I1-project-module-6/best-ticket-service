@@ -1,6 +1,7 @@
 package com.codegym.bestticket.entity.contract;
 
 import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.user.Enterprise;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -48,7 +49,7 @@ public class Contract {
     private Customer customer;
 
     @OneToOne
-    @JoinColumn(name = "customer_id")
-    private UUID organizerId;
+    @JoinColumn(name = "organizer_id")
+    private Enterprise organizer;
 
 }

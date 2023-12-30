@@ -1,5 +1,7 @@
 package com.codegym.bestticket.dto;
 
+import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.user.Enterprise;
 import jakarta.persistence.Column;
 import lombok.Data;
 
@@ -14,6 +16,6 @@ public class ContractDTO {
     private String status;
     private Timestamp createdAt;
     private Timestamp updatedAt;
-    private UUID customerId;
-    private UUID organizerId;
+    private Customer customer;
+    private Enterprise organizer;
 }
