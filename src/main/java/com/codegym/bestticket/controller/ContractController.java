@@ -4,9 +4,9 @@ import com.codegym.bestticket.dto.ContractDTO;
 import com.codegym.bestticket.dto.ResponseDto;
 import com.codegym.bestticket.service.impl.ContractService;
 import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,12 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
+import java.util.logging.Level;
 
 @CrossOrigin(value = "*")
-@Validated
 @RestController
 @RequestMapping("/api/contracts")
 @AllArgsConstructor
+@Log
 public class ContractController {
     private final ContractService contractService;
 
@@ -32,15 +33,15 @@ public class ContractController {
         return new ResponseEntity<>(contractService.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
     public ResponseEntity<ResponseDto> getContract(@PathVariable UUID id) {
-        try {
-            ResponseDto responseDto = ResponseDto.builder().build();
+        ResponseDto responseDto = ResponseDto.builder().build();
+        responseDto.setData(contractService.findById(id).orElse(null));
+        if (responseDto.getData() != null) {
             responseDto.setMessage("Contract found!");
             responseDto.setStatus(HttpStatus.OK);
-            responseDto.setData(contractService.findById(id));
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
             ResponseDto errorResponse = ResponseDto.builder()
                     .message("An error occurred while finding the contract.")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -56,11 +57,10 @@ public class ContractController {
             contractService.save(contractDTO);
             return ResponseEntity.ok("Save/Update completed!");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.WARNING, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while updating the contract.");
         }
     }
-
 
     @PostMapping("/add")
     public ResponseEntity<String> addContract(@RequestBody ContractDTO contractDTO) {
@@ -68,7 +68,7 @@ public class ContractController {
             contractService.save(contractDTO);
             return ResponseEntity.ok("Add completed!");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.WARNING, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while adding the contract.");
         }
     }
@@ -76,10 +76,12 @@ public class ContractController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteContract(@PathVariable UUID id) {
         try {
-            contractService.remove(id);
-            return ResponseEntity.ok("Contract removed!");
+            if (contractService.findById(id).isPresent()) {
+                contractService.remove(id);
+                return ResponseEntity.ok("Contract removed!");
+            } else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Contract is not found!");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.WARNING, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while deleting the contract.");
         }
     }

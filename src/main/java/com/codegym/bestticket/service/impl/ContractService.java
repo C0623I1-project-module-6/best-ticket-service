@@ -5,6 +5,7 @@ import com.codegym.bestticket.entity.contract.Contract;
 import com.codegym.bestticket.repository.IContractRepository;
 import com.codegym.bestticket.service.IContractService;
 import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Log
 @AllArgsConstructor
 public class ContractService implements IContractService {
     private final IContractRepository iContractRepository;
@@ -23,12 +25,8 @@ public class ContractService implements IContractService {
         ArrayList<ContractDTO> contractDTOs = new ArrayList<>();
         for (Contract contract : contracts) {
             ContractDTO contractDTO = new ContractDTO();
-            try {
-                BeanUtils.copyProperties(contract, contractDTO);
-                contractDTOs.add(contractDTO);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            BeanUtils.copyProperties(contract, contractDTO);
+            contractDTOs.add(contractDTO);
         }
         return contractDTOs;
     }

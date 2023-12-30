@@ -1,10 +1,13 @@
 package com.codegym.bestticket.entity.contract;
 
+import com.codegym.bestticket.entity.user.Customer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,10 +43,12 @@ public class Contract {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @Column(name = "customer_id")
-    private UUID customerId;
+    @OneToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
-    @Column(name = "organizer_id")
+    @OneToOne
+    @JoinColumn(name = "customer_id")
     private UUID organizerId;
 
 }
