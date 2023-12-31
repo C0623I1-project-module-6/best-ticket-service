@@ -31,9 +31,8 @@ public class Organizer {
     private OrganizerType organizerTypeId;
     @Column(name = "is_delete")
     private Boolean isDelete;
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User userId;
+    @OneToOne(mappedBy = "organizer")
+    private User user;
 
 
 }

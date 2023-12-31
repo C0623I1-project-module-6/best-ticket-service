@@ -25,9 +25,11 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true)
     private Customer customer;
-    @OneToOne(mappedBy = "userId")
+    @OneToOne
+    @JoinColumn(name = "user_id",unique = true)
     private Organizer organizer;
     @OneToMany(mappedBy = "userId")
     private List<BankAccount> bankAccounts;

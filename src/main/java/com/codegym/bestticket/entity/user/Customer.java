@@ -25,7 +25,6 @@ public class Customer {
     private String idCard;
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User userId;
+    @OneToOne(mappedBy = "customer")
+    private User user;
 }
