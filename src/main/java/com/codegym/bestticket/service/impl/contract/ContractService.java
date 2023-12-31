@@ -1,4 +1,4 @@
-package com.codegym.bestticket.service.impl;
+package com.codegym.bestticket.service.impl.contract;
 
 import com.codegym.bestticket.dto.ContractDTO;
 import com.codegym.bestticket.entity.contract.Contract;

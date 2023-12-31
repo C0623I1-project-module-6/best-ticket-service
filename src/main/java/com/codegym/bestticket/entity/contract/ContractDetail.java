@@ -23,7 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "contract_details")
-public class ContractDetail {
+public class   ContractDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;

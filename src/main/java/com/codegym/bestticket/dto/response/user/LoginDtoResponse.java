@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class LoginDtoResponse {
     private String phoneNumber;
+    private String email;
 
 }

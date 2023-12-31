@@ -1,4 +1,4 @@
-package com.codegym.bestticket.service.impl;
+package com.codegym.bestticket.service.impl.ticket;
 
 import com.codegym.bestticket.dto.request.ticket_type.TicketTypeRequestDTO;
 import com.codegym.bestticket.dto.response.ticket_type.TicketTypeResponseDTO;

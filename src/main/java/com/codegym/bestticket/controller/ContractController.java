@@ -2,7 +2,7 @@ package com.codegym.bestticket.controller;
 
 import com.codegym.bestticket.dto.ContractDTO;
 import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.service.impl.ContractService;
+import com.codegym.bestticket.service.impl.contract.ContractService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

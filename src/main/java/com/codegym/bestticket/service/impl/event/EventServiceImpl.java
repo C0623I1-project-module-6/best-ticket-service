@@ -1,4 +1,4 @@
-package com.codegym.bestticket.service.impl;
+package com.codegym.bestticket.service.impl.event;
 
 import com.codegym.bestticket.converter.event.impl.EventConverterImpl;
 import com.codegym.bestticket.dto.EventDTO;

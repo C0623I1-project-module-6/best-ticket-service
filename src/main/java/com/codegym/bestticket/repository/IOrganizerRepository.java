@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-public interface IEnterpriseRepository extends JpaRepository<Organizer, UUID> {
+public interface IOrganizerRepository extends JpaRepository<Organizer, UUID> {
 }

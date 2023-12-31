@@ -1,16 +1,17 @@
 package com.codegym.bestticket.converter.user;
 
 import com.codegym.bestticket.dto.request.user.RegisterDtoRequest;
+import com.codegym.bestticket.dto.response.user.RegisterDtoResponse;
 import com.codegym.bestticket.entity.user.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserConverter {
-    public RegisterDtoRequest entityToDto(User user) {
-        RegisterDtoRequest registerDtoRequest = new RegisterDtoRequest();
-        BeanUtils.copyProperties(user, registerDtoRequest);
-        return registerDtoRequest;
+public class RegisterConverter {
+    public RegisterDtoResponse entityToDto(User user) {
+        RegisterDtoResponse registerDtoResponse = new RegisterDtoResponse();
+        BeanUtils.copyProperties(user, registerDtoResponse);
+        return registerDtoResponse;
     }
 
     public User dtoToEntity(RegisterDtoRequest registerDtoRequest) {
@@ -18,4 +19,5 @@ public class UserConverter {
         BeanUtils.copyProperties(registerDtoRequest, user);
         return user;
     }
+
 }

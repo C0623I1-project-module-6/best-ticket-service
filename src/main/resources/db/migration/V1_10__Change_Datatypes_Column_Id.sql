@@ -84,4 +84,9 @@ ALTER TABLE users
     MODIFY COLUMN id BINARY(16);
 SET foreign_key_checks = 1;
 
+ SET foreign_key_checks = 0;
+ALTER TABLE contract_details
+    MODIFY COLUMN ticket_id BINARY(16);
+SET foreign_key_checks = 1;
+
 RENAME TABLE organizers TO enterprises;

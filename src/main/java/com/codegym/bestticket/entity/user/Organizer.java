@@ -11,24 +11,29 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "enterprises")
+@Table(name = "organizers")
 public class Organizer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @Column(name = "enterprise_name", length = 50, nullable = false)
-    private String enterpriseName;
-    @Column(name = "tax_code", length = 50, nullable = false, unique = true)
-    private String taxCode;
-    @Column(name = "phone_number", length = 15, nullable = false, unique = true)
+    @Column(length = 50, nullable = false)
+    private String name;
+    @Column(name = "phone_number", length =  50, nullable = false, unique = true)
     private String phoneNumber;
     @Column(nullable = false, unique = true)
     private String email;
+    @Column(name = "id_card", length = 50,unique = true)
+    private String idCard;
+    @Column(name = "tax_code", length = 50, unique = true)
+    private String taxCode;
+    @ManyToOne
+    @JoinColumn(name = "organizer_type_id")
+    private OrganizerType organizerTypeId;
     @Column(name = "is_delete")
     private Boolean isDelete;
     @OneToOne
-    @JoinColumn(name = "user_organizer_id")
-    private User user;
+    @JoinColumn(name = "user_id")
+    private User userId;
 
 
 }

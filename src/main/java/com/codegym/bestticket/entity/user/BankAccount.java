@@ -26,5 +26,5 @@ public class BankAccount {
     private String branch;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User userId;
 }

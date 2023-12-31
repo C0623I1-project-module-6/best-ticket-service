@@ -1,14 +1,13 @@
 package com.codegym.bestticket.entity.user;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
@@ -24,9 +23,9 @@ public class Customer {
     private String gender;
     @Column(name = "id_card", length = 50, unique = true)
     private String idCard;
-    @Column(name = "date_of_birth", length = 15)
-    private String dateOfBirth;
+    @Column(name = "date_of_birth")
+    private Date dateOfBirth;
     @OneToOne
-    @JoinColumn(name = "user_customer_id")
-    private User user;
+    @JoinColumn(name = "user_id")
+    private User userId;
 }

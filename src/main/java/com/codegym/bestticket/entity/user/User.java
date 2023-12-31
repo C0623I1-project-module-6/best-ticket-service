@@ -25,13 +25,11 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL)
     private Customer customer;
-    @OneToOne(mappedBy = "user")
-    private Organizer enterprise;
-    @OneToOne(mappedBy = "user")
-    private Individual individual;
-    @OneToMany(mappedBy = "user")
+    @OneToOne(mappedBy = "userId")
+    private Organizer organizer;
+    @OneToMany(mappedBy = "userId")
     private List<BankAccount> bankAccounts;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),

@@ -5,11 +5,14 @@ import com.codegym.bestticket.dto.request.user.RegisterDtoRequest;
 import com.codegym.bestticket.dto.request.user.LoginDtoRequest;
 import com.codegym.bestticket.dto.response.user.LoginDtoResponse;
 import com.codegym.bestticket.service.IUserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @Controller
 @CrossOrigin("*")
@@ -22,11 +25,15 @@ public class AuthController {
     public ResponseEntity<ResponseDto> register(@RequestBody RegisterDtoRequest registerDtoRequest) {
         if (registerDtoRequest == null) {
             return new ResponseEntity<>(
-                    new ResponseDto("Request not found!!!", HttpStatus.BAD_REQUEST, null), HttpStatus.BAD_REQUEST);
+                    new ResponseDto("Request not found!!!",
+                            HttpStatus.BAD_REQUEST,
+                            null), HttpStatus.BAD_REQUEST);
         }
         ResponseDto responseDto = iUserService.register(registerDtoRequest);
         return new ResponseEntity<>(
-                new ResponseDto("Register Successfully!!!", HttpStatus.CREATED, responseDto.getData()), HttpStatus.CREATED);
+                new ResponseDto("Register Successfully!!!",
+                        HttpStatus.CREATED,
+                        responseDto.getData()), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
@@ -34,15 +41,33 @@ public class AuthController {
         try {
             if (loginDtoRequest == null) {
                 return new ResponseEntity<>(
-                        new ResponseDto("Request not found!!!", HttpStatus.BAD_REQUEST, null), HttpStatus.BAD_REQUEST);
+                        new ResponseDto("Request not found!!!",
+                                HttpStatus.BAD_REQUEST,
+                                null), HttpStatus.BAD_REQUEST);
             }
-                iUserService.login(loginDtoRequest);
-                return new ResponseEntity<>(
-                        new ResponseDto("Login Successfully!!!", HttpStatus.OK), HttpStatus.OK);
+            LoginDtoResponse loginDtoResponse = iUserService.login(loginDtoRequest);
+            return new ResponseEntity<>(
+                    new ResponseDto("Login Successfully!!!",
+                            HttpStatus.OK,
+                            loginDtoResponse), HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
-                    new ResponseDto("Login failed", HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+                    new ResponseDto("Login failed",
+                            HttpStatus.UNAUTHORIZED), HttpStatus.UNAUTHORIZED);
         }
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseDto> deleteUser(@PathVariable UUID id) {
+        try {
+            iUserService.remove(id);
+            return new ResponseEntity<>(
+                    new ResponseDto("User deleted!!!",
+                            HttpStatus.OK),HttpStatus.OK);
+        } catch (EntityNotFoundException e){
+            return new ResponseEntity<>(
+                    new ResponseDto("User not found",
+                            HttpStatus.BAD_REQUEST),HttpStatus.BAD_REQUEST);
+        }
     }
 }

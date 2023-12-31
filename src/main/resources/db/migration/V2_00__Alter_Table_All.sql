@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS organizers
     id_card           VARCHAR(50) UNIQUE,
     tax_code          VARCHAR(50) UNIQUE,
     organizer_type_id BINARY(16),
-    user_id           BINARY(16),
+    user_id           BINARY(16) UNIQUE ,
     is_delete         bit default 0,
     FOREIGN KEY (organizer_type_id) REFERENCES organizer_types (id),
     FOREIGN KEY (user_id) REFERENCES users (id)
@@ -43,3 +43,11 @@ CREATE INDEX index_event_id ON events (id);
 ALTER TABLE contract_details
     ADD COLUMN event_id BINARY(16),
     ADD CONSTRAINT FOREIGN KEY (event_id) REFERENCES events (id);
+
+ALTER TABLE customers
+DROP FOREIGN KEY user_customer_id,
+DROP COLUMN user_customer_id;
+
+ALTER TABLE customers
+ADD COLUMN user_id BINARY(16) UNIQUE ,
+    ADD CONSTRAINT FOREIGN KEY (user_id) REFERENCES users(id);
