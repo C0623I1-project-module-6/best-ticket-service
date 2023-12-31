@@ -72,7 +72,7 @@ CREATE TABLE contract_details
 (
     id           binary(36) PRIMARY KEY,
     contract_id  binary(36),
-    ticket_id    binary(36),
+    ticket_id    binary(36) UNIQUE,
     quantity     INT            NOT NULL,
     ticket_price DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (contract_id)
