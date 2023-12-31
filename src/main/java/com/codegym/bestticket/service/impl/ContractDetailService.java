@@ -77,7 +77,7 @@ public class ContractDetailService implements IContractDetailService {
 
     @Override
     public Optional<ContractDetailResponseDTO> findByContractIdAndId(UUID contractId, UUID id) {
-        Optional<ContractDetail> contractDetailOptional = iContractDetailRepository.findByContractIdAndAndId(contractId, id);
+        Optional<ContractDetail> contractDetailOptional = iContractDetailRepository.findByContractIdAndId(contractId, id);
         if (contractDetailOptional.isPresent()) {
             ContractDetail contractDetail = contractDetailOptional.get();
             ContractDetailResponseDTO contractDetailResponseDTO = new ContractDetailResponseDTO();
