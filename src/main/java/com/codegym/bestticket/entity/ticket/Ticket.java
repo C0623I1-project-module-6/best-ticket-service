@@ -1,6 +1,7 @@
 package com.codegym.bestticket.entity.ticket;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,13 +17,15 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "tickets")
 public class Ticket {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String ticket_code;
+    @Column(name = "ticket_code")
+    private String ticketCode;
 
     private String seat;
 
@@ -37,7 +40,8 @@ public class Ticket {
     private Boolean isDelete;
 
     @ManyToOne
-    @JoinColumn(name = "ticketType_id", nullable = false)
+    @JoinColumn(name = "ticket_type_id", nullable = false)
+    @JsonIgnore
     private TicketType ticketType;
 
 }

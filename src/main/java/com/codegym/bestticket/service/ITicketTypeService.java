@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.UUID;
 
 
-public interface TicketTypeService {
+public interface ITicketTypeService {
 
     List<TicketTypeRequestDTO> getAllTicketType();
-    TicketTypeResponseDTO getTicketTypeById(TicketTypeResponseDTO ticketTypeResponseDTO);
+    TicketTypeResponseDTO getTicketTypeById(UUID id);
     TicketTypeRequestDTO createTicketType(TicketTypeRequestDTO ticketTypeRequestDTO);
     void deleteTicketType(UUID id);
-    TicketTypeResponseDTO updateTicketType(TicketTypeResponseDTO ticketTypeResponseDTO);
+    void updateTicketType(TicketTypeResponseDTO ticketTypeResponseDTO);
 }
