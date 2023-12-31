@@ -28,6 +28,7 @@ public class ContractDetailService implements IContractDetailService {
     public Iterable<ContractDetailResponseDTO> findAll() {
         Iterable<ContractDetail> contractDetails = iContractDetailRepository.findAll();
         return StreamSupport.stream(contractDetails.spliterator(), false)
+                .filter(contractDetail -> !contractDetail.getIsDelete())
                 .map(contractDetail -> {
                     ContractDetailResponseDTO contractDetailResponseDTO = new ContractDetailResponseDTO();
                     BeanUtils.copyProperties(contractDetail, contractDetailResponseDTO);
@@ -51,8 +52,21 @@ public class ContractDetailService implements IContractDetailService {
 
     @Override
     public Iterable<ContractDetailResponseDTO> findAllByContractId(UUID contractId) {
+        Optional<Contract> contract = iContractRepository.findById(contractId);
         Iterable<ContractDetail> contractDetails = iContractDetailRepository.findAllByContractId(contractId);
+        double amount = 0.0;
+        for (ContractDetail contractDetail : contractDetails) {
+            if (!contractDetail.getIsDelete()) {
+               amount += contractDetail.getQuantity() * contractDetail.getTicketPrice();
+            }
+        }
+        double finalAmount = amount;
+        contract.ifPresent(value -> {
+            value.setAmount(finalAmount);
+            iContractRepository.save(value);
+        });
         return StreamSupport.stream(contractDetails.spliterator(), false)
+                .filter(contractDetail -> !contractDetail.getIsDelete())
                 .map(contractDetail -> {
                     ContractDetailResponseDTO contractDetailResponseDTO = new ContractDetailResponseDTO();
                     BeanUtils.copyProperties(contractDetail, contractDetailResponseDTO);
@@ -88,7 +102,9 @@ public class ContractDetailService implements IContractDetailService {
 
         double totalAmount = amount;
         for (ContractDetail contractDetail : contractDetails) {
-            totalAmount += (contractDetail.getQuantity() * contractDetail.getTicketPrice());
+            if (!contractDetail.getIsDelete()) {
+                totalAmount += (contractDetail.getQuantity() * contractDetail.getTicketPrice());
+            }
         }
 
         contractDetailRequestDTO.getContract().setAmount(totalAmount);
@@ -109,6 +125,8 @@ public class ContractDetailService implements IContractDetailService {
     public void remove(UUID id) {
         Optional<ContractDetail> contractDetail = iContractDetailRepository.findById(id);
         contractDetail.ifPresent(value -> value.setIsDelete(true));
+        contractDetail.ifPresent(value -> value.getContract().setAmount(value.getContract().getAmount() - (value.getTicketPrice()) * value.getQuantity()));
+        contractDetail.ifPresent(iContractDetailRepository::save);
     }
 
     @Override

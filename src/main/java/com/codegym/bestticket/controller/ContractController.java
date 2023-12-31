@@ -10,7 +10,6 @@ import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,6 +65,7 @@ public class ContractController {
     public ResponseEntity<ResponseDto> addContract(@RequestBody ContractRequestDTO contractRequestDTO) {
         try {
             contractRequestDTO.setStatus(String.valueOf(EContractStatus.ACTIVE));
+            contractRequestDTO.setIsDelete(false);
             contractService.save(contractRequestDTO);
             return ResponseEntity.ok(ResponseDto.builder()
                     .message("Add successfully.")
@@ -89,7 +89,7 @@ public class ContractController {
             if (contractOptional.isPresent()) {
                 contractRequestDTO.setId(id);
                 contractService.save(contractRequestDTO);
-                ContractResponseDTO updatedContract = contractOptional.get();
+                Optional<ContractResponseDTO> updatedContract = contractService.findById(id);
                 ResponseDto responseDto = ResponseDto.builder()
                         .message("Update successfully.")
                         .status(HttpStatus.OK)
@@ -113,8 +113,8 @@ public class ContractController {
         }
     }
 
-    @DeleteMapping("/remove/{id}")
-    public ResponseEntity<ResponseDto> deleteContract(@PathVariable UUID id) {
+    @PutMapping("/remove/{id}")
+    public ResponseEntity<ResponseDto> remove(@PathVariable UUID id) {
         Optional<ContractResponseDTO> contractOptional = contractService.findById(id);
         if (contractOptional.isPresent()) {
             contractService.remove(id);
