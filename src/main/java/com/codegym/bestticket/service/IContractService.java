@@ -1,14 +1,15 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.dto.ContractDTO;
+import com.codegym.bestticket.dto.request.contract.ContractRequestDTO;
+import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public interface IContractService {
-    Iterable<ContractDTO> findAll();
-
-    Optional<ContractDTO> findById(UUID id);
-    void save(ContractDTO contractDTO);
+    Iterable<ContractResponseDTO> findAll();
+    Optional<ContractResponseDTO> findById(UUID id);
+    void save(ContractRequestDTO contractRequestDTO);
     void remove(UUID id);
+    void delete(UUID id);
 }
