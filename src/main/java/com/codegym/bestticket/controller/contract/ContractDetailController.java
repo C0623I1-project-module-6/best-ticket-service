@@ -1,4 +1,4 @@
-package com.codegym.bestticket.controller;
+package com.codegym.bestticket.controller.contract;
 
 import com.codegym.bestticket.dto.ResponseDto;
 import com.codegym.bestticket.dto.request.contract.ContractDetailRequestDTO;

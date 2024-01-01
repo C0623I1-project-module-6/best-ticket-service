@@ -1,4 +1,4 @@
-package com.codegym.bestticket.controller;
+package com.codegym.bestticket.controller.contract;
 
 import com.codegym.bestticket.constant.EContractStatus;
 import com.codegym.bestticket.dto.ResponseDto;

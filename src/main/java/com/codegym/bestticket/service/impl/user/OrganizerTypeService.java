@@ -1,7 +1,11 @@
 package com.codegym.bestticket.service.impl.user;
 
+import com.codegym.bestticket.converter.user.OrganizerTypeConverter;
 import com.codegym.bestticket.dto.OrganizerTypeDTO;
+import com.codegym.bestticket.entity.user.OrganizerType;
+import com.codegym.bestticket.repository.IOrganizerTypeRepository;
 import com.codegym.bestticket.service.IOrganizerTypeService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +14,16 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class OrganizerTypeService implements IOrganizerTypeService {
+    private final OrganizerTypeConverter organizerTypeConverter;
+    private final IOrganizerTypeRepository organizerTypeRepository;
 
     @Override
     public OrganizerTypeDTO create(OrganizerTypeDTO organizerTypeDTO) {
-        return null;
+        OrganizerType organizerType =
+                organizerTypeConverter.dtoToEntity(organizerTypeDTO);
+        organizerType.setIsDelete(false);
+        organizerTypeRepository.save(organizerType);
+        return organizerTypeConverter.entityToDto(organizerType);
     }
 
     @Override
@@ -23,6 +33,9 @@ public class OrganizerTypeService implements IOrganizerTypeService {
 
     @Override
     public void remove(UUID id) {
-
+        OrganizerType organizerType = organizerTypeRepository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException("Organizer type not found"));
+        organizerType.setIsDelete(true);
+        organizerTypeRepository.save(organizerType);
     }
 }

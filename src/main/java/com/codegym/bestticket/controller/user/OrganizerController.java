@@ -1,4 +1,4 @@
-package com.codegym.bestticket.controller;
+package com.codegym.bestticket.controller.user;
 
 import com.codegym.bestticket.dto.CustomerDTO;
 import com.codegym.bestticket.dto.OrganizerDTO;
@@ -11,13 +11,12 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
-@Controller
+@RestController
 @CrossOrigin("*")
 @AllArgsConstructor
 @RequestMapping("/api/organizers")
@@ -100,15 +99,15 @@ public class OrganizerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDto> deleteCustomer(@PathVariable UUID id) {
+    public ResponseEntity<ResponseDto> deleteOrganizer(@PathVariable UUID id) {
         try {
             organizerService.remove(id);
             return new ResponseEntity<>(
-                    new ResponseDto("Customer deleted!!!",
+                    new ResponseDto("Organizer deleted!!!",
                             HttpStatus.OK), HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    new ResponseDto("User not found",
+                    new ResponseDto("Organizer not found",
                             HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
         }
     }

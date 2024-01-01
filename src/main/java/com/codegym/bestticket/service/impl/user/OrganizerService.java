@@ -10,6 +10,7 @@ import com.codegym.bestticket.repository.IOrganizerRepository;
 import com.codegym.bestticket.repository.IOrganizerTypeRepository;
 import com.codegym.bestticket.repository.IUserRepository;
 import com.codegym.bestticket.service.IOrganizerService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,15 +29,15 @@ public class OrganizerService implements IOrganizerService {
 
     @Override
     public OrganizerDtoResponse create(OrganizerDTO organizerDTO) {
-        UUID userId=organizerDTO.getUser();
+        UUID userId = organizerDTO.getUser();
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new RuntimeException("User not found"));
-//        UUID organizerTypeId= organizerDTO.getOrganizerType();
-//        OrganizerType organizerType=organizerTypeRepository.findById(organizerTypeId)
-//                .orElseThrow(()-> new RuntimeException("Organizer type not found"));
-        Organizer organizer= organizerConverter.dtoToEntity(organizerDTO);
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        UUID organizerTypeId = organizerDTO.getOrganizerType();
+        OrganizerType organizerType = organizerTypeRepository.findById(organizerTypeId)
+                .orElseThrow(() -> new RuntimeException("Organizer type not found"));
+        Organizer organizer = organizerConverter.dtoToEntity(organizerDTO);
         organizer.setUser(user);
-//        organizer.setOrganizerType(organizerType);
+        organizer.setOrganizerType(organizerType);
         organizer.setIsDelete(false);
         organizerRepository.save(organizer);
         return organizerConverter.entityToDto(organizer);
@@ -49,7 +50,10 @@ public class OrganizerService implements IOrganizerService {
 
     @Override
     public void remove(UUID id) {
-
+        Organizer organizer = organizerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Organizer not found"));
+        organizer.setIsDelete(true);
+        organizerRepository.save(organizer);
     }
 
     @Override
