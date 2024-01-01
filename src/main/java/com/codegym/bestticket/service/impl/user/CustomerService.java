@@ -25,7 +25,6 @@ import java.util.UUID;
 @Builder
 public class CustomerService implements ICustomerService {
     private final CustomerConverter customerConverter;
-    private final RegisterConverter registerConverter;
     private final ICustomerRepository customerRepository;
     private final IUserRepository userRepository;
 

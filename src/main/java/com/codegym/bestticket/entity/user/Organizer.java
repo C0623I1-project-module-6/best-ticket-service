@@ -28,7 +28,7 @@ public class Organizer {
     private String taxCode;
     @ManyToOne
     @JoinColumn(name = "organizer_type_id")
-    private OrganizerType organizerTypeId;
+    private OrganizerType organizerType;
     @Column(name = "is_delete")
     private Boolean isDelete;
     @OneToOne

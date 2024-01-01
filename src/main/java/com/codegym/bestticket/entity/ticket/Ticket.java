@@ -1,6 +1,7 @@
 package com.codegym.bestticket.entity.ticket;
 
 
+import com.codegym.bestticket.entity.contract.ContractDetail;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,8 +22,8 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-
-    private String ticket_code;
+    @Column(name = "ticket_code")
+    private String ticketCode;
 
     private String seat;
 
@@ -35,7 +36,9 @@ public class Ticket {
     private String barcode;
 
     private Boolean isDelete;
-
+    @ManyToOne
+    @JoinColumn(name = "contract_detail_id")
+    private ContractDetail contractDetail;
     @ManyToOne
     @JoinColumn(name = "ticketType_id", nullable = false)
     private TicketType ticketType;

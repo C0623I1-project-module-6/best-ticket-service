@@ -19,6 +19,6 @@ public class OrganizerType {
     private String name;
     @Column(name = "is_delete")
     private Boolean isDelete;
-    @OneToMany(mappedBy = "organizerTypeId")
+    @OneToMany(mappedBy = "organizerType")
     private List<Organizer> organizers;
 }

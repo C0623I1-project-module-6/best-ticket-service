@@ -36,6 +36,27 @@ create table bank_accounts
     foreign key (user_id) references users (id)
 );
 
+CREATE TABLE contracts
+(
+    id         BINARY(36) PRIMARY KEY,
+    `date`     DATETIME       NOT NULL,
+    amount     DECIMAL(10, 2) NOT NULL,
+    `status`   VARCHAR(30)    NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE contract_details
+(
+    id           binary(36) PRIMARY KEY,
+    contract_id  binary(36),
+    quantity     INT            NOT NULL,
+    ticket_price DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (contract_id)
+        REFERENCES contracts (id)
+);
+
+
 CREATE TABLE ticket_types
 (
     id     binary(36) PRIMARY KEY,
@@ -53,33 +74,13 @@ CREATE TABLE tickets
     promotion      VARCHAR(5),
     barcode        VARCHAR(20),
     ticket_type_id binary(36),
+    contract_detail_id BINARY(16),
     FOREIGN KEY (ticket_type_id)
-        REFERENCES ticket_types (id)
+        REFERENCES ticket_types (id),
+    FOREIGN KEY (contract_detail_id)
+        REFERENCES contract_details(id)
 );
 
-CREATE TABLE contracts
-(
-    id         BINARY(36) PRIMARY KEY,
-    `date`     DATETIME       NOT NULL,
-    amount     DECIMAL(10, 2) NOT NULL,
-    `status`   VARCHAR(30)    NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-
-CREATE TABLE contract_details
-(
-    id           binary(36) PRIMARY KEY,
-    contract_id  binary(36),
-    ticket_id    binary(36) UNIQUE,
-    quantity     INT            NOT NULL,
-    ticket_price DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (contract_id)
-        REFERENCES contracts (id),
-    FOREIGN KEY (ticket_id)
-        REFERENCES tickets (id)
-);
 
 create table customer
 (

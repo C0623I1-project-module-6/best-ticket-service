@@ -1,19 +1,14 @@
 package com.codegym.bestticket.entity.contract;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.codegym.bestticket.entity.ticket.Ticket;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -31,9 +26,8 @@ public class   ContractDetail {
     @ManyToOne
     @JoinColumn(name = "contract_id", nullable = false)
     private Contract contract;
-
-    @Column(name = "ticket_id")
-    private UUID ticketId;
+    @OneToMany(mappedBy = "contractDetail")
+    private List<Ticket> tickets;
 
     @Column(name = "quantity")
     private Integer quantity;
