@@ -1,2 +1,3 @@
 ALTER TABLE users
-DROP COLUMN username;
+DROP
+COLUMN username;
