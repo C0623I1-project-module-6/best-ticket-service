@@ -1,5 +1,6 @@
 package com.codegym.bestticket.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,6 +34,7 @@ public class Organizer {
     private Boolean isDelete;
     @OneToOne
     @JoinColumn(name = "user_id",unique = true)
+    @JsonIgnore
     private User user;
 
 

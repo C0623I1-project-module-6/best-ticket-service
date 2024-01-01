@@ -1,7 +1,6 @@
 package com.codegym.bestticket.service.impl.user;
 
 import com.codegym.bestticket.converter.user.CustomerConverter;
-import com.codegym.bestticket.converter.user.RegisterConverter;
 import com.codegym.bestticket.dto.CustomerDTO;
 import com.codegym.bestticket.dto.response.user.CustomerDtoResponse;
 import com.codegym.bestticket.entity.user.Customer;
@@ -14,7 +13,6 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -59,7 +57,7 @@ public class CustomerService implements ICustomerService {
     @Override
     public void remove(UUID id) {
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Event is not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Customer is not found"));
         customer.setIsDelete(true);
         customerRepository.save(customer);
     }

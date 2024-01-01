@@ -1,4 +1,4 @@
-package com.codegym.bestticket.controller;
+package com.codegym.bestticket.controller.ticket;
 
 import com.codegym.bestticket.constant.EMessage;
 import com.codegym.bestticket.dto.ResponseDto;
