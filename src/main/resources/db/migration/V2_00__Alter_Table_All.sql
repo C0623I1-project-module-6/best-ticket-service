@@ -51,3 +51,6 @@ DROP COLUMN user_customer_id;
 ALTER TABLE customers
 ADD COLUMN user_id BINARY(16) UNIQUE ,
     ADD CONSTRAINT FOREIGN KEY (user_id) REFERENCES users(id);
+
+ALTER TABLE customers
+    MODIFY date_of_birth VARCHAR(20);

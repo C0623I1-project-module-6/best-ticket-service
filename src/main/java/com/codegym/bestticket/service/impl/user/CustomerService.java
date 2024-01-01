@@ -1,10 +1,11 @@
 package com.codegym.bestticket.service.impl.user;
 
 import com.codegym.bestticket.converter.user.CustomerConverter;
+import com.codegym.bestticket.converter.user.RegisterConverter;
 import com.codegym.bestticket.dto.CustomerDTO;
 import com.codegym.bestticket.dto.response.user.CustomerDtoResponse;
 import com.codegym.bestticket.entity.user.Customer;
-
+import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.repository.ICustomerRepository;
 import com.codegym.bestticket.repository.IUserRepository;
 import com.codegym.bestticket.service.ICustomerService;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,43 +25,61 @@ import java.util.UUID;
 @Builder
 public class CustomerService implements ICustomerService {
     private final CustomerConverter customerConverter;
+    private final RegisterConverter registerConverter;
     private final ICustomerRepository customerRepository;
     private final IUserRepository userRepository;
 
     @Override
     public CustomerDtoResponse create(CustomerDTO customerDTO) {
-//        UUID userId = customerDTO.getUserId();
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(()-> new IllegalArgumentException("User not found"));
-//        try {
-//            UUID.fromString(userId.toString());
-//        } catch (IllegalArgumentException e) {
-//            throw new IllegalArgumentException("Invalid UUID format");
-//        }
+        UUID userid = customerDTO.getUser();
+        User user = userRepository.findById(userid)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         Customer customer = customerConverter.dtoToEntity(customerDTO);
+        customer.setUser(user);
+        customer.setIsDelete(false);
         customerRepository.save(customer);
-        CustomerDtoResponse customerDtoResponse =
-                customerConverter.entityToDto(customer);
-        return customerDtoResponse;
+        return customerConverter.entityToDto(customer);
     }
 
     @Override
     public CustomerDtoResponse update(UUID id, CustomerDTO customerDTO) {
         Optional<Customer> optionalCustomer = customerRepository.findById(id);
-        if (optionalCustomer.isPresent()) {
-            Customer newCustomer = customerConverter.dtoToEntity(customerDTO);
-            customerRepository.save(newCustomer);
-            CustomerDtoResponse updatedCustomerDtoResponse = customerConverter.entityToDto(newCustomer);
-            return updatedCustomerDtoResponse;
-        } else {
-            throw new EntityNotFoundException("Customer not found");
+        if (optionalCustomer.isEmpty()) {
+            throw new RuntimeException("Customer not found is" + id);
         }
+        Customer customer = optionalCustomer.get();
+        customer.setFullName(customerDTO.getFullName());
+        customer.setGender(customerDTO.getGender());
+        customer.setIdCard(customerDTO.getIdCard());
+        customer.setDateOfBirth(customerDTO.getDateOfBirth());
+        customerRepository.save(customer);
+        return customerConverter.entityToDto(customer);
     }
 
 
     @Override
     public void remove(UUID id) {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Event is not found"));
+        customer.setIsDelete(true);
+        customerRepository.save(customer);
+    }
 
+    @Override
+    public List<CustomerDtoResponse> findAll() {
+        return customerConverter.entitiesToDTOs(
+                customerRepository.findAllByIsDeleteFalse());
+    }
+
+    @Override
+    public CustomerDtoResponse findById(UUID id) {
+        Customer customer =
+                customerRepository.findByIdAndIsDeleteFalse(id);
+        if (customer != null) {
+            return customerConverter.entityToDto(customer);
+        } else {
+            throw new EntityNotFoundException("Customer not found or is delete ");
+        }
     }
 
 }

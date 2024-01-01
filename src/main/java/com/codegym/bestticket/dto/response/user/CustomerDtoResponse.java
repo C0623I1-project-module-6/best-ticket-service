@@ -8,11 +8,11 @@ import java.util.UUID;
 
 @Data
 public class CustomerDtoResponse {
-    private String phoneNumber;
-    private String email;
+    private UUID id;
     private String fullName;
     private String gender;
     private String idCard;
-    private UUID userId;
     private Date dateOfBirth;
+    private User user;
+    private Boolean isDelete;
 }

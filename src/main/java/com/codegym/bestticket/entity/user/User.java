@@ -1,5 +1,6 @@
 package com.codegym.bestticket.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,6 +27,7 @@ public class User {
     private String email;
 
     @OneToOne(mappedBy = "user")
+    @JsonIgnore
     private Customer customerId;
     @OneToOne(mappedBy = "user")
     private Organizer organizerId;
