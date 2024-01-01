@@ -23,37 +23,37 @@ import java.util.UUID;
 public class OrganizerController {
     private final IOrganizerService organizerService;
 
-//    @GetMapping("")
-//    public ResponseEntity<ResponseDto> getCustomers() {
-//        try {
-//            List<CustomerDtoResponse> customerDtoResponse =
-//                    customerService.findAll();
-//            return new ResponseEntity<>(
-//                    new ResponseDto("Customer list",
-//                            HttpStatus.OK,
-//                            customerDtoResponse), HttpStatus.OK);
-//        } catch (RuntimeException e) {
-//            return new ResponseEntity<>(
-//                    new ResponseDto("Customer list not found",
-//                            HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
-//        }
-//    }
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity<ResponseDto> getCustomer(@PathVariable UUID id){
-//        try{
-//            CustomerDtoResponse customerDtoResponse=
-//                    customerService.findById(id);
-//            return new ResponseEntity<>(
-//                    new ResponseDto("Customer" + id,
-//                            HttpStatus.OK,
-//                            customerDtoResponse),HttpStatus.OK);
-//        } catch (RuntimeException e){
-//            return new ResponseEntity<>(
-//                    new ResponseDto("Customer not found or is delete",
-//                            HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
-//        }
-//    }
+    @GetMapping("")
+    public ResponseEntity<ResponseDto> getOrganizers() {
+        try {
+            List<OrganizerDtoResponse> organizerDtoResponses =
+                    organizerService.findAll();
+            return new ResponseEntity<>(
+                    new ResponseDto("Organizer list",
+                            HttpStatus.OK,
+                            organizerDtoResponses), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(
+                    new ResponseDto("Organizer list not found",
+                            HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseDto> getOrganizer(@PathVariable UUID id){
+        try{
+            OrganizerDtoResponse organizerDtoResponse=
+                    organizerService.findById(id);
+            return new ResponseEntity<>(
+                    new ResponseDto("Organizer" + id,
+                            HttpStatus.OK,
+                            organizerDtoResponse),HttpStatus.OK);
+        } catch (RuntimeException e){
+            return new ResponseEntity<>(
+                    new ResponseDto("Organizer not found or is deleted",
+                            HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @PostMapping("/add")
     public ResponseEntity<ResponseDto> addOrganizer(@RequestBody OrganizerDTO organizerDTO) {

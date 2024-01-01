@@ -58,11 +58,18 @@ public class OrganizerService implements IOrganizerService {
 
     @Override
     public List<OrganizerDtoResponse> findAll() {
-        return null;
+        return organizerConverter.entitiesToDTOs(
+                organizerRepository.findAllByIsDeleteFalse());
     }
 
     @Override
     public OrganizerDtoResponse findById(UUID id) {
-        return null;
+        Organizer organizer=
+                organizerRepository.findByIdAndIsDeleteFalse(id);
+        if (organizer!=null){
+            return organizerConverter.entityToDto(organizer);
+        } else {
+            throw new EntityNotFoundException("Organizer not found");
+        }
     }
 }

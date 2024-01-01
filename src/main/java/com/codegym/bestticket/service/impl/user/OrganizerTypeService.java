@@ -6,6 +6,7 @@ import com.codegym.bestticket.entity.user.OrganizerType;
 import com.codegym.bestticket.repository.IOrganizerTypeRepository;
 import com.codegym.bestticket.service.IOrganizerTypeService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class OrganizerTypeService implements IOrganizerTypeService {
     private final OrganizerTypeConverter organizerTypeConverter;
     private final IOrganizerTypeRepository organizerTypeRepository;
