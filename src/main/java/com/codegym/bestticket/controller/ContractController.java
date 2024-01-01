@@ -2,13 +2,9 @@ package com.codegym.bestticket.controller;
 
 import com.codegym.bestticket.constant.EContractStatus;
 import com.codegym.bestticket.dto.ResponseDto;
-<<<<<<< HEAD
 import com.codegym.bestticket.service.impl.contract.ContractService;
-=======
 import com.codegym.bestticket.dto.request.contract.ContractRequestDTO;
 import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
-import com.codegym.bestticket.service.impl.ContractService;
->>>>>>> 15f49ff2de9f06a8debaa514a68547b704482455
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
