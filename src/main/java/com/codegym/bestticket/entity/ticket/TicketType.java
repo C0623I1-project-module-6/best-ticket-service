@@ -31,8 +31,7 @@ public class TicketType {
 
     private Double price;
 
-//    @Column(name = "is_delete")
-//    private Boolean isDelete;
+    private Boolean isDelete;
 
     @OneToMany(mappedBy = "ticketType")
     private Set<Ticket> tickets;
