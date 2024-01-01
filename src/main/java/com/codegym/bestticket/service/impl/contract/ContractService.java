@@ -4,7 +4,6 @@ import com.codegym.bestticket.constant.EContractStatus;
 import com.codegym.bestticket.dto.request.contract.ContractRequestDTO;
 import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
 import com.codegym.bestticket.entity.contract.Contract;
-import com.codegym.bestticket.repository.IContractDetailRepository;
 import com.codegym.bestticket.repository.IContractRepository;
 import com.codegym.bestticket.service.IContractService;
 import lombok.AllArgsConstructor;
@@ -22,7 +21,6 @@ import java.util.stream.StreamSupport;
 @Service
 public class ContractService implements IContractService {
     private final IContractRepository iContractRepository;
-    private final IContractDetailRepository iContractDetailRepository;
 
     @Override
     public Iterable<ContractResponseDTO> findAll() {
