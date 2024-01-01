@@ -4,14 +4,17 @@ import com.codegym.bestticket.dto.request.contract.ContractDetailRequestDTO;
 import com.codegym.bestticket.dto.response.contract.ContractDetailResponseDTO;
 import com.codegym.bestticket.entity.contract.Contract;
 import com.codegym.bestticket.entity.contract.ContractDetail;
+import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.repository.IContractDetailRepository;
 import com.codegym.bestticket.repository.IContractRepository;
+import com.codegym.bestticket.repository.ITicketRepository;
 import com.codegym.bestticket.service.IContractDetailService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,6 +26,7 @@ import java.util.stream.StreamSupport;
 public class ContractDetailService implements IContractDetailService {
     private final IContractDetailRepository iContractDetailRepository;
     private final IContractRepository iContractRepository;
+    private final ITicketRepository iTicketRepository;
 
     @Override
     public Iterable<ContractDetailResponseDTO> findAll() {
@@ -57,7 +61,7 @@ public class ContractDetailService implements IContractDetailService {
         double amount = 0.0;
         for (ContractDetail contractDetail : contractDetails) {
             if (!contractDetail.getIsDelete()) {
-               amount += contractDetail.getQuantity() * contractDetail.getTicketPrice();
+                amount += contractDetail.getQuantity() * contractDetail.getTicketPrice();
             }
         }
         double finalAmount = amount;
@@ -119,6 +123,11 @@ public class ContractDetailService implements IContractDetailService {
         ContractDetail contractDetail = new ContractDetail();
         BeanUtils.copyProperties(contractDetailRequestDTO, contractDetail);
         iContractDetailRepository.save(contractDetail);
+
+        for (Ticket ticket : contractDetail.getTickets()) {
+            ticket.setContractDetail(contractDetail);
+            iTicketRepository.save(ticket);
+        }
     }
 
     @Override
