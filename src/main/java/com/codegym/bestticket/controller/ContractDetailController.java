@@ -5,8 +5,8 @@ import com.codegym.bestticket.dto.request.contract.ContractDetailRequestDTO;
 import com.codegym.bestticket.dto.response.contract.ContractDetailResponseDTO;
 import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
 import com.codegym.bestticket.entity.contract.Contract;
-import com.codegym.bestticket.service.impl.ContractDetailService;
-import com.codegym.bestticket.service.impl.ContractService;
+import com.codegym.bestticket.service.IContractDetailService;
+import com.codegym.bestticket.service.IContractService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
@@ -31,8 +31,8 @@ import java.util.logging.Level;
 @RestController
 @RequestMapping("/api/contracts/{contractId}/contract-details")
 public class ContractDetailController {
-    private final ContractService contractService;
-    private final ContractDetailService contractDetailService;
+    private final IContractService contractService;
+    private final IContractDetailService contractDetailService;
 
     @GetMapping()
     public ResponseEntity<ResponseDto> getContractDetailList(@PathVariable UUID contractId) {

@@ -1,8 +1,6 @@
 package com.codegym.bestticket.dto.request.ticket;
 
-import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.entity.ticket.TicketType;
-import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Data;
 

@@ -1,5 +1,6 @@
 package com.codegym.bestticket.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,16 +19,18 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @Column(name = "username", length = 50, nullable = false, unique = true)
-    private String username;
-    @Column(name = "password", length = 50, nullable = false)
+    @Column(nullable = false)
     private String password;
+    @Column(name = "phone_number", length = 15, nullable = false, unique = true)
+    private String phoneNumber;
+    @Column(nullable = false, unique = true)
+    private String email;
+
     @OneToOne(mappedBy = "user")
-    private Customer customer;
+    @JsonIgnore
+    private Customer customerId;
     @OneToOne(mappedBy = "user")
-    private Enterprise organizer;
-    @OneToOne(mappedBy = "user")
-    private Individual individual;
+    private Organizer organizerId;
     @OneToMany(mappedBy = "user")
     private List<BankAccount> bankAccounts;
     @ManyToMany(fetch = FetchType.LAZY)

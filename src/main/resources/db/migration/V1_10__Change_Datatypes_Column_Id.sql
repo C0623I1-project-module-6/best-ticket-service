@@ -38,7 +38,7 @@ SET foreign_key_checks = 1;
 SET foreign_key_checks = 0;
 ALTER TABLE individuals
     MODIFY COLUMN id BINARY(16),
-    MODIFY COLUMN user_individuals_id BINARY(16);
+    MODIFY COLUMN user_individual_id BINARY(16);
 SET foreign_key_checks = 1;
 
 SET foreign_key_checks = 0;
@@ -49,7 +49,7 @@ SET foreign_key_checks = 1;
 SET foreign_key_checks = 0;
 ALTER TABLE organizers
     MODIFY COLUMN id BINARY(16),
-    MODIFY COLUMN user_id BINARY(16);
+    MODIFY COLUMN user_organizer_id BINARY(16);
 SET foreign_key_checks = 1;
 
 SET foreign_key_checks = 0;
@@ -84,4 +84,5 @@ ALTER TABLE users
     MODIFY COLUMN id BINARY(16);
 SET foreign_key_checks = 1;
 
-RENAME TABLE organizers TO enterprise;
+
+RENAME TABLE organizers TO enterprises;

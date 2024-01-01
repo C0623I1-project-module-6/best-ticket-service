@@ -10,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -27,7 +27,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "contract_details")
-public class ContractDetail {
+public class   ContractDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -37,10 +37,9 @@ public class ContractDetail {
     @JoinColumn(name = "contract_id", nullable = false)
     private Contract contract;
 
+    @OneToMany(mappedBy = "contractDetail")
     @JsonIgnore
-    @OneToOne
-    @JoinColumn(name = "ticket_id")
-    private Ticket ticket;
+    private List<Ticket> tickets;
 
     @Column(name = "quantity")
     private Integer quantity;

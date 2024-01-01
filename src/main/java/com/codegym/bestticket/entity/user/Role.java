@@ -1,8 +1,5 @@
 package com.codegym.bestticket.entity.user;
-
 import jakarta.persistence.Entity;
-
-import com.codegym.bestticket.constant.ERole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,9 +17,10 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @Column(name = "name", length = 50)
-    @Enumerated
-    private ERole name;
+    @Column( length = 50)
+    private String name;
+    @Column(name = "is_delete")
+    private Boolean isDelete;
     @ManyToMany(mappedBy = "roles")
     private List<User> users;
 

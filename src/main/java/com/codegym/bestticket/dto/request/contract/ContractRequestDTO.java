@@ -1,7 +1,7 @@
 package com.codegym.bestticket.dto.request.contract;
 
 import com.codegym.bestticket.entity.user.Customer;
-import com.codegym.bestticket.entity.user.Enterprise;
+import com.codegym.bestticket.entity.user.Organizer;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -16,6 +16,6 @@ public class ContractRequestDTO {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Customer customer;
-    private Enterprise organizer;
+    private Organizer organizer;
     private Boolean isDelete;
 }
