@@ -1,5 +1,6 @@
 package com.codegym.bestticket.entity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,5 +21,6 @@ public class OrganizerType {
     @Column(name = "is_delete")
     private Boolean isDelete;
     @OneToMany(mappedBy = "organizerType")
+    @JsonIgnore
     private List<Organizer> organizers;
 }

@@ -28,9 +28,10 @@ public class User {
 
     @OneToOne(mappedBy = "user")
     @JsonIgnore
-    private Customer customerId;
+    private Customer customer;
     @OneToOne(mappedBy = "user")
-    private Organizer organizerId;
+    @JsonIgnore
+    private Organizer organizer;
     @OneToMany(mappedBy = "user")
     private List<BankAccount> bankAccounts;
     @ManyToMany(fetch = FetchType.LAZY)

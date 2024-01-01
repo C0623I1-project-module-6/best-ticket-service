@@ -1,4 +1,4 @@
-package com.codegym.bestticket.controller;
+package com.codegym.bestticket.controller.event;
 
 import com.codegym.bestticket.dto.EventDTO;
 import com.codegym.bestticket.dto.response.event.EventResponse;

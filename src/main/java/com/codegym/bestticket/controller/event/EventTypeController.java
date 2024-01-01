@@ -1,4 +1,4 @@
-package com.codegym.bestticket.controller;
+package com.codegym.bestticket.controller.event;
 
 import com.codegym.bestticket.dto.response.event_type.EventTypeResponse;
 import com.codegym.bestticket.service.EventTypeService;
