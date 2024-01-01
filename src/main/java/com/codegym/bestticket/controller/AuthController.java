@@ -57,17 +57,31 @@ public class AuthController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDto> deleteUser(@PathVariable UUID id) {
+    @DeleteMapping("/disable/{id}")
+    public ResponseEntity<ResponseDto> disableUser(@PathVariable UUID id) {
         try {
             iUserService.remove(id);
             return new ResponseEntity<>(
                     new ResponseDto("User deleted!!!",
-                            HttpStatus.OK),HttpStatus.OK);
-        } catch (EntityNotFoundException e){
+                            HttpStatus.OK), HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
                     new ResponseDto("User not found",
-                            HttpStatus.BAD_REQUEST),HttpStatus.BAD_REQUEST);
+                            HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ResponseDto> deleteUser(@PathVariable UUID id) {
+        try {
+            iUserService.delete(id);
+            return new ResponseEntity<>(
+                    new ResponseDto("User deleted!!!",
+                            HttpStatus.OK), HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(
+                    new ResponseDto("User not found or is deleted",
+                            HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
         }
     }
 }

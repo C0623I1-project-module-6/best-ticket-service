@@ -40,15 +40,15 @@ public class OrganizerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDto> getOrganizer(@PathVariable UUID id){
-        try{
-            OrganizerDtoResponse organizerDtoResponse=
+    public ResponseEntity<ResponseDto> getOrganizer(@PathVariable UUID id) {
+        try {
+            OrganizerDtoResponse organizerDtoResponse =
                     organizerService.findById(id);
             return new ResponseEntity<>(
                     new ResponseDto("Organizer" + id,
                             HttpStatus.OK,
-                            organizerDtoResponse),HttpStatus.OK);
-        } catch (RuntimeException e){
+                            organizerDtoResponse), HttpStatus.OK);
+        } catch (RuntimeException e) {
             return new ResponseEntity<>(
                     new ResponseDto("Organizer not found or is deleted",
                             HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
@@ -78,7 +78,7 @@ public class OrganizerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDto> editOrganizer(@PathVariable UUID id,
-                                                    @RequestBody OrganizerDTO organizerDTO) {
+                                                     @RequestBody OrganizerDTO organizerDTO) {
         try {
             if (organizerDTO == null) {
                 return new ResponseEntity<>(
@@ -98,17 +98,31 @@ public class OrganizerController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDto> deleteOrganizer(@PathVariable UUID id) {
+    @DeleteMapping("/disable/{id}")
+    public ResponseEntity<ResponseDto> disableOrganizer(@PathVariable UUID id) {
         try {
             organizerService.remove(id);
+            return new ResponseEntity<>(
+                    new ResponseDto("Organizer disabled!!!",
+                            HttpStatus.OK), HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(
+                    new ResponseDto("Organizer not found or is deleted",
+                            HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ResponseDto> deleteOrganizer(@PathVariable UUID id) {
+        try {
+            organizerService.delete(id);
             return new ResponseEntity<>(
                     new ResponseDto("Organizer deleted!!!",
                             HttpStatus.OK), HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    new ResponseDto("Organizer not found",
-                            HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+                    new ResponseDto("Organizer not found or is deleted",
+                            HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
         }
     }
 }

@@ -95,17 +95,30 @@ public class CustomerController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDto> deleteCustomer(@PathVariable UUID id) {
+    @DeleteMapping("/remove/{id}")
+    public ResponseEntity<ResponseDto> removeCustomer(@PathVariable UUID id) {
         try {
             customerService.remove(id);
+            return new ResponseEntity<>(
+                    new ResponseDto("Customer disabled!!!",
+                            HttpStatus.OK), HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(
+                    new ResponseDto("Customer not found or is deleted",
+                            HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
+        }
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ResponseDto> deleteCustomer(@PathVariable UUID id) {
+        try {
+            customerService.delete(id);
             return new ResponseEntity<>(
                     new ResponseDto("Customer deleted!!!",
                             HttpStatus.OK), HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    new ResponseDto("User not found",
-                            HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+                    new ResponseDto("Customer not found or is deleted",
+                            HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
         }
     }
 }

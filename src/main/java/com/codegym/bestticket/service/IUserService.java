@@ -11,5 +11,6 @@ public interface IUserService {
     ResponseDto register(RegisterDtoRequest registerDtoRequest);
     LoginDtoResponse login(LoginDtoRequest loginDtoRequest);
     void remove(UUID id);
+    void delete(UUID id);
 }
 

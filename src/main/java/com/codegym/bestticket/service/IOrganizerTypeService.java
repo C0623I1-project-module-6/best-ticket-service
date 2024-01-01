@@ -12,4 +12,5 @@ public interface IOrganizerTypeService {
     OrganizerTypeDTO update(UUID id, OrganizerTypeDTO organizerTypeDTO);
 
     void remove(UUID id);
+    void delete(UUID id);
 }

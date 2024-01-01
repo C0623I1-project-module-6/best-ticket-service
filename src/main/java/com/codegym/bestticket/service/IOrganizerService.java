@@ -11,6 +11,7 @@ public interface IOrganizerService {
     OrganizerDtoResponse update(UUID id, OrganizerDTO organizerDTO);
 
     void remove(UUID id);
+    void delete(UUID id);
 
     List<OrganizerDtoResponse> findAll();
 

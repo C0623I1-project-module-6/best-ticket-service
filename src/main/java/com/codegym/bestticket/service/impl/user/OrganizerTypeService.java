@@ -40,4 +40,9 @@ public class OrganizerTypeService implements IOrganizerTypeService {
         organizerType.setIsDelete(true);
         organizerTypeRepository.save(organizerType);
     }
+
+    @Override
+    public void delete(UUID id) {
+        organizerTypeRepository.deleteById(id);
+    }
 }

@@ -17,6 +17,7 @@ import java.util.UUID;
 @RequestMapping("/api/organizer_types")
 public class OrganizerTypeController {
     private final IOrganizerTypeService organizerTypeService;
+
     @PostMapping("/add")
     public ResponseEntity<ResponseDto> addOrganizer(@RequestBody OrganizerTypeDTO organizerTypeDTO) {
         try {
@@ -47,8 +48,8 @@ public class OrganizerTypeController {
                             HttpStatus.OK), HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    new ResponseDto("Organizer type not found",
-                            HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+                    new ResponseDto("Organizer type not found or is deleted",
+                            HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
         }
     }
 }

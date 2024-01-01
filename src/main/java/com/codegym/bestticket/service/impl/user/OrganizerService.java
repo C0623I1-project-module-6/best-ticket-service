@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,10 +32,10 @@ public class OrganizerService implements IOrganizerService {
     public OrganizerDtoResponse create(OrganizerDTO organizerDTO) {
         UUID userId = organizerDTO.getUser();
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
         UUID organizerTypeId = organizerDTO.getOrganizerType();
         OrganizerType organizerType = organizerTypeRepository.findById(organizerTypeId)
-                .orElseThrow(() -> new RuntimeException("Organizer type not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Organizer type not found"));
         Organizer organizer = organizerConverter.dtoToEntity(organizerDTO);
         organizer.setUser(user);
         organizer.setOrganizerType(organizerType);
@@ -45,7 +46,22 @@ public class OrganizerService implements IOrganizerService {
 
     @Override
     public OrganizerDtoResponse update(UUID id, OrganizerDTO organizerDTO) {
-        return null;
+        Optional<Organizer> optionalOrganizer= organizerRepository.findById(id);
+        if (optionalOrganizer.isEmpty()){
+            throw new EntityNotFoundException("Organizer not found" + id);
+        }
+        Organizer organizer=optionalOrganizer.get();
+        String oldPhoneNumber= organizer.getPhoneNumber();
+        String oldEmail= organizer.getEmail();
+        String oldIdCard= organizer.getIdCard();
+        String oldTaxCode= organizer.getTaxCode();
+        organizerConverter.dtoToEntity(organizerDTO);
+        organizer.setPhoneNumber(oldPhoneNumber);
+        organizer.setEmail(oldEmail);
+        organizer.setIdCard(oldIdCard);
+        organizer.setTaxCode(oldTaxCode);
+        organizerRepository.save(organizer);
+        return organizerConverter.entityToDto(organizer);
     }
 
     @Override
@@ -54,6 +70,11 @@ public class OrganizerService implements IOrganizerService {
                 .orElseThrow(() -> new EntityNotFoundException("Organizer not found"));
         organizer.setIsDelete(true);
         organizerRepository.save(organizer);
+    }
+
+    @Override
+    public void delete(UUID id) {
+        organizerRepository.deleteById(id);
     }
 
     @Override

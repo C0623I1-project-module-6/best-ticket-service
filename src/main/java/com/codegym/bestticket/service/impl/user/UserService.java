@@ -56,7 +56,13 @@ public class UserService implements IUserService {
     public void remove(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User is not found"));
-        userRepository.delete(user);
+        user.setIsDelete(true);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void delete(UUID id) {
+        userRepository.deleteById(id);
     }
 
 }

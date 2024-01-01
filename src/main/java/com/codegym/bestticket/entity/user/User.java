@@ -25,6 +25,8 @@ public class User {
     private String phoneNumber;
     @Column(nullable = false, unique = true)
     private String email;
+    @Column(name = "is_delete")
+    private Boolean isDelete;
 
     @OneToOne(mappedBy = "user")
     @JsonIgnore
