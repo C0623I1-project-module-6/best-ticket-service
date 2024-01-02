@@ -2,10 +2,10 @@ package com.codegym.bestticket.service.impl.user;
 
 import com.codegym.bestticket.converter.user.LoginConverter;
 import com.codegym.bestticket.converter.user.RegisterConverter;
-import com.codegym.bestticket.dto.request.user.LoginDtoRequest;
-import com.codegym.bestticket.dto.request.user.RegisterDtoRequest;
-import com.codegym.bestticket.dto.response.user.LoginDtoResponse;
-import com.codegym.bestticket.dto.response.user.RegisterDtoResponse;
+import com.codegym.bestticket.dto.request.user.LoginRequestDTO;
+import com.codegym.bestticket.dto.request.user.RegisterRequestDTO;
+import com.codegym.bestticket.dto.response.user.LoginResponseDTO;
+import com.codegym.bestticket.dto.response.user.RegisterResponseDTO;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.exception.EmailAlreadyExistsException;
 import com.codegym.bestticket.exception.EmailNotFoundException;
@@ -30,34 +30,36 @@ public class UserService implements IUserService {
     private final LoginConverter loginConverter;
 
     @Override
-    public RegisterDtoResponse register(RegisterDtoRequest registerDtoRequest) {
+    public RegisterResponseDTO register(RegisterRequestDTO registerRequestDTO) {
         if (userRepository.existsByUsername(
-                registerDtoRequest.getUsername())) {
+                registerRequestDTO.getUsername())) {
             throw new UsernameAlreadyExistsException("Username already exists.");
         }
         if (userRepository.existsByEmail(
-                registerDtoRequest.getEmail())) {
+                registerRequestDTO.getEmail())) {
             throw new EmailAlreadyExistsException("Email already exists.");
         }
         if (userRepository.existsByPhoneNumber(
-                registerDtoRequest.getPhoneNumber())) {
+                registerRequestDTO.getPhoneNumber())) {
             throw new PhoneNumberAlreadyExistsException("Phone number already exists.");
         }
-        User user = registerConverter.dtoToEntity(registerDtoRequest);
+        User user = User.builder()
+                .isDeleted(false)
+                .build();
         userRepository.save(user);
         return registerConverter.entityToDto(user);
     }
 
     @Override
-    public LoginDtoResponse login(LoginDtoRequest loginDtoRequest) {
-        User user = userRepository.findByEmail(loginDtoRequest.getEmail());
+    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
+        User user = userRepository.findByEmail(loginRequestDTO.getEmail());
         if (user == null) {
-            user = userRepository.findByPhoneNumber(loginDtoRequest.getPhoneNumber());
+            user = userRepository.findByPhoneNumber(loginRequestDTO.getPhoneNumber());
         }
         if (user == null) {
             throw new EmailNotFoundException("Email not found.");
         }
-        String password = loginDtoRequest.getPassword();
+        String password = loginRequestDTO.getPassword();
         if (password == null || password.isEmpty()) {
             throw new InvalidPasswordException("Password is not blank.");
         }

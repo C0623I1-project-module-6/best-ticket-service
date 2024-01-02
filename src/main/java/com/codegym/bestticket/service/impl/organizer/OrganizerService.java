@@ -1,8 +1,8 @@
 package com.codegym.bestticket.service.impl.organizer;
 
 import com.codegym.bestticket.converter.organizer.OrganizerConverter;
-import com.codegym.bestticket.dto.OrganizerDTO;
-import com.codegym.bestticket.dto.response.organizer.OrganizerDtoResponse;
+import com.codegym.bestticket.dto.request.organizer.OrganizerRequestDTO;
+import com.codegym.bestticket.dto.response.organizer.OrganizerResponseDTO;
 import com.codegym.bestticket.entity.organizer.Organizer;
 import com.codegym.bestticket.entity.organizer.OrganizerType;
 import com.codegym.bestticket.entity.user.User;
@@ -29,14 +29,14 @@ public class OrganizerService implements IOrganizerService {
     private final IOrganizerTypeRepository organizerTypeRepository;
 
     @Override
-    public OrganizerDtoResponse create(OrganizerDTO organizerDTO) {
-        UUID userId = organizerDTO.getUser();
+    public OrganizerResponseDTO create(OrganizerRequestDTO organizerRequestDTO) {
+        UUID userId = organizerRequestDTO.getUser();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        UUID organizerTypeId = organizerDTO.getOrganizerType();
+        UUID organizerTypeId = organizerRequestDTO.getOrganizerType();
         OrganizerType organizerType = organizerTypeRepository.findById(organizerTypeId)
                 .orElseThrow(() -> new EntityNotFoundException("Organizer type not found"));
-        Organizer organizer = organizerConverter.dtoToEntity(organizerDTO);
+        Organizer organizer = organizerConverter.dtoToEntity(organizerRequestDTO);
         organizer.setUser(user);
         organizer.setOrganizerType(organizerType);
         organizer.setIsDeleted(false);
@@ -45,7 +45,7 @@ public class OrganizerService implements IOrganizerService {
     }
 
     @Override
-    public OrganizerDtoResponse update(UUID id, OrganizerDTO organizerDTO) {
+    public OrganizerResponseDTO update(UUID id, OrganizerRequestDTO organizerRequestDTO) {
         Optional<Organizer> optionalOrganizer= organizerRepository.findById(id);
         if (optionalOrganizer.isEmpty()){
             throw new EntityNotFoundException("Organizer not found" + id);
@@ -55,7 +55,7 @@ public class OrganizerService implements IOrganizerService {
         String oldEmail= organizer.getEmail();
         String oldIdCard= organizer.getIdCard();
         String oldTaxCode= organizer.getTaxCode();
-        organizerConverter.dtoToEntity(organizerDTO);
+        organizerConverter.dtoToEntity(organizerRequestDTO);
         organizer.setPhoneNumber(oldPhoneNumber);
         organizer.setEmail(oldEmail);
         organizer.setIdCard(oldIdCard);
@@ -78,13 +78,13 @@ public class OrganizerService implements IOrganizerService {
     }
 
     @Override
-    public List<OrganizerDtoResponse> findAll() {
+    public List<OrganizerResponseDTO> findAll() {
         return organizerConverter.entitiesToDTOs(
                 organizerRepository.findAllByIsDeletedFalse());
     }
 
     @Override
-    public OrganizerDtoResponse findById(UUID id) {
+    public OrganizerResponseDTO findById(UUID id) {
         Organizer organizer=
                 organizerRepository.findByIdAndIsDeletedFalse(id);
         if (organizer!=null){

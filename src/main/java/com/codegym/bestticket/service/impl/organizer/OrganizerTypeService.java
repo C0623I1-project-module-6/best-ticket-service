@@ -1,7 +1,7 @@
 package com.codegym.bestticket.service.impl.organizer;
 
 import com.codegym.bestticket.converter.organizer.OrganizerTypeConverter;
-import com.codegym.bestticket.dto.OrganizerTypeDTO;
+import com.codegym.bestticket.dto.request.organizer.OrganizerTypeRequestDTO;
 import com.codegym.bestticket.entity.organizer.OrganizerType;
 import com.codegym.bestticket.repository.organizer.IOrganizerTypeRepository;
 import com.codegym.bestticket.service.IOrganizerTypeService;
@@ -20,16 +20,16 @@ public class OrganizerTypeService implements IOrganizerTypeService {
     private final IOrganizerTypeRepository organizerTypeRepository;
 
     @Override
-    public OrganizerTypeDTO create(OrganizerTypeDTO organizerTypeDTO) {
+    public OrganizerTypeRequestDTO create(OrganizerTypeRequestDTO organizerTypeRequestDTO) {
         OrganizerType organizerType =
-                organizerTypeConverter.dtoToEntity(organizerTypeDTO);
+                organizerTypeConverter.dtoToEntity(organizerTypeRequestDTO);
         organizerType.setIsDeleted(false);
         organizerTypeRepository.save(organizerType);
         return organizerTypeConverter.entityToDto(organizerType);
     }
 
     @Override
-    public OrganizerTypeDTO update(UUID id, OrganizerTypeDTO organizerTypeDTO) {
+    public OrganizerTypeRequestDTO update(UUID id, OrganizerTypeRequestDTO organizerTypeRequestDTO) {
         return null;
     }
 

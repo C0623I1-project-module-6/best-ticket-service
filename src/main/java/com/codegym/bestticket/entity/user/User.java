@@ -1,5 +1,6 @@
 package com.codegym.bestticket.entity.user;
 
+import com.codegym.bestticket.entity.bank_account.BankAccount;
 import com.codegym.bestticket.entity.customer.Customer;
 import com.codegym.bestticket.entity.organizer.Organizer;
 import com.fasterxml.jackson.annotation.JsonIgnore;

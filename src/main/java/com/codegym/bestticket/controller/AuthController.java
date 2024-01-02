@@ -1,10 +1,10 @@
 package com.codegym.bestticket.controller;
 
 import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.dto.request.user.LoginDtoRequest;
-import com.codegym.bestticket.dto.request.user.RegisterDtoRequest;
-import com.codegym.bestticket.dto.response.user.LoginDtoResponse;
-import com.codegym.bestticket.dto.response.user.RegisterDtoResponse;
+import com.codegym.bestticket.dto.request.user.LoginRequestDTO;
+import com.codegym.bestticket.dto.request.user.RegisterRequestDTO;
+import com.codegym.bestticket.dto.response.user.LoginResponseDTO;
+import com.codegym.bestticket.dto.response.user.RegisterResponseDTO;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -28,9 +28,9 @@ public class AuthController {
     private final IUserService iUserService;
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseDto> register(@RequestBody RegisterDtoRequest registerDtoRequest) {
+    public ResponseEntity<ResponseDto> register(@RequestBody RegisterRequestDTO registerRequestDTO) {
       try{
-          if (registerDtoRequest == null) {
+          if (registerRequestDTO == null) {
               return new ResponseEntity<>(
                       ResponseDto.builder()
                               .message("Request not found!")
@@ -38,12 +38,12 @@ public class AuthController {
                               .build(),
                       HttpStatus.BAD_REQUEST);
           }
-          RegisterDtoResponse registerDtoResponse = iUserService.register(registerDtoRequest);
+          RegisterResponseDTO registerResponseDTO = iUserService.register(registerRequestDTO);
           return new ResponseEntity<>(
                   ResponseDto.builder()
                           .message("Register successfully!!!")
                           .status(HttpStatus.CREATED)
-                          .data(registerDtoResponse)
+                          .data(registerResponseDTO)
                           .build(),
                   HttpStatus.CREATED);
       }catch (RuntimeException e){
@@ -57,9 +57,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDto> login(@RequestBody LoginDtoRequest loginDtoRequest) {
+    public ResponseEntity<ResponseDto> login(@RequestBody LoginRequestDTO loginRequestDTO) {
         try {
-            if (loginDtoRequest == null) {
+            if (loginRequestDTO == null) {
                 return new ResponseEntity<>(
                         ResponseDto.builder()
                                 .message("Request not found!")
@@ -67,12 +67,12 @@ public class AuthController {
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            LoginDtoResponse loginDtoResponse = iUserService.login(loginDtoRequest);
+            LoginResponseDTO loginResponseDTO = iUserService.login(loginRequestDTO);
             return new ResponseEntity<>(
                     ResponseDto.builder()
                             .message("Login successfully!!!")
                             .status(HttpStatus.OK)
-                            .data(loginDtoResponse)
+                            .data(loginResponseDTO)
                             .build(),
                     HttpStatus.CREATED);
         }catch (RuntimeException e){

@@ -1,7 +1,7 @@
 package com.codegym.bestticket.converter.organizer;
 
-import com.codegym.bestticket.dto.OrganizerDTO;
-import com.codegym.bestticket.dto.response.organizer.OrganizerDtoResponse;
+import com.codegym.bestticket.dto.request.organizer.OrganizerRequestDTO;
+import com.codegym.bestticket.dto.response.organizer.OrganizerResponseDTO;
 import com.codegym.bestticket.entity.organizer.Organizer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
@@ -11,19 +11,19 @@ import java.util.stream.Collectors;
 
 @Component
 public class OrganizerConverter {
-    public OrganizerDtoResponse entityToDto(Organizer organizer) {
-        OrganizerDtoResponse organizerDtoResponse = new OrganizerDtoResponse();
-        BeanUtils.copyProperties(organizer, organizerDtoResponse);
-        return organizerDtoResponse;
+    public OrganizerResponseDTO entityToDto(Organizer organizer) {
+        OrganizerResponseDTO organizerResponseDTO = new OrganizerResponseDTO();
+        BeanUtils.copyProperties(organizer, organizerResponseDTO);
+        return organizerResponseDTO;
     }
 
-    public Organizer dtoToEntity(OrganizerDTO organizerDTO) {
+    public Organizer dtoToEntity(OrganizerRequestDTO organizerRequestDTO) {
         Organizer organizer= new Organizer();
-        BeanUtils.copyProperties(organizerDTO, organizer);
+        BeanUtils.copyProperties(organizerRequestDTO, organizer);
         return organizer;
     }
 
-    public List<OrganizerDtoResponse> entitiesToDTOs(List<Organizer> organizers) {
+    public List<OrganizerResponseDTO> entitiesToDTOs(List<Organizer> organizers) {
         return organizers.stream()
                 .map(this::entityToDto)
                 .collect(Collectors.toList());

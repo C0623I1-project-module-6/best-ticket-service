@@ -1,9 +1,9 @@
-package com.codegym.bestticket.controller.user;
+package com.codegym.bestticket.controller.bank_account;
 
-import com.codegym.bestticket.dto.request.organizer.OrganizerRequestDTO;
 import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.dto.response.organizer.OrganizerResponseDTO;
-import com.codegym.bestticket.service.IOrganizerService;
+import com.codegym.bestticket.dto.request.bank_acount.BankAccountRequestDTO;
+import com.codegym.bestticket.dto.response.bank_account.BankAccountResponseDTO;
+import com.codegym.bestticket.service.IBankAccountService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,26 +24,26 @@ import java.util.UUID;
 @RestController
 @CrossOrigin("*")
 @AllArgsConstructor
-@RequestMapping("/api/organizers")
-public class OrganizerController {
-    private final IOrganizerService organizerService;
+@RequestMapping("/api/bank-accounts")
+public class BankAccountController {
+    private final IBankAccountService bankAccountService;
 
     @GetMapping("")
-    public ResponseEntity<ResponseDto> getOrganizers() {
+    public ResponseEntity<ResponseDto> getBankAccounts() {
         try {
-            List<OrganizerResponseDTO> organizerResponsDTOS =
-                    organizerService.findAll();
+            List<BankAccountResponseDTO> bankAccountResponseDTOS =
+                    bankAccountService.findAll();
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Organizer list")
+                            .message("Bank account list")
                             .status(HttpStatus.OK)
-                            .data(organizerResponsDTOS)
+                            .data(bankAccountResponseDTOS)
                             .build(),
                     HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Organizer list not found!")
+                            .message("Bank account list not found!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
                     HttpStatus.NOT_FOUND);
@@ -51,21 +51,21 @@ public class OrganizerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDto> getOrganizer(@PathVariable UUID id) {
+    public ResponseEntity<ResponseDto> getBankAccount(@PathVariable UUID id) {
         try {
-            OrganizerResponseDTO organizerResponseDTO =
-                    organizerService.findById(id);
+            BankAccountResponseDTO bankAccountResponseDTO =
+                    bankAccountService.findById(id);
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Organizer" + organizerResponseDTO.getId())
+                            .message("Bank account" + bankAccountResponseDTO.getId())
                             .status(HttpStatus.OK)
-                            .data(organizerResponseDTO)
+                            .data(bankAccountResponseDTO)
                             .build(),
                     HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Organizer" + id + "not found!")
+                            .message("Bank account" + id + "not found")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
                     HttpStatus.NOT_FOUND);
@@ -73,9 +73,9 @@ public class OrganizerController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addOrganizer(@RequestBody OrganizerRequestDTO organizerRequestDTO) {
+    public ResponseEntity<ResponseDto> addBankAccount(@RequestBody BankAccountRequestDTO bankAccountRequestDTO) {
         try {
-            if (organizerRequestDTO == null) {
+            if (bankAccountRequestDTO == null) {
                 return new ResponseEntity<>(
                         ResponseDto.builder()
                                 .message("Request not found!")
@@ -83,18 +83,18 @@ public class OrganizerController {
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            OrganizerResponseDTO organizerResponseDTO = organizerService.create(organizerRequestDTO);
+            BankAccountResponseDTO bankAccountResponseDTO = bankAccountService.create(bankAccountRequestDTO);
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Add organizer successfully!!!")
+                            .message("Add bank account successfully!!!")
                             .status(HttpStatus.CREATED)
-                            .data(organizerResponseDTO)
+                            .data(bankAccountResponseDTO)
                             .build(),
                     HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Add organizer failed!")
+                            .message("Add bank account failed!")
                             .status(HttpStatus.BAD_REQUEST)
                             .build(),
                     HttpStatus.BAD_REQUEST);
@@ -102,10 +102,10 @@ public class OrganizerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDto> editOrganizer(@PathVariable UUID id,
-                                                     @RequestBody OrganizerRequestDTO organizerRequestDTO) {
+    public ResponseEntity<ResponseDto> editBankAccount(@PathVariable UUID id,
+                                                       @RequestBody BankAccountRequestDTO bankAccountRequestDTO) {
         try {
-            if (organizerRequestDTO == null) {
+            if (bankAccountRequestDTO == null) {
                 return new ResponseEntity<>(
                         ResponseDto.builder()
                                 .message("Request not found!")
@@ -113,18 +113,18 @@ public class OrganizerController {
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            OrganizerResponseDTO organizerResponseDTO = organizerService.update(id, organizerRequestDTO);
+            BankAccountResponseDTO bankAccountResponseDTO = bankAccountService.update(id, bankAccountRequestDTO);
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Edit organizer successfully!!!")
+                            .message("Edit bank account successfully!!!")
                             .status(HttpStatus.OK)
-                            .data(organizerResponseDTO)
+                            .data(bankAccountResponseDTO)
                             .build(),
                     HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Edit organizer failed!")
+                            .message("Edit bank account failed!")
                             .status(HttpStatus.BAD_REQUEST)
                             .build(),
                     HttpStatus.BAD_REQUEST);
@@ -132,19 +132,19 @@ public class OrganizerController {
     }
 
     @DeleteMapping("/disable/{id}")
-    public ResponseEntity<ResponseDto> disableOrganizer(@PathVariable UUID id) {
+    public ResponseEntity<ResponseDto> disableBankAccount(@PathVariable UUID id) {
         try {
-            organizerService.remove(id);
+            bankAccountService.remove(id);
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Organizer disabled!!!")
+                            .message("Bank account disabled!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Organizer not found or is deleted!")
+                            .message("Bank account not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
                     HttpStatus.NOT_FOUND);
@@ -152,19 +152,19 @@ public class OrganizerController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponseDto> deleteOrganizer(@PathVariable UUID id) {
+    public ResponseEntity<ResponseDto> deleteBankAccount(@PathVariable UUID id) {
         try {
-            organizerService.delete(id);
+            bankAccountService.delete(id);
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Organizer deleted!!!")
+                            .message("Bank account deleted!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Organizer not found or is deleted!")
+                            .message("Bank account not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
                     HttpStatus.NOT_FOUND);

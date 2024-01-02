@@ -1,7 +1,7 @@
 package com.codegym.bestticket.controller;
 
 import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.dto.RoleDTO;
+import com.codegym.bestticket.dto.request.user.RoleRequestDTO;
 import com.codegym.bestticket.service.IRoleService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -25,9 +25,9 @@ public class RoleController {
     private final IRoleService roleService;
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addRole(@RequestBody RoleDTO roleDTO) {
+    public ResponseEntity<ResponseDto> addRole(@RequestBody RoleRequestDTO roleRequestDTO) {
         try {
-            if (roleDTO == null) {
+            if (roleRequestDTO == null) {
                 return new ResponseEntity<>(
                         ResponseDto.builder()
                                 .message("Request not found!")
@@ -35,12 +35,12 @@ public class RoleController {
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            RoleDTO resultRoleDTO = roleService.create(roleDTO);
+            RoleRequestDTO resultRoleRequestDTO = roleService.create(roleRequestDTO);
             return new ResponseEntity<>(
                     ResponseDto.builder()
                             .message("Add role successfully!!!")
                             .status(HttpStatus.CREATED)
-                            .data(resultRoleDTO)
+                            .data(resultRoleRequestDTO)
                             .build(),
                     HttpStatus.CREATED);
         } catch (RuntimeException e) {

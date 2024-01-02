@@ -1,18 +1,16 @@
-package com.codegym.bestticket.dto.response.customer;
+package com.codegym.bestticket.dto.request.customer;
 
-import com.codegym.bestticket.entity.user.User;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.UUID;
 
 @Data
-public class CustomerDtoResponse {
+public class CustomerRequestDTO {
     private UUID id;
     private String fullName;
     private String gender;
     private String idCard;
     private Date dateOfBirth;
-    private User user;
-    private Boolean isDeleted;
+    private UUID user;
 }

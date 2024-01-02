@@ -1,8 +1,8 @@
 package com.codegym.bestticket.service.impl.customer;
 
 import com.codegym.bestticket.converter.customer.CustomerConverter;
-import com.codegym.bestticket.dto.CustomerDTO;
-import com.codegym.bestticket.dto.response.customer.CustomerDtoResponse;
+import com.codegym.bestticket.dto.request.customer.CustomerRequestDTO;
+import com.codegym.bestticket.dto.response.customer.CustomerResponseDTO;
 import com.codegym.bestticket.entity.customer.Customer;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.repository.customer.ICustomerRepository;
@@ -26,11 +26,11 @@ public class CustomerService implements ICustomerService {
     private final IUserRepository userRepository;
 
     @Override
-    public CustomerDtoResponse create(CustomerDTO customerDTO) {
-        UUID userid = customerDTO.getUser();
+    public CustomerResponseDTO create(CustomerRequestDTO customerRequestDTO) {
+        UUID userid = customerRequestDTO.getUser();
         User user = userRepository.findById(userid)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        Customer customer = customerConverter.dtoToEntity(customerDTO);
+        Customer customer = customerConverter.dtoToEntity(customerRequestDTO);
         customer.setUser(user);
         customer.setIsDeleted(false);
         customerRepository.save(customer);
@@ -38,14 +38,14 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override
-    public CustomerDtoResponse update(UUID id, CustomerDTO customerDTO) {
+    public CustomerResponseDTO update(UUID id, CustomerRequestDTO customerRequestDTO) {
         Optional<Customer> optionalCustomer = customerRepository.findById(id);
         if (optionalCustomer.isEmpty()) {
             throw new EntityNotFoundException("Customer not found is" + id);
         }
         Customer customer = optionalCustomer.get();
         String oldIdCard= customer.getIdCard();
-        customerConverter.dtoToEntity(customerDTO);
+        customerConverter.dtoToEntity(customerRequestDTO);
         customer.setIdCard(oldIdCard);
         customerRepository.save(customer);
         return customerConverter.entityToDto(customer);
@@ -65,13 +65,13 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override
-    public List<CustomerDtoResponse> findAll() {
+    public List<CustomerResponseDTO> findAll() {
         return customerConverter.entitiesToDTOs(
                 customerRepository.findAllByIsDeletedFalse());
     }
 
     @Override
-    public CustomerDtoResponse findById(UUID id) {
+    public CustomerResponseDTO findById(UUID id) {
         Customer customer =
                 customerRepository.findByIdAndIsDeletedFalse(id);
         if (customer != null) {

@@ -1,5 +1,6 @@
-package com.codegym.bestticket.entity.user;
+package com.codegym.bestticket.entity.bank_account;
 
+import com.codegym.bestticket.entity.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
