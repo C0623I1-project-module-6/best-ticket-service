@@ -14,7 +14,7 @@ import java.util.UUID;
 @Table(name = "bank_accounts")
 public class BankAccount {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Column(name = "account_name", length = 50,nullable = false)
     private String accountName;
@@ -22,7 +22,7 @@ public class BankAccount {
     private String accountNumber;
     @Column(name = "bank_name",length = 100, nullable = false)
     private String bankName;
-    @Column(name = "branch", length = 100)
+    @Column(length = 100)
     private String branch;
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -1,3 +1,5 @@
 ALTER TABLE customers
-DROP COLUMN phone_number,
-DROP COLUMN email;
+DROP
+COLUMN phone_number,
+DROP
+COLUMN email;

@@ -1,8 +1,6 @@
 package com.codegym.bestticket.converter.user;
 import com.codegym.bestticket.dto.CustomerDTO;
-import com.codegym.bestticket.dto.EventDTO;
 import com.codegym.bestticket.dto.response.user.CustomerDtoResponse;
-import com.codegym.bestticket.entity.event.Event;
 import com.codegym.bestticket.entity.user.Customer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;

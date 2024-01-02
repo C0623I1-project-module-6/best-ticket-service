@@ -41,7 +41,6 @@ public class   ContractDetail {
     @JsonIgnore
     private List<Ticket> tickets;
 
-    @Column(name = "quantity")
     private Integer quantity;
 
     @Column(name = "ticket_price", columnDefinition = "DECIMAL(10, 2)")
