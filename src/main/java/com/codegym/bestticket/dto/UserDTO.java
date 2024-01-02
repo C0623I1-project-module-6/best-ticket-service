@@ -1,6 +1,5 @@
 package com.codegym.bestticket.dto;
 
-import com.codegym.bestticket.entity.user.User;
 import lombok.Data;
 
 import java.util.UUID;

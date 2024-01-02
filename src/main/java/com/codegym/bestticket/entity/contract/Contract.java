@@ -33,13 +33,12 @@ public class Contract {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "date")
     private String date;
 
-    @Column(name = "amount", columnDefinition = "DECIMAL(10, 2)")
+    @Column(columnDefinition = "DECIMAL(10, 2)")
     private Double amount;
 
-    @Column(name = "status", length = 30)
+    @Column( length = 30)
     private String status;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

@@ -1,6 +1,5 @@
 package com.codegym.bestticket.converter.user;
 
-
 import com.codegym.bestticket.dto.OrganizerTypeDTO;
 import com.codegym.bestticket.entity.user.OrganizerType;
 import org.springframework.beans.BeanUtils;

@@ -1,5 +1,6 @@
 package com.codegym.bestticket.entity.ticket;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,7 +31,7 @@ public class TicketType {
     private String name;
 
     private Double price;
-
+    @Column(name = "is_delete")
     private Boolean isDelete;
 
     @OneToMany(mappedBy = "ticketType")
