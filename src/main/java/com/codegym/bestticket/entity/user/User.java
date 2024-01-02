@@ -40,6 +40,8 @@ public class User {
     private String phoneNumber;
     @Column(nullable = false, unique = true)
     private String email;
+    @Column(unique = true,nullable = false)
+    private String username;
     @Column(name = "is_delete")
     private Boolean isDelete;
 

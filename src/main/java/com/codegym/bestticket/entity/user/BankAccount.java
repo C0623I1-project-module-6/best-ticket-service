@@ -24,6 +24,7 @@ public class BankAccount {
     private String bankName;
     @Column(length = 100)
     private String branch;
+    private Boolean is_delete;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
