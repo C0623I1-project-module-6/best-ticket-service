@@ -1,8 +1,6 @@
 package com.codegym.bestticket.service;
 
 import com.codegym.bestticket.dto.OrganizerTypeDTO;
-import com.codegym.bestticket.dto.response.user.OrganizerDtoResponse;
-import com.codegym.bestticket.entity.user.OrganizerType;
 
 import java.util.UUID;
 

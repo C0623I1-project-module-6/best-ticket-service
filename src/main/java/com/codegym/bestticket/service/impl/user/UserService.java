@@ -3,8 +3,8 @@ package com.codegym.bestticket.service.impl.user;
 import com.codegym.bestticket.converter.user.LoginConverter;
 import com.codegym.bestticket.converter.user.RegisterConverter;
 import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.dto.request.user.RegisterDtoRequest;
 import com.codegym.bestticket.dto.request.user.LoginDtoRequest;
+import com.codegym.bestticket.dto.request.user.RegisterDtoRequest;
 import com.codegym.bestticket.dto.response.user.LoginDtoResponse;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.exception.PhoneNumberAlreadyExistsException;
@@ -13,7 +13,6 @@ import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
