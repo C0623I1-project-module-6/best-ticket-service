@@ -8,7 +8,7 @@ import java.util.UUID;
 
 
 public interface ICustomerRepository extends JpaRepository<Customer, UUID> {
-    List<Customer> findAllByIsDeleteFalse();
+    List<Customer> findAllByIsDeletedFalse();
 
-    Customer findByIdAndIsDeleteFalse(UUID id);
+    Customer findByIdAndIsDeletedFalse(UUID id);
 }

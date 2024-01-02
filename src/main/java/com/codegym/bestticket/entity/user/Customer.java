@@ -37,10 +37,10 @@ public class Customer {
     private String idCard;
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
-    @Column(name = "is_delete")
-    private Boolean isDelete;
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
     @OneToOne
-    @JoinColumn(name = "user_id",unique = true)
+    @JoinColumn(name = "user_id", unique = true)
     @JsonIgnore
     private User user;
 }

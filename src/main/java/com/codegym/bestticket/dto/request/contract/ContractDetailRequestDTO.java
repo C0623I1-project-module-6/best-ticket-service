@@ -14,5 +14,5 @@ public class ContractDetailRequestDTO {
     private List<Ticket> tickets;
     private Integer quantity;
     private Double ticketPrice;
-    private Boolean isDelete;
+    private Boolean isDeleted;
 }

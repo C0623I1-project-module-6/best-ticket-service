@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IOrganizerRepository extends JpaRepository<Organizer, UUID> {
-    List<Organizer> findAllByIsDeleteFalse();
-    Organizer findByIdAndIsDeleteFalse(UUID id);
+    List<Organizer> findAllByIsDeletedFalse();
+    Organizer findByIdAndIsDeletedFalse(UUID id);
 }

@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/auths")
+@RequestMapping("/api/auth")
 @AllArgsConstructor
 public class AuthController {
     private final IUserService iUserService;
@@ -70,7 +70,7 @@ public class AuthController {
             LoginDtoResponse loginDtoResponse = iUserService.login(loginDtoRequest);
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Register successfully!!!")
+                            .message("Login successfully!!!")
                             .status(HttpStatus.OK)
                             .data(loginDtoResponse)
                             .build(),
@@ -78,7 +78,7 @@ public class AuthController {
         }catch (RuntimeException e){
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Register failed!!!")
+                            .message("Login failed!!!")
                             .status(HttpStatus.UNAUTHORIZED)
                             .build(),
                     HttpStatus.UNAUTHORIZED);

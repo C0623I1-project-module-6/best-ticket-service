@@ -11,5 +11,5 @@ public class TicketTypeRequestDTO {
     private UUID id;
     private String name;
     private Double price;
-    private Boolean isDelete;
+    private Boolean isDeleted;
 }

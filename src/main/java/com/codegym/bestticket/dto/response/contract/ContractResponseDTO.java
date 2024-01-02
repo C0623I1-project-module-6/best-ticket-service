@@ -17,5 +17,5 @@ public class ContractResponseDTO {
     private Timestamp updatedAt;
     private Customer customer;
     private Organizer organizer;
-    private Boolean isDelete;
+    private Boolean isDeleted;
 }

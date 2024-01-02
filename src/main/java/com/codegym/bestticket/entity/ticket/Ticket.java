@@ -44,8 +44,8 @@ public class Ticket {
 
     private String barcode;
     private Long quantity;
-
-    private Boolean isDelete;
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
     @ManyToOne
     @JoinColumn(name = "contract_detail_id")
     private ContractDetail contractDetail;

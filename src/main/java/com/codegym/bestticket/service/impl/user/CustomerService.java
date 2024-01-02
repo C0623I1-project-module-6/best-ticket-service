@@ -32,7 +32,7 @@ public class CustomerService implements ICustomerService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         Customer customer = customerConverter.dtoToEntity(customerDTO);
         customer.setUser(user);
-        customer.setIsDelete(false);
+        customer.setIsDeleted(false);
         customerRepository.save(customer);
         return customerConverter.entityToDto(customer);
     }
@@ -55,7 +55,7 @@ public class CustomerService implements ICustomerService {
     public void remove(UUID id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Customer is not found"));
-        customer.setIsDelete(true);
+        customer.setIsDeleted(true);
         customerRepository.save(customer);
     }
 
@@ -67,13 +67,13 @@ public class CustomerService implements ICustomerService {
     @Override
     public List<CustomerDtoResponse> findAll() {
         return customerConverter.entitiesToDTOs(
-                customerRepository.findAllByIsDeleteFalse());
+                customerRepository.findAllByIsDeletedFalse());
     }
 
     @Override
     public CustomerDtoResponse findById(UUID id) {
         Customer customer =
-                customerRepository.findByIdAndIsDeleteFalse(id);
+                customerRepository.findByIdAndIsDeletedFalse(id);
         if (customer != null) {
             return customerConverter.entityToDto(customer);
         } else {

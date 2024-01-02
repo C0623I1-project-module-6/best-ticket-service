@@ -23,7 +23,7 @@ public class OrganizerTypeService implements IOrganizerTypeService {
     public OrganizerTypeDTO create(OrganizerTypeDTO organizerTypeDTO) {
         OrganizerType organizerType =
                 organizerTypeConverter.dtoToEntity(organizerTypeDTO);
-        organizerType.setIsDelete(false);
+        organizerType.setIsDeleted(false);
         organizerTypeRepository.save(organizerType);
         return organizerTypeConverter.entityToDto(organizerType);
     }
@@ -37,7 +37,7 @@ public class OrganizerTypeService implements IOrganizerTypeService {
     public void remove(UUID id) {
         OrganizerType organizerType = organizerTypeRepository.findById(id)
                         .orElseThrow(() -> new EntityNotFoundException("Organizer type not found"));
-        organizerType.setIsDelete(true);
+        organizerType.setIsDeleted(true);
         organizerTypeRepository.save(organizerType);
     }
 

@@ -52,7 +52,7 @@ CREATE TABLE contract_details
     contract_id  binary(36),
     quantity     INT            NOT NULL,
     ticket_price DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (contract_id)
+     FOREIGN KEY (contract_id)
         REFERENCES contracts (id)
 );
 
