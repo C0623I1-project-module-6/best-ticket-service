@@ -1,6 +1,5 @@
 package com.codegym.bestticket.dto.response.user;
 
-import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.entity.user.OrganizerType;
 import com.codegym.bestticket.entity.user.User;
 import lombok.Data;

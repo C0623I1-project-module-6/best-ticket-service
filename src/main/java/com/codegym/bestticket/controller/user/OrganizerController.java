@@ -1,11 +1,8 @@
 package com.codegym.bestticket.controller.user;
 
-import com.codegym.bestticket.dto.CustomerDTO;
 import com.codegym.bestticket.dto.OrganizerDTO;
 import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.dto.response.user.CustomerDtoResponse;
 import com.codegym.bestticket.dto.response.user.OrganizerDtoResponse;
-import com.codegym.bestticket.service.ICustomerService;
 import com.codegym.bestticket.service.IOrganizerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;

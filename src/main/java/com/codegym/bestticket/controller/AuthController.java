@@ -1,8 +1,8 @@
 package com.codegym.bestticket.controller;
 
 import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.dto.request.user.RegisterDtoRequest;
 import com.codegym.bestticket.dto.request.user.LoginDtoRequest;
+import com.codegym.bestticket.dto.request.user.RegisterDtoRequest;
 import com.codegym.bestticket.dto.response.user.LoginDtoResponse;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,13 +10,20 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 
 import java.util.UUID;
 
-@Controller
+@RestController
 @CrossOrigin("*")
-@RequestMapping("/api/users")
+@RequestMapping("/api/auths")
 @AllArgsConstructor
 public class AuthController {
     private final IUserService iUserService;

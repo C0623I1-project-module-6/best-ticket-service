@@ -11,7 +11,6 @@ import com.codegym.bestticket.service.ICustomerService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +19,6 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 @Transactional
-@Builder
 public class CustomerService implements ICustomerService {
     private final CustomerConverter customerConverter;
     private final ICustomerRepository customerRepository;

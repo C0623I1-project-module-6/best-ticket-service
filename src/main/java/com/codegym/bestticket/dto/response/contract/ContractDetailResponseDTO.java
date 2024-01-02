@@ -3,6 +3,7 @@ package com.codegym.bestticket.dto.response.contract;
 import com.codegym.bestticket.entity.contract.Contract;
 import com.codegym.bestticket.entity.ticket.Ticket;
 import lombok.Data;
+
 import java.util.UUID;
 
 @Data
