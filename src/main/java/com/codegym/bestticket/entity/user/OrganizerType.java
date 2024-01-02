@@ -16,6 +16,7 @@ import lombok.Setter;
 
 import java.util.List;
 import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
@@ -28,8 +29,8 @@ public class OrganizerType {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
-    @Column(name = "is_delete")
-    private Boolean isDelete;
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
     @OneToMany(mappedBy = "organizerType")
     @JsonIgnore
     private List<Organizer> organizers;

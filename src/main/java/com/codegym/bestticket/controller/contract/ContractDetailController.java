@@ -49,7 +49,7 @@ public class ContractDetailController {
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto> getContractDetail(@PathVariable UUID contractId, @PathVariable UUID id) {
         Optional<ContractDetailResponseDTO> contractDetailResponseDTO = contractDetailService.findByContractIdAndId(contractId, id);
-        if (contractDetailResponseDTO.isPresent() && !contractDetailResponseDTO.get().getIsDelete()) {
+        if (contractDetailResponseDTO.isPresent() && !contractDetailResponseDTO.get().getIsDeleted()) {
             ResponseDto responseDto = ResponseDto.builder()
                     .message("Contract detail found.")
                     .status(HttpStatus.OK)

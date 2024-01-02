@@ -18,6 +18,7 @@ import java.util.stream.StreamSupport;
 public class TicketTypeService implements ITicketTypeService {
 
     private final ITicketTypeRepository ticketTypeRepository;
+
     @Override
     public List<TicketTypeRequestDTO> getAllTicketType() {
         Iterable<TicketType> ticketTypes = ticketTypeRepository.findAll();
@@ -36,6 +37,7 @@ public class TicketTypeService implements ITicketTypeService {
     @Override
     public TicketTypeResponseDTO getTicketTypeById(UUID id) {
         TicketType ticketType = ticketTypeRepository.findById(id).orElse(null);
+
         TicketTypeResponseDTO ticketTypeResponseDTO = TicketTypeResponseDTO.builder().build();
         assert ticketType != null;
         if (Boolean.FALSE.equals(ticketType.getIsDelete())) {
@@ -43,6 +45,7 @@ public class TicketTypeService implements ITicketTypeService {
             return ticketTypeResponseDTO;
         }
         return null;
+
     }
 
     @Override
@@ -60,7 +63,7 @@ public class TicketTypeService implements ITicketTypeService {
     public void deleteTicketType(UUID id) {
         TicketType ticketType = ticketTypeRepository.findById(id).orElse(null);
         assert ticketType != null;
-        ticketType.setIsDelete(true);
+        ticketType.setIsDeleted(true);
         ticketTypeRepository.save(ticketType);
     }
 

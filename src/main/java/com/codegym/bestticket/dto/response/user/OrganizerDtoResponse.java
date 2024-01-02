@@ -16,5 +16,5 @@ public class OrganizerDtoResponse {
     private String taxCode;
     private OrganizerType organizerType;
     private User user;
-    private Boolean isDelete;
+    private Boolean isDeleted;
 }

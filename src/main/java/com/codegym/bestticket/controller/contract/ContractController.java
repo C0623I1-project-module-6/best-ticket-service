@@ -66,7 +66,7 @@ public class ContractController {
     public ResponseEntity<ResponseDto> addContract(@RequestBody ContractRequestDTO contractRequestDTO) {
         try {
             contractRequestDTO.setStatus(String.valueOf(EContractStatus.ACTIVE));
-            contractRequestDTO.setIsDelete(false);
+            contractRequestDTO.setIsDeleted(false);
             contractService.save(contractRequestDTO);
             return ResponseEntity.ok(ResponseDto.builder()
                     .message("Add successfully.")

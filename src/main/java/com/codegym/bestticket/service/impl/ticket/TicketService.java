@@ -72,7 +72,7 @@ public class TicketService implements ITicketService {
     public void deleteTicketById(UUID id) {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
         assert ticket != null;
-        ticket.setIsDelete(false);
+        ticket.setIsDeleted(false);
         ticketRepository.save(ticket);
 
     }

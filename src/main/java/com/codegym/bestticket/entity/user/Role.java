@@ -29,8 +29,8 @@ public class Role {
     private UUID id;
     @Column( length = 50)
     private String name;
-    @Column(name = "is_delete")
-    private Boolean isDelete;
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
     @ManyToMany(mappedBy = "roles")
     private List<User> users;
 
