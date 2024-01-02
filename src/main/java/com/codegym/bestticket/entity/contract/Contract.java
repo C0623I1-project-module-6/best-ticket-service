@@ -38,7 +38,7 @@ public class Contract {
     @Column(columnDefinition = "DECIMAL(10, 2)")
     private Double amount;
 
-    @Column( length = 30)
+    @Column(length = 30)
     private String status;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -57,6 +57,6 @@ public class Contract {
     @JoinColumn(name = "organizer_id")
     private Organizer organizer;
 
-    @Column(name = "is_delete", columnDefinition = "DEFAULT 0")
-    private Boolean isDelete;
+    @Column(name = "is_deleted", columnDefinition = "DEFAULT 0")
+    private Boolean isDeleted;
 }

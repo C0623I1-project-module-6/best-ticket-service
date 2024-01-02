@@ -10,7 +10,7 @@ CREATE TABLE events
     name          VARCHAR(50)  NOT NULL,
     address       VARCHAR(255) NOT NULL,
     event_type_id BINARY(36),
-    FOREIGN KEY (event_type_id) REFERENCES event_types (id)
+     FOREIGN KEY (event_type_id) REFERENCES event_types (id)
 );
 
 CREATE TABLE times

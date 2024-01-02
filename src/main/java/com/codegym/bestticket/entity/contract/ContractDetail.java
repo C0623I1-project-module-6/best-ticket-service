@@ -27,7 +27,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "contract_details")
-public class   ContractDetail {
+public class ContractDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -46,6 +46,6 @@ public class   ContractDetail {
     @Column(name = "ticket_price", columnDefinition = "DECIMAL(10, 2)")
     private Double ticketPrice;
 
-    @Column(name = "is_delete")
-    private Boolean isDelete;
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
 }

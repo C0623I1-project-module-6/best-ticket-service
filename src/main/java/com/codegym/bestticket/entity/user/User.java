@@ -34,16 +34,23 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    @Column(nullable = false,unique = true)
+    private String username;
     @Column(nullable = false)
     private String password;
     @Column(name = "phone_number", length = 15, nullable = false, unique = true)
     private String phoneNumber;
     @Column(nullable = false, unique = true)
     private String email;
+<<<<<<< HEAD
     @Column(unique = true,nullable = false)
     private String username;
     @Column(name = "is_delete")
     private Boolean isDelete;
+=======
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+>>>>>>> 3530e576dcff91de9abbe2334bf9ce8dc58d259a
 
     @OneToOne(mappedBy = "user")
     @JsonIgnore

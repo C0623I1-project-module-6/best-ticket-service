@@ -39,7 +39,7 @@ public class OrganizerService implements IOrganizerService {
         Organizer organizer = organizerConverter.dtoToEntity(organizerDTO);
         organizer.setUser(user);
         organizer.setOrganizerType(organizerType);
-        organizer.setIsDelete(false);
+        organizer.setIsDeleted(false);
         organizerRepository.save(organizer);
         return organizerConverter.entityToDto(organizer);
     }
@@ -68,7 +68,7 @@ public class OrganizerService implements IOrganizerService {
     public void remove(UUID id) {
         Organizer organizer = organizerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Organizer not found"));
-        organizer.setIsDelete(true);
+        organizer.setIsDeleted(true);
         organizerRepository.save(organizer);
     }
 
@@ -80,13 +80,13 @@ public class OrganizerService implements IOrganizerService {
     @Override
     public List<OrganizerDtoResponse> findAll() {
         return organizerConverter.entitiesToDTOs(
-                organizerRepository.findAllByIsDeleteFalse());
+                organizerRepository.findAllByIsDeletedFalse());
     }
 
     @Override
     public OrganizerDtoResponse findById(UUID id) {
         Organizer organizer=
-                organizerRepository.findByIdAndIsDeleteFalse(id);
+                organizerRepository.findByIdAndIsDeletedFalse(id);
         if (organizer!=null){
             return organizerConverter.entityToDto(organizer);
         } else {

@@ -23,7 +23,7 @@ public class TicketRequestDTO {
 
     private String barcode;
 
-    private Boolean isDelete;
+    private Boolean isDeleted;
     private TicketType ticketType;
 
 }

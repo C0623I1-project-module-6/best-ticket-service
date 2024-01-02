@@ -22,11 +22,12 @@ import java.util.stream.StreamSupport;
 public class ContractService implements IContractService {
     private final IContractRepository iContractRepository;
 
+
     @Override
     public Iterable<ContractResponseDTO> findAll() {
         Iterable<Contract> contracts = iContractRepository.findAll();
         return StreamSupport.stream(contracts.spliterator(), false)
-                .filter(contract -> !contract.getIsDelete())
+                .filter(contract -> !contract.getIsDeleted())
                 .map(contract -> {
                     ContractResponseDTO contractResponseDTO = new ContractResponseDTO();
                     BeanUtils.copyProperties(contract, contractResponseDTO);
@@ -59,7 +60,7 @@ public class ContractService implements IContractService {
     public void remove(UUID id) {
         Optional<Contract> contract = iContractRepository.findById(id);
         contract.ifPresent(value -> value.setStatus(String.valueOf(EContractStatus.INACTIVE)));
-        contract.ifPresent(value -> value.setIsDelete(true));
+        contract.ifPresent(value -> value.setIsDeleted(true));
         contract.ifPresent(iContractRepository::save);
     }
 
