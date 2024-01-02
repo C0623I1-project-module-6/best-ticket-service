@@ -1,6 +1,6 @@
-package com.codegym.bestticket.repository;
+package com.codegym.bestticket.repository.customer;
 
-import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.customer.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

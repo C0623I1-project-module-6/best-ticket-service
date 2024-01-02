@@ -1,8 +1,8 @@
-package com.codegym.bestticket.controller.user;
+package com.codegym.bestticket.controller;
 
-import com.codegym.bestticket.dto.OrganizerTypeDTO;
 import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.service.IOrganizerTypeService;
+import com.codegym.bestticket.dto.RoleDTO;
+import com.codegym.bestticket.service.IRoleService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,14 +20,14 @@ import java.util.UUID;
 @RestController
 @CrossOrigin("*")
 @AllArgsConstructor
-@RequestMapping("/api/organizer-types")
-public class OrganizerTypeController {
-    private final IOrganizerTypeService organizerTypeService;
+@RequestMapping("/api/roles")
+public class RoleController {
+    private final IRoleService roleService;
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addOrganizerType(@RequestBody OrganizerTypeDTO organizerTypeDTO) {
+    public ResponseEntity<ResponseDto> addRole(@RequestBody RoleDTO roleDTO) {
         try {
-            if (organizerTypeDTO == null) {
+            if (roleDTO == null) {
                 return new ResponseEntity<>(
                         ResponseDto.builder()
                                 .message("Request not found!")
@@ -35,18 +35,18 @@ public class OrganizerTypeController {
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            OrganizerTypeDTO resultOrganizerTypeDTO = organizerTypeService.create(organizerTypeDTO);
+            RoleDTO resultRoleDTO = roleService.create(roleDTO);
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Add organizer type successfully!!!")
+                            .message("Add role successfully!!!")
                             .status(HttpStatus.CREATED)
-                            .data(resultOrganizerTypeDTO)
+                            .data(resultRoleDTO)
                             .build(),
                     HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Add organizer type failed!")
+                            .message("Add role failed!")
                             .status(HttpStatus.BAD_REQUEST)
                             .build(),
                     HttpStatus.BAD_REQUEST);
@@ -54,19 +54,19 @@ public class OrganizerTypeController {
     }
 
     @DeleteMapping("/disable/{id}")
-    public ResponseEntity<ResponseDto> disableOrganizerType(@PathVariable UUID id) {
+    public ResponseEntity<ResponseDto> disableRole(@PathVariable UUID id) {
         try {
-            organizerTypeService.remove(id);
+            roleService.remove(id);
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Organizer type disable!!!")
+                            .message("Role disabled!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Organizer type not found or is deleted!")
+                            .message("Role not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
                     HttpStatus.NOT_FOUND);
@@ -74,19 +74,19 @@ public class OrganizerTypeController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponseDto> deleteOrganizerType(@PathVariable UUID id) {
+    public ResponseEntity<ResponseDto> deleteRole(@PathVariable UUID id) {
         try {
-            organizerTypeService.delete(id);
+            roleService.delete(id);
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Organizer type deleted!!!")
+                            .message("Role deleted!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Organizer type not found or is deleted!")
+                            .message("Role not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
                     HttpStatus.NOT_FOUND);

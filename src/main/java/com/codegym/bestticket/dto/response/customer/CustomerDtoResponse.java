@@ -1,4 +1,4 @@
-package com.codegym.bestticket.dto.response.user;
+package com.codegym.bestticket.dto.response.customer;
 
 import com.codegym.bestticket.entity.user.User;
 import lombok.Data;

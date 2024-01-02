@@ -1,12 +1,12 @@
-package com.codegym.bestticket.service.impl.user;
+package com.codegym.bestticket.service.impl.customer;
 
-import com.codegym.bestticket.converter.user.CustomerConverter;
+import com.codegym.bestticket.converter.customer.CustomerConverter;
 import com.codegym.bestticket.dto.CustomerDTO;
-import com.codegym.bestticket.dto.response.user.CustomerDtoResponse;
-import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.dto.response.customer.CustomerDtoResponse;
+import com.codegym.bestticket.entity.customer.Customer;
 import com.codegym.bestticket.entity.user.User;
-import com.codegym.bestticket.repository.ICustomerRepository;
-import com.codegym.bestticket.repository.IUserRepository;
+import com.codegym.bestticket.repository.customer.ICustomerRepository;
+import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.service.ICustomerService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

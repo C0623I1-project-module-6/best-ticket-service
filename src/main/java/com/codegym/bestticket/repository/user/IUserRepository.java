@@ -1,4 +1,4 @@
-package com.codegym.bestticket.repository;
+package com.codegym.bestticket.repository.user;
 
 
 import com.codegym.bestticket.entity.user.User;

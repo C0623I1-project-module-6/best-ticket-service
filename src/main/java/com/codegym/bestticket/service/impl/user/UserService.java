@@ -8,7 +8,7 @@ import com.codegym.bestticket.dto.response.user.LoginDtoResponse;
 import com.codegym.bestticket.dto.response.user.RegisterDtoResponse;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.exception.PhoneNumberAlreadyExistsException;
-import com.codegym.bestticket.repository.IUserRepository;
+import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

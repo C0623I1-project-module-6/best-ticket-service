@@ -1,7 +1,7 @@
-package com.codegym.bestticket.converter.user;
+package com.codegym.bestticket.converter.customer;
 import com.codegym.bestticket.dto.CustomerDTO;
-import com.codegym.bestticket.dto.response.user.CustomerDtoResponse;
-import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.dto.response.customer.CustomerDtoResponse;
+import com.codegym.bestticket.entity.customer.Customer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 

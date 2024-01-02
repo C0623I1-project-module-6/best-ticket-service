@@ -3,7 +3,7 @@ package com.codegym.bestticket.service.impl.ticket;
 import com.codegym.bestticket.dto.request.ticket_type.TicketTypeRequestDTO;
 import com.codegym.bestticket.dto.response.ticket_type.TicketTypeResponseDTO;
 import com.codegym.bestticket.entity.ticket.TicketType;
-import com.codegym.bestticket.repository.ITicketTypeRepository;
+import com.codegym.bestticket.repository.ticket.ITicketTypeRepository;
 import com.codegym.bestticket.service.ITicketTypeService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;

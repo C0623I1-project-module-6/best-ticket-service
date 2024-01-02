@@ -1,14 +1,14 @@
-package com.codegym.bestticket.service.impl.user;
+package com.codegym.bestticket.service.impl.organizer;
 
-import com.codegym.bestticket.converter.user.OrganizerConverter;
+import com.codegym.bestticket.converter.organizer.OrganizerConverter;
 import com.codegym.bestticket.dto.OrganizerDTO;
-import com.codegym.bestticket.dto.response.user.OrganizerDtoResponse;
-import com.codegym.bestticket.entity.user.Organizer;
-import com.codegym.bestticket.entity.user.OrganizerType;
+import com.codegym.bestticket.dto.response.organizer.OrganizerDtoResponse;
+import com.codegym.bestticket.entity.organizer.Organizer;
+import com.codegym.bestticket.entity.organizer.OrganizerType;
 import com.codegym.bestticket.entity.user.User;
-import com.codegym.bestticket.repository.IOrganizerRepository;
-import com.codegym.bestticket.repository.IOrganizerTypeRepository;
-import com.codegym.bestticket.repository.IUserRepository;
+import com.codegym.bestticket.repository.organizer.IOrganizerRepository;
+import com.codegym.bestticket.repository.organizer.IOrganizerTypeRepository;
+import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.service.IOrganizerService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

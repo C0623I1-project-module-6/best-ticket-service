@@ -1,4 +1,4 @@
-package com.codegym.bestticket.repository;
+package com.codegym.bestticket.repository.contract;
 
 import com.codegym.bestticket.entity.contract.Contract;
 import org.springframework.data.jpa.repository.JpaRepository;

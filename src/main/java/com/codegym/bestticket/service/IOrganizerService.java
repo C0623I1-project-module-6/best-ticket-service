@@ -1,7 +1,7 @@
 package com.codegym.bestticket.service;
 
 import com.codegym.bestticket.dto.OrganizerDTO;
-import com.codegym.bestticket.dto.response.user.OrganizerDtoResponse;
+import com.codegym.bestticket.dto.response.organizer.OrganizerDtoResponse;
 
 import java.util.List;
 import java.util.UUID;

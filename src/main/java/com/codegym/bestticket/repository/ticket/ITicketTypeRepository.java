@@ -1,4 +1,4 @@
-package com.codegym.bestticket.repository;
+package com.codegym.bestticket.repository.ticket;
 
 import com.codegym.bestticket.entity.ticket.TicketType;
 import org.springframework.data.jpa.repository.JpaRepository;
