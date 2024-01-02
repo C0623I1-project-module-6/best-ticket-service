@@ -31,13 +31,13 @@ public class CustomerController {
     @GetMapping("")
     public ResponseEntity<ResponseDto> getCustomers() {
         try {
-            List<CustomerDtoResponse> customerDtoResponse =
+            List<CustomerDtoResponse> customerDtoResponses =
                     customerService.findAll();
             return new ResponseEntity<>(
                     ResponseDto.builder()
                             .message("Customer list")
                             .status(HttpStatus.OK)
-                            .data(customerDtoResponse)
+                            .data(customerDtoResponses)
                             .build(),
                     HttpStatus.OK);
         } catch (RuntimeException e) {
@@ -108,7 +108,7 @@ public class CustomerController {
             if (customerDTO == null) {
                 return new ResponseEntity<>(
                         ResponseDto.builder()
-                                .message("Request not found")
+                                .message("Request not found!")
                                 .status(HttpStatus.BAD_REQUEST)
                                 .build(),
                         HttpStatus.BAD_REQUEST);

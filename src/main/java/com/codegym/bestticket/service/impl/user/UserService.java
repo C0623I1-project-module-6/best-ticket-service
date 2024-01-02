@@ -2,10 +2,10 @@ package com.codegym.bestticket.service.impl.user;
 
 import com.codegym.bestticket.converter.user.LoginConverter;
 import com.codegym.bestticket.converter.user.RegisterConverter;
-import com.codegym.bestticket.dto.ResponseDto;
 import com.codegym.bestticket.dto.request.user.LoginDtoRequest;
 import com.codegym.bestticket.dto.request.user.RegisterDtoRequest;
 import com.codegym.bestticket.dto.response.user.LoginDtoResponse;
+import com.codegym.bestticket.dto.response.user.RegisterDtoResponse;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.exception.PhoneNumberAlreadyExistsException;
 import com.codegym.bestticket.repository.IUserRepository;
@@ -26,15 +26,14 @@ public class UserService implements IUserService {
     private final LoginConverter loginConverter;
 
     @Override
-    public ResponseDto register(RegisterDtoRequest registerDtoRequest) {
+    public RegisterDtoResponse register(RegisterDtoRequest registerDtoRequest) {
         if (userRepository.existsByPhoneNumber(
                 registerDtoRequest.getPhoneNumber())){
             throw new PhoneNumberAlreadyExistsException("Phone number already exists.");
         }
         User user = registerConverter.dtoToEntity(registerDtoRequest);
         userRepository.save(user);
-        registerConverter.entityToDto(user);
-        return new ResponseDto(user);
+        return  registerConverter.entityToDto(user);
     }
 
     @Override
