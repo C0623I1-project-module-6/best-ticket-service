@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface ITicketTypeService {
 
-    List<TicketTypeRequestDTO> getAllTicketType();
+    Iterable<TicketTypeRequestDTO> getAllTicketType();
     TicketTypeResponseDTO getTicketTypeById(UUID id);
     TicketTypeRequestDTO createTicketType(TicketTypeRequestDTO ticketTypeRequestDTO);
     void deleteTicketType(UUID id);
