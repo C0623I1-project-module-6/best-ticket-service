@@ -83,12 +83,13 @@ public class ContractController {
         }
     }
 
-    @PutMapping("/contract-detail/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<ResponseDto> updateContract(@PathVariable UUID id, @RequestBody ContractRequestDTO contractRequestDTO) {
         try {
             Optional<ContractResponseDTO> contractOptional = contractService.findById(id);
             if (contractOptional.isPresent()) {
                 contractRequestDTO.setId(id);
+                contractRequestDTO.setIsDelete(false);
                 contractService.save(contractRequestDTO);
                 Optional<ContractResponseDTO> updatedContract = contractService.findById(id);
                 ResponseDto responseDto = ResponseDto.builder()

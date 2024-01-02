@@ -38,7 +38,7 @@ public class ContractService implements IContractService {
     @Override
     public Optional<ContractResponseDTO> findById(UUID id) {
         Optional<Contract> contractOptional = iContractRepository.findById(id);
-        if (contractOptional.isPresent()) {
+        if (contractOptional.isPresent() && !contractOptional.get().getIsDelete()) {
             Contract contract = contractOptional.get();
             ContractResponseDTO contractResponseDTO = new ContractResponseDTO();
             BeanUtils.copyProperties(contract, contractResponseDTO);
