@@ -11,6 +11,7 @@ public interface ICustomerService {
     CustomerDtoResponse create(CustomerDTO customerDTO);
     CustomerDtoResponse update ( UUID id, CustomerDTO customerDTO);
     void remove(UUID id);
+    void delete(UUID id);
     List<CustomerDtoResponse> findAll();
     CustomerDtoResponse findById(UUID id);
 

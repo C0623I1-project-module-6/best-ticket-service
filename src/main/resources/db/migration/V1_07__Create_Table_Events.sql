@@ -15,7 +15,7 @@ CREATE TABLE events
 
 CREATE TABLE times
 (
-    id   BINARY(36) PRIMARY KEY ,
+    id   BINARY(36) PRIMARY KEY,
     time datetime
 );
 

@@ -1,6 +1,5 @@
 package com.codegym.bestticket.dto.response.ticket_type;
 
-import com.codegym.bestticket.entity.ticket.TicketType;
 import lombok.Builder;
 import lombok.Data;
 
