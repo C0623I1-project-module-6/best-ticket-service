@@ -1,6 +1,6 @@
 package com.codegym.bestticket.controller.ticket;
 
-import com.codegym.bestticket.constant.EMessage;
+import com.codegym.bestticket.constant.ETicketMessage;
 import com.codegym.bestticket.dto.ResponseDto;
 import com.codegym.bestticket.dto.request.ticket_type.TicketTypeRequestDTO;
 import com.codegym.bestticket.dto.response.ticket_type.TicketTypeResponseDTO;
@@ -9,9 +9,15 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -23,85 +29,113 @@ public class TicketTypeController {
 
     @GetMapping()
     public ResponseEntity<ResponseDto> getAllTicketType() {
-        List<TicketTypeRequestDTO> ticketTypeRequestDTOS = ticketTypeService.getAllTicketType();
+        Iterable<TicketTypeRequestDTO> ticketTypeRequestDTOS = ticketTypeService.getAllTicketType();
 
-        ResponseDto responseDto = ResponseDto.builder().build();
+        ResponseDto responseDto;
 
-        if (ticketTypeRequestDTOS.isEmpty()) {
-            responseDto.setMessage(String.valueOf(EMessage.FAIL));
-            responseDto.setStatus(HttpStatus.NO_CONTENT);
+        if (ticketTypeRequestDTOS == null) {
+            responseDto = ResponseDto.builder()
+                    .message(String.valueOf(ETicketMessage.FAIL))
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
             return new ResponseEntity<>(responseDto, responseDto.getStatus());
         }
 
-        responseDto.setData(ticketTypeRequestDTOS);
-        responseDto.setStatus(HttpStatus.OK);
-        responseDto.setMessage(String.valueOf(EMessage.SUCCESS));
+        responseDto = ResponseDto.builder()
+                .status(HttpStatus.OK)
+                .message(String.valueOf(ETicketMessage.SUCCESS))
+                .data(ticketTypeRequestDTOS)
+                .build();
 
         return new ResponseEntity<>(responseDto, responseDto.getStatus());
 
     }
-
 
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto> getTicketTypeById(@PathVariable UUID id) {
         TicketTypeResponseDTO ticketTypeResponseDTO = ticketTypeService.getTicketTypeById(id);
-        ResponseDto responseDto = ResponseDto.builder().build();
+        ResponseDto responseDto;
+
         if (ticketTypeResponseDTO == null) {
-            responseDto.setStatus(HttpStatus.NO_CONTENT);
-            responseDto.setMessage(String.valueOf(EMessage.FAIL));
+            responseDto = ResponseDto.builder()
+                    .status(HttpStatus.NOT_FOUND)
+                    .message(String.valueOf(ETicketMessage.FAIL))
+                    .build();
             return new ResponseEntity<>(responseDto, responseDto.getStatus());
         }
 
-        responseDto.setData(ticketTypeResponseDTO);
-        responseDto.setMessage(String.valueOf(EMessage.SUCCESS));
-        responseDto.setStatus(HttpStatus.OK);
+        responseDto = ResponseDto.builder()
+                .message(String.valueOf(ETicketMessage.SUCCESS))
+                .status(HttpStatus.OK)
+                .data(ticketTypeResponseDTO)
+                .build();
         return new ResponseEntity<>(responseDto, responseDto.getStatus());
 
     }
+
     @PostMapping("/create")
     public ResponseEntity<ResponseDto> createTicketType(@RequestBody TicketTypeRequestDTO ticketTypeRequestDTO) {
-        ResponseDto responseDto = ResponseDto.builder().build();
         if (ticketTypeRequestDTO == null) {
-            responseDto.setStatus(HttpStatus.NO_CONTENT);
-            responseDto.setMessage(String.valueOf(EMessage.FAIL));
-            return new ResponseEntity<>( responseDto.getStatus());
+            ResponseDto responseDto = ResponseDto.builder()
+                    .status(HttpStatus.NOT_FOUND)
+                    .message(String.valueOf(ETicketMessage.FAIL))
+                    .build();
+            return new ResponseEntity<>(responseDto.getStatus());
         }
         TicketTypeResponseDTO ticketTypeResponseDTO = TicketTypeResponseDTO.builder().build();
         TicketTypeRequestDTO ticketTypeRequestDTO1 = ticketTypeService.createTicketType(ticketTypeRequestDTO);
         BeanUtils.copyProperties(ticketTypeRequestDTO1, ticketTypeResponseDTO);
 
-        responseDto.setData(ticketTypeResponseDTO);
-        responseDto.setMessage(String.valueOf(EMessage.SUCCESS));
-        responseDto.setStatus(HttpStatus.CREATED);
+        ResponseDto responseDto;
+
+        responseDto = ResponseDto.builder()
+                .status(HttpStatus.CREATED)
+                .message(String.valueOf(ETicketMessage.SUCCESS))
+                .data(ticketTypeRequestDTO)
+                .build();
         return new ResponseEntity<>(responseDto, responseDto.getStatus());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDto> deleteTicketType(@PathVariable UUID id) {
-        ResponseDto responseDto = ResponseDto.builder().build();
+        ResponseDto responseDto;
         if (id == null) {
-            responseDto.setStatus(HttpStatus.NOT_FOUND);
-            responseDto.setMessage(String.valueOf(EMessage.FAIL));
+            responseDto = ResponseDto.builder()
+                    .status(HttpStatus.NOT_FOUND)
+                    .message(String.valueOf(ETicketMessage.FAIL))
+                    .build();
+            responseDto.setMessage(String.valueOf(ETicketMessage.FAIL));
         }
 
-        responseDto.setMessage(String.valueOf(EMessage.SUCCESS));
-        responseDto.setStatus(HttpStatus.OK);
         ticketTypeService.deleteTicketType(id);
+        responseDto = ResponseDto.builder()
+                .status(HttpStatus.OK)
+                .message(String.valueOf(ETicketMessage.SUCCESS))
+                .build();
         return new ResponseEntity<>(responseDto, responseDto.getStatus());
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<ResponseDto> updateTicketType(@PathVariable UUID id, @RequestBody TicketTypeResponseDTO ticketTypeResponseDTO) {
+        ResponseDto responseDto;
+        if (ticketTypeResponseDTO != null) {
+            ticketTypeResponseDTO.setId(id);
+            ticketTypeService.updateTicketType(ticketTypeResponseDTO);
 
-        ticketTypeResponseDTO.setId(id);
-        ticketTypeService.updateTicketType(ticketTypeResponseDTO);
-
-        ResponseDto responseDto = ResponseDto.builder().build();
-        responseDto.setData(ticketTypeResponseDTO);
-        responseDto.setMessage(String.valueOf(EMessage.SUCCESS));
-        responseDto.setStatus(HttpStatus.OK);
+            responseDto = ResponseDto.builder()
+                    .status(HttpStatus.OK)
+                    .message(String.valueOf(ETicketMessage.SUCCESS))
+                    .data(ticketTypeResponseDTO)
+                    .build();
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }
+        responseDto = ResponseDto.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .message(String.valueOf(ETicketMessage.SUCCESS))
+                .build();
         return new ResponseEntity<>(responseDto, responseDto.getStatus());
+
     }
 
 }
