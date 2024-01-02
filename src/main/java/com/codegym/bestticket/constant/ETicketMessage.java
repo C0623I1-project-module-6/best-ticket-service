@@ -1,6 +1,6 @@
 package com.codegym.bestticket.constant;
 
-public enum EMessage {
+public enum ETicketMessage {
     SUCCESS,
     FAIL,
 

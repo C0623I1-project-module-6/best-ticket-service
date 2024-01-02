@@ -43,7 +43,11 @@ public class ContractDetailService implements IContractDetailService {
     @Override
     public Optional<ContractDetailResponseDTO> findById(UUID id) {
         Optional<ContractDetail> contractDetailOptional = iContractDetailRepository.findById(id);
-        if (contractDetailOptional.isPresent()) {
+        return getContractDetailResponseDTO(contractDetailOptional);
+    }
+
+    private Optional<ContractDetailResponseDTO> getContractDetailResponseDTO(Optional<ContractDetail> contractDetailOptional) {
+        if (contractDetailOptional.isPresent() && !contractDetailOptional.get().getIsDelete()) {
             ContractDetail contractDetail = contractDetailOptional.get();
             ContractDetailResponseDTO contractDetailResponseDTO = new ContractDetailResponseDTO();
             BeanUtils.copyProperties(contractDetail, contractDetailResponseDTO);
@@ -81,14 +85,7 @@ public class ContractDetailService implements IContractDetailService {
     @Override
     public Optional<ContractDetailResponseDTO> findByContractIdAndId(UUID contractId, UUID id) {
         Optional<ContractDetail> contractDetailOptional = iContractDetailRepository.findByContractIdAndId(contractId, id);
-        if (contractDetailOptional.isPresent()) {
-            ContractDetail contractDetail = contractDetailOptional.get();
-            ContractDetailResponseDTO contractDetailResponseDTO = new ContractDetailResponseDTO();
-            BeanUtils.copyProperties(contractDetail, contractDetailResponseDTO);
-            return Optional.of(contractDetailResponseDTO);
-        } else {
-            return Optional.empty();
-        }
+        return getContractDetailResponseDTO(contractDetailOptional);
     }
 
     @Override
@@ -122,7 +119,10 @@ public class ContractDetailService implements IContractDetailService {
         ContractDetail contractDetail = new ContractDetail();
         BeanUtils.copyProperties(contractDetailRequestDTO, contractDetail);
         iContractDetailRepository.save(contractDetail);
+        setTicketContractDetail(contractDetail);
+    }
 
+    private void setTicketContractDetail(ContractDetail contractDetail) {
         for (Ticket ticket : contractDetail.getTickets()) {
             ticket.setContractDetail(contractDetail);
             iTicketRepository.save(ticket);

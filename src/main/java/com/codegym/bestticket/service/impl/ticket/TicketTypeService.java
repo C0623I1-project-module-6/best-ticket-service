@@ -11,38 +11,41 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Service
 public class TicketTypeService implements ITicketTypeService {
 
-
     private final ITicketTypeRepository ticketTypeRepository;
-
 
     @Override
     public List<TicketTypeRequestDTO> getAllTicketType() {
-        Iterable<TicketType> tickets = ticketTypeRepository.findAll();
+        Iterable<TicketType> ticketTypes = ticketTypeRepository.findAll();
 
-        return StreamSupport.stream(tickets.spliterator(), true)
+        return StreamSupport.stream(ticketTypes.spliterator(), true)
+                .filter(ticketType -> !ticketType.getIsDelete())
                 .map(ticketType -> {
                     TicketTypeRequestDTO ticketTypeRequestDTO = TicketTypeRequestDTO.builder().build();
                     BeanUtils.copyProperties(ticketType, ticketTypeRequestDTO);
                     return ticketTypeRequestDTO;
                 })
-                .collect(Collectors.toList());
+                .toList();
 
     }
 
     @Override
     public TicketTypeResponseDTO getTicketTypeById(UUID id) {
         TicketType ticketType = ticketTypeRepository.findById(id).orElse(null);
-        TicketTypeResponseDTO ticketTypeResponseDTO1 = TicketTypeResponseDTO.builder().build();
+
+        TicketTypeResponseDTO ticketTypeResponseDTO = TicketTypeResponseDTO.builder().build();
         assert ticketType != null;
-        BeanUtils.copyProperties(ticketType, ticketTypeResponseDTO1);
-        return ticketTypeResponseDTO1;
+        if (Boolean.FALSE.equals(ticketType.getIsDelete())) {
+            BeanUtils.copyProperties(ticketType, ticketTypeResponseDTO);
+            return ticketTypeResponseDTO;
+        }
+        return null;
+
     }
 
     @Override
