@@ -4,6 +4,8 @@ import com.codegym.bestticket.constant.EContractStatus;
 import com.codegym.bestticket.dto.request.contract.ContractRequestDTO;
 import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
 import com.codegym.bestticket.entity.contract.Contract;
+import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.repository.IContractRepository;
 import com.codegym.bestticket.service.IContractService;
 import lombok.AllArgsConstructor;
@@ -67,4 +69,32 @@ public class ContractService implements IContractService {
     public void delete(UUID id) {
         iContractRepository.deleteById(id);
     }
+
+    @Override
+    public Iterable<ContractResponseDTO> searchAllByCustomer(Customer customer) {
+        Iterable<Contract> contracts = iContractRepository.searchAllByCustomer(customer);
+        return StreamSupport.stream(contracts.spliterator(), false)
+                .filter(contract -> !contract.getIsDelete())
+                .map(contract -> {
+                    ContractResponseDTO contractResponseDTO = new ContractResponseDTO();
+                    BeanUtils.copyProperties(contract, contractResponseDTO);
+                    return contractResponseDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<ContractResponseDTO> searchAllByOrganizer(Organizer organizer) {
+        Iterable<Contract> contracts = iContractRepository.searchAllByOrganizer(organizer);
+        return StreamSupport.stream(contracts.spliterator(), false)
+                .filter(contract -> !contract.getIsDelete())
+                .map(contract -> {
+                    ContractResponseDTO contractResponseDTO = new ContractResponseDTO();
+                    BeanUtils.copyProperties(contract, contractResponseDTO);
+                    return contractResponseDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
+
 }

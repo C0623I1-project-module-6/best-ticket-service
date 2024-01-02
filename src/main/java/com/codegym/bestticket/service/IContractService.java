@@ -2,6 +2,8 @@ package com.codegym.bestticket.service;
 
 import com.codegym.bestticket.dto.request.contract.ContractRequestDTO;
 import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
+import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.user.Organizer;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -12,4 +14,6 @@ public interface IContractService {
     void save(ContractRequestDTO contractRequestDTO);
     void remove(UUID id);
     void delete(UUID id);
+    Iterable<ContractResponseDTO> searchAllByCustomer(Customer customer);
+    Iterable<ContractResponseDTO> searchAllByOrganizer(Organizer organizer);
 }

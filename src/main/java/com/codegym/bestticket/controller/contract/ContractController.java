@@ -133,4 +133,7 @@ public class ContractController {
                             .build());
         }
     }
+
+    @GetMapping("/search/by-customer")
+    public ResponseEntity<>
 }
