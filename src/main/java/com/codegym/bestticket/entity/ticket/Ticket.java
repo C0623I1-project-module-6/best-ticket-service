@@ -43,7 +43,7 @@ public class Ticket {
     private String promotion;
 
     private String barcode;
-//    private Long quantity;
+    private Long quantity;
 
     private Boolean isDelete;
     @ManyToOne
