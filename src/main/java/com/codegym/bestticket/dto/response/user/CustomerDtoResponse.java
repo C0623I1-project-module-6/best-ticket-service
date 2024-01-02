@@ -14,5 +14,5 @@ public class CustomerDtoResponse {
     private String idCard;
     private Date dateOfBirth;
     private User user;
-    private Boolean isDelete;
+    private Boolean isDeleted;
 }

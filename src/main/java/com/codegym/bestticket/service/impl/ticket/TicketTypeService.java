@@ -22,14 +22,13 @@ public class TicketTypeService implements ITicketTypeService {
     private final ITicketTypeRepository ticketTypeRepository;
 
 
-
     @Override
     public List<TicketTypeRequestDTO> getAllTicketType() {
         Iterable<TicketType> tickets = ticketTypeRepository.findAll();
 
         return StreamSupport.stream(tickets.spliterator(), true)
                 .map(ticketType -> {
-                    TicketTypeRequestDTO ticketTypeRequestDTO =  TicketTypeRequestDTO.builder().build();
+                    TicketTypeRequestDTO ticketTypeRequestDTO = TicketTypeRequestDTO.builder().build();
                     BeanUtils.copyProperties(ticketType, ticketTypeRequestDTO);
                     return ticketTypeRequestDTO;
                 })
@@ -40,19 +39,19 @@ public class TicketTypeService implements ITicketTypeService {
     @Override
     public TicketTypeResponseDTO getTicketTypeById(UUID id) {
         TicketType ticketType = ticketTypeRepository.findById(id).orElse(null);
-        TicketTypeResponseDTO ticketTypeResponseDTO1 =  TicketTypeResponseDTO.builder().build();
+        TicketTypeResponseDTO ticketTypeResponseDTO1 = TicketTypeResponseDTO.builder().build();
         assert ticketType != null;
-        BeanUtils.copyProperties(ticketType,ticketTypeResponseDTO1);
+        BeanUtils.copyProperties(ticketType, ticketTypeResponseDTO1);
         return ticketTypeResponseDTO1;
     }
 
     @Override
     public TicketTypeRequestDTO createTicketType(TicketTypeRequestDTO ticketTypeRequestDTO) {
         TicketType ticketType = new TicketType();
-        BeanUtils.copyProperties(ticketTypeRequestDTO,ticketType);
+        BeanUtils.copyProperties(ticketTypeRequestDTO, ticketType);
         ticketType = ticketTypeRepository.save(ticketType);
-        TicketTypeRequestDTO resultTicketRequestDTO =  TicketTypeRequestDTO.builder().build();
-        BeanUtils.copyProperties(ticketType,resultTicketRequestDTO);
+        TicketTypeRequestDTO resultTicketRequestDTO = TicketTypeRequestDTO.builder().build();
+        BeanUtils.copyProperties(ticketType, resultTicketRequestDTO);
 
         return resultTicketRequestDTO;
     }
@@ -61,7 +60,7 @@ public class TicketTypeService implements ITicketTypeService {
     public void deleteTicketType(UUID id) {
         TicketType ticketType = ticketTypeRepository.findById(id).orElse(null);
         assert ticketType != null;
-        ticketType.setIsDelete(true);
+        ticketType.setIsDeleted(true);
         ticketTypeRepository.save(ticketType);
     }
 
@@ -69,7 +68,7 @@ public class TicketTypeService implements ITicketTypeService {
     public void updateTicketType(TicketTypeResponseDTO ticketTypeResponseDTO) {
         TicketType ticketType = ticketTypeRepository.findById(ticketTypeResponseDTO.getId()).orElse(null);
         assert ticketType != null;
-        BeanUtils.copyProperties(ticketTypeResponseDTO,ticketType);
+        BeanUtils.copyProperties(ticketTypeResponseDTO, ticketType);
 
         ticketTypeRepository.save(ticketType);
     }

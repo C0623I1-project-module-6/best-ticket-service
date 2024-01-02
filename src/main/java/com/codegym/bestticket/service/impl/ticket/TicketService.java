@@ -59,7 +59,7 @@ public class TicketService implements ITicketService {
     public void updateTicket(TicketResponseDTO ticketResponseDTO) {
         Ticket ticket = ticketRepository.findById(ticketResponseDTO.getId()).orElse(null);
         assert ticket != null;
-        BeanUtils.copyProperties(ticketResponseDTO,ticket);
+        BeanUtils.copyProperties(ticketResponseDTO, ticket);
 
         ticketRepository.save(ticket);
     }
@@ -68,7 +68,7 @@ public class TicketService implements ITicketService {
     public void deleteTicketById(UUID id) {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
         assert ticket != null;
-        ticket.setIsDelete(false);
+        ticket.setIsDeleted(false);
         ticketRepository.save(ticket);
 
     }
