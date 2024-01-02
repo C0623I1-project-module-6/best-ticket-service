@@ -24,7 +24,7 @@ public class TicketService implements ITicketService {
         Iterable<Ticket> tickets = ticketRepository.findAll();
 
         return StreamSupport.stream(tickets.spliterator(), true)
-                .filter(ticket -> !ticket.getIsDelete())
+                .filter(ticket -> !ticket.getIsDeleted())
                 .map(ticket -> {
                     TicketRequestDTO ticketRequestDTO = TicketRequestDTO.builder().build();
                     BeanUtils.copyProperties(ticket, ticketRequestDTO);
@@ -37,7 +37,7 @@ public class TicketService implements ITicketService {
     public TicketResponseDTO getTicketById(UUID id) {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
         assert ticket != null;
-        if (Boolean.FALSE.equals(ticket.getIsDelete())) {
+        if (Boolean.FALSE.equals(ticket.getIsDeleted())) {
             TicketResponseDTO ticketResponseDTO1 = TicketResponseDTO.builder().build();
 
             BeanUtils.copyProperties(ticket, ticketResponseDTO1);

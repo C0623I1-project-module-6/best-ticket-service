@@ -47,7 +47,7 @@ public class ContractDetailService implements IContractDetailService {
     }
 
     private Optional<ContractDetailResponseDTO> getContractDetailResponseDTO(Optional<ContractDetail> contractDetailOptional) {
-        if (contractDetailOptional.isPresent() && !contractDetailOptional.get().getIsDelete()) {
+        if (contractDetailOptional.isPresent() && !contractDetailOptional.get().getIsDeleted()) {
             ContractDetail contractDetail = contractDetailOptional.get();
             ContractDetailResponseDTO contractDetailResponseDTO = new ContractDetailResponseDTO();
             BeanUtils.copyProperties(contractDetail, contractDetailResponseDTO);

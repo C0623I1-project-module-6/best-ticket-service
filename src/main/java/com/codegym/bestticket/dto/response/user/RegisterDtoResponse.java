@@ -1,5 +1,6 @@
 package com.codegym.bestticket.dto.response.user;
 
+import com.codegym.bestticket.entity.user.Role;
 import lombok.Data;
 
 import java.util.UUID;
@@ -7,6 +8,9 @@ import java.util.UUID;
 @Data
 public class RegisterDtoResponse {
     private UUID id;
-    private String phoneNumber;
+    private String username;
     private String email;
+    private String phoneNumber;
+    private Role role;
+
 }
