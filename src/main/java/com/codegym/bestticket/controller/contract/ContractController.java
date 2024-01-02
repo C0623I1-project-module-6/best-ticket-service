@@ -4,12 +4,13 @@ import com.codegym.bestticket.constant.EContractStatus;
 import com.codegym.bestticket.dto.ResponseDto;
 import com.codegym.bestticket.dto.request.contract.ContractRequestDTO;
 import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
-import com.codegym.bestticket.service.impl.contract.ContractService;
+import com.codegym.bestticket.service.IContractService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +29,7 @@ import java.util.logging.Level;
 @RestController
 @RequestMapping("/api/contracts")
 public class ContractController {
-    private final ContractService contractService;
+    private final IContractService contractService;
 
     @GetMapping()
     public ResponseEntity<ResponseDto> getContractList() {
@@ -82,12 +83,13 @@ public class ContractController {
         }
     }
 
-    @PutMapping("/contract-detail/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<ResponseDto> updateContract(@PathVariable UUID id, @RequestBody ContractRequestDTO contractRequestDTO) {
         try {
             Optional<ContractResponseDTO> contractOptional = contractService.findById(id);
             if (contractOptional.isPresent()) {
                 contractRequestDTO.setId(id);
+                contractRequestDTO.setIsDelete(false);
                 contractService.save(contractRequestDTO);
                 Optional<ContractResponseDTO> updatedContract = contractService.findById(id);
                 ResponseDto responseDto = ResponseDto.builder()
@@ -113,7 +115,7 @@ public class ContractController {
         }
     }
 
-    @PutMapping("/remove/{id}")
+    @DeleteMapping("/remove/{id}")
     public ResponseEntity<ResponseDto> remove(@PathVariable UUID id) {
         Optional<ContractResponseDTO> contractOptional = contractService.findById(id);
         if (contractOptional.isPresent()) {
