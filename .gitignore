@@ -40,3 +40,4 @@ out/
 ### VS Code ###
 .vscode/
 
+src/main/java/com/codegym/bestticket/controller/TestController.java

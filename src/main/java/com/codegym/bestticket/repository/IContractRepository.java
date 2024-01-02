@@ -1,11 +1,9 @@
 package com.codegym.bestticket.repository;
 
-import com.codegym.bestticket.dto.request.contract.ContractRequestDTO;
 import com.codegym.bestticket.entity.contract.Contract;
 import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.Organizer;
 import org.springframework.data.jpa.repository.JpaRepository;
-
 
 import java.util.UUID;
 

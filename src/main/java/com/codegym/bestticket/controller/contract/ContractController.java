@@ -89,7 +89,7 @@ public class ContractController {
             Optional<ContractResponseDTO> contractOptional = contractService.findById(id);
             if (contractOptional.isPresent()) {
                 contractRequestDTO.setId(id);
-                contractRequestDTO.setIsDelete(false);
+                contractRequestDTO.setIsDeleted(false);
                 contractService.save(contractRequestDTO);
                 Optional<ContractResponseDTO> updatedContract = contractService.findById(id);
                 ResponseDto responseDto = ResponseDto.builder()
@@ -134,6 +134,13 @@ public class ContractController {
         }
     }
 
-    @GetMapping("/search/by-customer")
-    public ResponseEntity<>
+    @GetMapping("/search/{input}")
+    public ResponseEntity<ResponseDto> search(@PathVariable String input) {
+        ResponseDto responseDto = ResponseDto.builder()
+                .message("Test")
+                .data(contractService.searchByInput(input))
+                .status(HttpStatus.OK)
+                .build();
+        return ResponseEntity.ok(responseDto);
+    }
 }

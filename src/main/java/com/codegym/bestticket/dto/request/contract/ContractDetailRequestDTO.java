@@ -12,7 +12,6 @@ public class ContractDetailRequestDTO {
     private UUID id;
     private Contract contract;
     private List<Ticket> tickets;
-    private Integer quantity;
-    private Double ticketPrice;
+    private Double amount;
     private Boolean isDeleted;
 }

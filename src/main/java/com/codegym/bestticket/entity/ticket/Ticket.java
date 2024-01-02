@@ -54,4 +54,5 @@ public class Ticket {
     @JsonIgnore
     private TicketType ticketType;
 
+    private Double price;
 }

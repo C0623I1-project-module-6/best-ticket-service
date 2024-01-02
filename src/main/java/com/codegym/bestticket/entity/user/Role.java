@@ -30,7 +30,6 @@ public class Role {
     @Column( length = 50)
     private String name;
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
     @ManyToMany(mappedBy = "roles")
     private List<User> users;
 

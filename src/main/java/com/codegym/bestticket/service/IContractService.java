@@ -16,4 +16,5 @@ public interface IContractService {
     void delete(UUID id);
     Iterable<ContractResponseDTO> searchAllByCustomer(Customer customer);
     Iterable<ContractResponseDTO> searchAllByOrganizer(Organizer organizer);
+    Iterable<ContractResponseDTO> searchByInput(String input);
 }

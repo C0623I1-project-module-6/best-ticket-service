@@ -11,7 +11,7 @@ import java.util.UUID;
 public class ContractResponseDTO {
     private UUID id;
     private String Date;
-    private Double amount;
+    private Double total_amount;
     private String status;
     private Timestamp createdAt;
     private Timestamp updatedAt;
