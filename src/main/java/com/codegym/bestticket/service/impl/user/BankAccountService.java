@@ -20,7 +20,7 @@ public class BankAccountService implements IBankAccountService {
         Iterable<BankAccount> bankAccounts = bankAccountRepository.findAll();
 
         return StreamSupport.stream(bankAccounts.spliterator(), true)
-                .filter(bankAccount -> !bankAccount.getIs_delete())
+                .filter(bankAccount -> !bankAccount.getIsDeleted())
                 .map(bankAccount -> {
                     BankAccountResponseDTO bankAccountResponseDTO = BankAccountResponseDTO.builder().build();
                     BeanUtils.copyProperties(bankAccount, bankAccountResponseDTO);

@@ -89,7 +89,7 @@ public class ContractController {
             Optional<ContractResponseDTO> contractOptional = contractService.findById(id);
             if (contractOptional.isPresent()) {
                 contractRequestDTO.setId(id);
-                contractRequestDTO.setIsDelete(false);
+                contractRequestDTO.setIsDeleted(false);
                 contractService.save(contractRequestDTO);
                 Optional<ContractResponseDTO> updatedContract = contractService.findById(id);
                 ResponseDto responseDto = ResponseDto.builder()
