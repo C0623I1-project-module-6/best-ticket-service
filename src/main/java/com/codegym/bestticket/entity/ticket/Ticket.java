@@ -58,9 +58,10 @@ public class Ticket {
     @JoinColumn(name = "ticket_type_id", nullable = false)
     @JsonIgnore
     private TicketType ticketType;
-
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     @JsonIgnore
     private Event event;
+
+    private Double price;
 }

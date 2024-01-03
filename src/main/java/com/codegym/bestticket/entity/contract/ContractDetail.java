@@ -41,7 +41,6 @@ public class ContractDetail {
     @JsonIgnore
     private List<Ticket> tickets;
 
-
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 }
