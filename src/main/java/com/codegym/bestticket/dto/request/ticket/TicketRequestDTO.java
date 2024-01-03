@@ -1,5 +1,6 @@
 package com.codegym.bestticket.dto.request.ticket;
 
+import com.codegym.bestticket.entity.contract.ContractDetail;
 import com.codegym.bestticket.entity.ticket.TicketType;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +25,11 @@ public class TicketRequestDTO {
     private String barcode;
 
     private Boolean isDeleted;
+
     private TicketType ticketType;
+
+    private String status;
+
+    private ContractDetail contractDetail;
 
 }

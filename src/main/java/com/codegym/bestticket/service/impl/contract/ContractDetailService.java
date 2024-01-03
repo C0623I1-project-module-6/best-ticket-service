@@ -61,6 +61,7 @@ public class ContractDetailService implements IContractDetailService {
     @Override
     public Iterable<ContractDetailResponseDTO> findAllByContractId(UUID contractId) {
         Optional<Contract> contract = iContractRepository.findById(contractId);
+
         Iterable<ContractDetail> contractDetailsOfContract = iContractDetailRepository.findAllByContractId(contractId);
         updateContractTotalAmount(contractDetailsOfContract, contract);
         return StreamSupport.stream(contractDetailsOfContract.spliterator(), false)
@@ -106,6 +107,7 @@ public class ContractDetailService implements IContractDetailService {
     }
 
     private void calculateAmount(ContractDetailRequestDTO contractDetailRequestDTO) {
+
         double amount = 0.0;
         for (Ticket ticket : contractDetailRequestDTO.getTickets()) {
             amount += ticket.getQuantity() * ticket.getPrice();
@@ -139,6 +141,7 @@ public class ContractDetailService implements IContractDetailService {
     public void remove(UUID id) {
         Optional<ContractDetail> contractDetail = iContractDetailRepository.findById(id);
         contractDetail.ifPresent(value -> value.setIsDeleted(true));
+
         contractDetail.ifPresent(value -> {
             double totalAmount = value.getContract().getTotalAmount() - value.getTickets().stream()
                     .mapToDouble(ticket -> ticket.getQuantity() * ticket.getPrice())

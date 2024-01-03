@@ -47,10 +47,13 @@ public class Ticket {
     private Long quantity;
     @Column(name = "is_deleted")
     private Boolean isDeleted;
+
     private String status;
+
     @ManyToOne
     @JoinColumn(name = "contract_detail_id")
     private ContractDetail contractDetail;
+
     @ManyToOne
     @JoinColumn(name = "ticket_type_id", nullable = false)
     @JsonIgnore
