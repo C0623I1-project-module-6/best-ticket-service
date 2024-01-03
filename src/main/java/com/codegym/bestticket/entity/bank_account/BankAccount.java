@@ -36,6 +36,7 @@ public class BankAccount {
     private String bankName;
     @Column(length = 100)
     private String branch;
+
     @Column(name = "is_deleted")
     private Boolean isDeleted;
     @ManyToOne

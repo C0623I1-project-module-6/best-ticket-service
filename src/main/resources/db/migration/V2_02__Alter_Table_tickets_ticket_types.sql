@@ -4,6 +4,7 @@ DROP COLUMN price;
 ALTER TABLE tickets
 ADD COLUMN price double,
 ADD COLUMN quantity int;
+ADD COLUMN status VARCHAR(45)
 
 ALTER TABLE tickets
 ADD COLUMN event_id BINARY(16),
