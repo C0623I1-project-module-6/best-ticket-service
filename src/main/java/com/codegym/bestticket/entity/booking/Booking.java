@@ -1,4 +1,4 @@
-package com.codegym.bestticket.entity.contract;
+package com.codegym.bestticket.entity.booking;
 
 import com.codegym.bestticket.entity.user.customer.Customer;
 import com.codegym.bestticket.entity.user.organizer.Organizer;
@@ -27,7 +27,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "contracts")
-public class Contract {
+public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

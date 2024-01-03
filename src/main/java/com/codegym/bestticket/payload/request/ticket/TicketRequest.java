@@ -1,8 +1,7 @@
 package com.codegym.bestticket.payload.request.ticket;
 
-import com.codegym.bestticket.entity.contract.ContractDetail;
+import com.codegym.bestticket.entity.booking.BookingDetail;
 import com.codegym.bestticket.entity.ticket.TicketType;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
@@ -29,6 +28,6 @@ public class TicketRequest {
 
     private String status;
 
-    private ContractDetail contractDetail;
+    private BookingDetail bookingDetail;
 
 }
