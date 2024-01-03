@@ -1,10 +1,9 @@
 package com.codegym.bestticket.converter.user.impl;
 
 import com.codegym.bestticket.converter.user.ICustomerConverter;
-import com.codegym.bestticket.payload.request.customer.CustomerRequestDTO;
-import com.codegym.bestticket.payload.response.customer.CustomerResponseDTO;
-
 import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.payload.request.user.CustomerRequest;
+import com.codegym.bestticket.payload.response.user.CustomerResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
@@ -12,20 +11,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+
 public class CustomerConverter implements ICustomerConverter {
-    public CustomerResponseDTO entityToDto(Customer customer) {
-        CustomerResponseDTO customerResponseDTO = new CustomerResponseDTO();
-        BeanUtils.copyProperties(customer, customerResponseDTO);
-        return customerResponseDTO;
+    public CustomerResponse entityToDto(Customer customer) {
+        CustomerResponse customerResponse = new CustomerResponse();
+        BeanUtils.copyProperties(customer, customerResponse);
+        return customerResponse;
+
     }
 
-    public Customer dtoToEntity(CustomerRequestDTO customerRequestDTO) {
+    public Customer dtoToEntity(CustomerRequest customerRequest) {
         Customer customer = new Customer();
-        BeanUtils.copyProperties(customerRequestDTO, customer);
+        BeanUtils.copyProperties(customerRequest, customer);
         return customer;
     }
 
-    public List<CustomerResponseDTO> entitiesToDTOs(List<Customer> customers) {
+    public List<CustomerResponse> entitiesToDTOs(List<Customer> customers) {
         return customers.stream()
                 .map(this::entityToDto)
                 .collect(Collectors.toList());

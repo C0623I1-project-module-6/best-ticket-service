@@ -1,13 +1,13 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.payload.request.user.RoleRequestDTO;
+import com.codegym.bestticket.dto.user.RoleDto;
 
 import java.util.UUID;
 
 public interface IRoleService {
-    RoleRequestDTO create(RoleRequestDTO roleRequestDTO);
+    RoleDto create(RoleDto roleDto);
 
-    RoleRequestDTO update(UUID id, RoleRequestDTO roleRequestDTO);
+    RoleDto update(UUID id, RoleDto roleDto);
 
     void remove(UUID id);
 

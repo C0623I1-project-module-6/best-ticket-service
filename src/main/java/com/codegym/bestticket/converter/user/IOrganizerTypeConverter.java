@@ -1,10 +1,10 @@
 package com.codegym.bestticket.converter.user;
 
 import com.codegym.bestticket.entity.user.OrganizerType;
-import com.codegym.bestticket.payload.request.organizer.OrganizerTypeRequestDTO;
+import com.codegym.bestticket.payload.request.user.OrganizerTypeRequest;
 
 public interface IOrganizerTypeConverter {
-    OrganizerTypeRequestDTO entityToDto(OrganizerType organizerType);
+    OrganizerTypeRequest entityToDto(OrganizerType organizerType);
 
-    OrganizerType dtoToEntity(OrganizerTypeRequestDTO organizerTypeRequestDTO);
+    OrganizerType dtoToEntity(OrganizerTypeRequest organizerTypeRequest);
 }

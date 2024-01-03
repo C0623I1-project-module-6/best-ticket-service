@@ -2,8 +2,8 @@ package com.codegym.bestticket.controller.ticket;
 
 import com.codegym.bestticket.constant.ETicketMessage;
 import com.codegym.bestticket.payload.ResponsePayload;
-import com.codegym.bestticket.payload.request.ticket.TicketRequestDTO;
-import com.codegym.bestticket.payload.response.ticket.TicketResponseDTO;
+import com.codegym.bestticket.payload.request.ticket.TicketRequest;
+import com.codegym.bestticket.payload.response.ticket.TicketResponse;
 import com.codegym.bestticket.service.ITicketService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -29,7 +29,7 @@ public class TicketController {
 
     @GetMapping
     public ResponseEntity<ResponsePayload> getAllTicket() {
-        Iterable<TicketRequestDTO> ticketRequestDTOS = ticketService.getAllTicket();
+        Iterable<TicketRequest> ticketRequestDTOS = ticketService.getAllTicket();
         ResponsePayload responsePayload;
         if (ticketRequestDTOS == null) {
             responsePayload = ResponsePayload.builder()
@@ -50,9 +50,9 @@ public class TicketController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponsePayload> getTicketById(@PathVariable UUID id) {
-        TicketResponseDTO ticketResponseDTO = ticketService.getTicketById(id);
+        TicketResponse ticketResponse = ticketService.getTicketById(id);
         ResponsePayload responsePayload;
-        if (ticketResponseDTO == null) {
+        if (ticketResponse == null) {
             responsePayload = ResponsePayload.builder()
                     .status(HttpStatus.NOT_FOUND)
                     .message(String.valueOf(ETicketMessage.FAIL))
@@ -62,15 +62,15 @@ public class TicketController {
         responsePayload = ResponsePayload.builder()
                 .message(String.valueOf(ETicketMessage.SUCCESS))
                 .status(HttpStatus.OK)
-                .data(ticketResponseDTO)
+                .data(ticketResponse)
                 .build();
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
     @PostMapping
-    public ResponseEntity<ResponsePayload> createTicket(@RequestBody TicketResponseDTO ticketResponseDTO) {
+    public ResponseEntity<ResponsePayload> createTicket(@RequestBody TicketResponse ticketResponse) {
 
-        if (ticketResponseDTO == null) {
+        if (ticketResponse == null) {
             ResponsePayload responsePayload = ResponsePayload.builder()
                     .status(HttpStatus.NOT_FOUND)
                     .message(String.valueOf(ETicketMessage.FAIL))
@@ -78,32 +78,32 @@ public class TicketController {
             return new ResponseEntity<>(responsePayload.getStatus());
         }
 
-        TicketRequestDTO ticketRequestDTO = TicketRequestDTO.builder().build();
-        BeanUtils.copyProperties(ticketResponseDTO, ticketRequestDTO);
+        TicketRequest ticketRequest = new TicketRequest();
+        BeanUtils.copyProperties(ticketResponse, ticketRequest);
 
         ResponsePayload responsePayload;
-        ticketRequestDTO = ticketService.createTicket(ticketRequestDTO);
+        ticketRequest = ticketService.createTicket(ticketRequest);
 
         responsePayload = ResponsePayload.builder()
                 .status(HttpStatus.CREATED)
                 .message(String.valueOf(ETicketMessage.SUCCESS))
-                .data(ticketRequestDTO)
+                .data(ticketRequest)
                 .build();
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponsePayload> updateTicket(@PathVariable UUID id, @RequestBody TicketResponseDTO ticketResponseDTO) {
+    public ResponseEntity<ResponsePayload> updateTicket(@PathVariable UUID id, @RequestBody TicketResponse ticketResponse) {
         ResponsePayload responsePayload;
-        if (ticketResponseDTO != null) {
-            ticketResponseDTO.setId(id);
+        if (ticketResponse != null) {
+            ticketResponse.setId(id);
 
-            ticketService.updateTicket(ticketResponseDTO);
+            ticketService.updateTicket(ticketResponse);
 
             responsePayload = ResponsePayload.builder()
                     .status(HttpStatus.OK)
                     .message(String.valueOf(ETicketMessage.SUCCESS))
-                    .data(ticketResponseDTO)
+                    .data(ticketResponse)
                     .build();
             return new ResponseEntity<>(responsePayload, HttpStatus.OK);
         }

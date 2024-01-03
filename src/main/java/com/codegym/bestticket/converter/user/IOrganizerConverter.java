@@ -1,15 +1,15 @@
 package com.codegym.bestticket.converter.user;
 
 import com.codegym.bestticket.entity.user.Organizer;
-import com.codegym.bestticket.payload.request.organizer.OrganizerRequestDTO;
-import com.codegym.bestticket.payload.response.organizer.OrganizerResponseDTO;
+import com.codegym.bestticket.payload.request.user.OrganizerRequest;
+import com.codegym.bestticket.payload.response.user.OrganizerResponse;
 
 import java.util.List;
 
 public interface IOrganizerConverter {
-    OrganizerResponseDTO entityToDto(Organizer organizer);
+    OrganizerResponse entityToDto(Organizer organizer);
 
-    Organizer dtoToEntity(OrganizerRequestDTO organizerRequestDTO);
+    Organizer dtoToEntity(OrganizerRequest organizerRequest);
 
-    List<OrganizerResponseDTO> entitiesToDTOs(List<Organizer> organizers);
+    List<OrganizerResponse> entitiesToDTOs(List<Organizer> organizers);
 }

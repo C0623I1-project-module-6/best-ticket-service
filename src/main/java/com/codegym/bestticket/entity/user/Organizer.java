@@ -31,18 +31,17 @@ public class Organizer {
     private UUID id;
     @Column(length = 50, nullable = false)
     private String name;
-    @Column(name = "phone_number", length = 50, nullable = false, unique = true)
+    @Column(length = 50, nullable = false, unique = true)
     private String phoneNumber;
     @Column(nullable = false, unique = true)
     private String email;
-    @Column(name = "id_card", length = 50, unique = true)
+    @Column(length = 50, unique = true)
     private String idCard;
-    @Column(name = "tax_code", length = 50, unique = true)
+    @Column(length = 50, unique = true)
     private String taxCode;
     @ManyToOne
     @JoinColumn(name = "organizer_type_id")
     private OrganizerType organizerType;
-    @Column(name = "is_deleted")
     private Boolean isDeleted;
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)

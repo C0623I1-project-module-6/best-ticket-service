@@ -7,7 +7,7 @@ ALTER TABLE contract_details
     DROP COLUMN ticket_price;
 
 ALTER TABLE contract_details
-    ADD COLUMN amount double;
+    ADD COLUMN amount DOUBLE;
 
 ALTER TABLE contracts
-    CHANGE amount total_amount double;
+    CHANGE amount total_amount DOUBLE;

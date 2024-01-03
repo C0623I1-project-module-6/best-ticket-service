@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS organizer_types
 (
     id        BINARY(16),
     name      VARCHAR(50),
-    is_deleted BIT default 0
+    is_deleted BIT DEFAULT 0
 );
 
 CREATE INDEX index_organizer_type_id ON organizer_types (id);
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS organizers
     tax_code          VARCHAR(50) UNIQUE,
     organizer_type_id BINARY(16),
     user_id           BINARY(16) UNIQUE,
-    is_deleted         bit default 0,
+    is_deleted         BIT DEFAULT 0,
     FOREIGN KEY (organizer_type_id) REFERENCES organizer_types (id),
     FOREIGN KEY (user_id) REFERENCES users (id)
 );

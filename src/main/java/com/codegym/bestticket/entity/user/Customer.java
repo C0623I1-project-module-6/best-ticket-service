@@ -1,6 +1,5 @@
 package com.codegym.bestticket.entity.user;
 
-import com.codegym.bestticket.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,15 +29,13 @@ public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(name = "full_name", length = 50, nullable = false)
+    @Column(length = 50, nullable = false)
     private String fullName;
     @Column(length = 15)
     private String gender;
-    @Column(name = "id_card", length = 50, unique = true)
+    @Column(length = 50, unique = true)
     private String idCard;
-    @Column(name = "date_of_birth")
     private Date dateOfBirth;
-    @Column(name = "is_deleted")
     private Boolean isDeleted;
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)

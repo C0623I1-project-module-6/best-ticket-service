@@ -28,16 +28,14 @@ public class BankAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(name = "account_name", length = 50, nullable = false)
+    @Column( length = 50, nullable = false)
     private String accountName;
-    @Column(name = "account_number", length = 20, nullable = false, unique = true)
+    @Column(length = 20, nullable = false, unique = true)
     private String accountNumber;
-    @Column(name = "bank_name", length = 100, nullable = false)
+    @Column( length = 100, nullable = false)
     private String bankName;
     @Column(length = 100)
     private String branch;
-
-    @Column(name = "is_deleted")
     private Boolean isDeleted;
     @ManyToOne
     @JoinColumn(name = "user_id")
