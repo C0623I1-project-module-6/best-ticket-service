@@ -1,8 +1,13 @@
 package com.codegym.bestticket.service.impl.organizer;
 
+<<<<<<< HEAD
 import com.codegym.bestticket.converter.user.impl.OrganizerTypeConverter;
 import com.codegym.bestticket.dto.request.organizer.OrganizerTypeRequestDTO;
-import com.codegym.bestticket.entity.organizer.OrganizerType;
+=======
+import com.codegym.bestticket.converter.organizer.OrganizerTypeConverter;
+import com.codegym.bestticket.payload.request.organizer.OrganizerTypeRequestDTO;
+>>>>>>> b443a7ace48527560c855f611c0b22a40f4cbd0b
+import com.codegym.bestticket.entity.user.OrganizerType;
 import com.codegym.bestticket.repository.organizer.IOrganizerTypeRepository;
 import com.codegym.bestticket.service.IOrganizerTypeService;
 import jakarta.persistence.EntityNotFoundException;

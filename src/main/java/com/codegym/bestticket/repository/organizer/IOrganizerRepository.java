@@ -1,6 +1,6 @@
 package com.codegym.bestticket.repository.organizer;
 
-import com.codegym.bestticket.entity.organizer.Organizer;
+import com.codegym.bestticket.entity.user.Organizer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

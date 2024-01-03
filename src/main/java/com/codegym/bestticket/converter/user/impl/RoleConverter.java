@@ -1,6 +1,6 @@
 package com.codegym.bestticket.converter.user.impl;
 
-import com.codegym.bestticket.dto.request.user.RoleRequestDTO;
+import com.codegym.bestticket.payload.request.user.RoleRequestDTO;
 import com.codegym.bestticket.entity.user.Role;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;

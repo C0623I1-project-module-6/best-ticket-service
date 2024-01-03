@@ -1,7 +1,12 @@
 package com.codegym.bestticket.service.impl.user;
 
+<<<<<<< HEAD
 import com.codegym.bestticket.converter.user.impl.RoleConverter;
 import com.codegym.bestticket.dto.request.user.RoleRequestDTO;
+=======
+import com.codegym.bestticket.converter.user.RoleConverter;
+import com.codegym.bestticket.payload.request.user.RoleRequestDTO;
+>>>>>>> b443a7ace48527560c855f611c0b22a40f4cbd0b
 import com.codegym.bestticket.entity.user.Role;
 import com.codegym.bestticket.repository.user.IRoleRepository;
 import com.codegym.bestticket.service.IRoleService;

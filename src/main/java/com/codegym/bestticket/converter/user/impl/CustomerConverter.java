@@ -1,7 +1,10 @@
 package com.codegym.bestticket.converter.user.impl;
-import com.codegym.bestticket.dto.request.customer.CustomerRequestDTO;
-import com.codegym.bestticket.dto.response.customer.CustomerResponseDTO;
-import com.codegym.bestticket.entity.customer.Customer;
+
+import com.codegym.bestticket.converter.user.ICustomerConverter;
+import com.codegym.bestticket.payload.request.customer.CustomerRequestDTO;
+import com.codegym.bestticket.payload.response.customer.CustomerResponseDTO;
+
+import com.codegym.bestticket.entity.user.Customer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class CustomerConverter {
+public class CustomerConverter implements ICustomerConverter {
     public CustomerResponseDTO entityToDto(Customer customer) {
         CustomerResponseDTO customerResponseDTO = new CustomerResponseDTO();
         BeanUtils.copyProperties(customer, customerResponseDTO);

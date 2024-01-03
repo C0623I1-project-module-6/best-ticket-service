@@ -1,7 +1,7 @@
 package com.codegym.bestticket.controller;
 
-import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.dto.request.user.RoleRequestDTO;
+import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.request.user.RoleRequestDTO;
 import com.codegym.bestticket.service.IRoleService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -25,11 +25,11 @@ public class RoleController {
     private final IRoleService roleService;
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addRole(@RequestBody RoleRequestDTO roleRequestDTO) {
+    public ResponseEntity<ResponsePayload> addRole(@RequestBody RoleRequestDTO roleRequestDTO) {
         try {
             if (roleRequestDTO == null) {
                 return new ResponseEntity<>(
-                        ResponseDto.builder()
+                        ResponsePayload.builder()
                                 .message("Request not found!")
                                 .status(HttpStatus.BAD_REQUEST)
                                 .build(),
@@ -37,7 +37,7 @@ public class RoleController {
             }
             RoleRequestDTO resultRoleRequestDTO = roleService.create(roleRequestDTO);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Add role successfully!!!")
                             .status(HttpStatus.CREATED)
                             .data(resultRoleRequestDTO)
@@ -45,7 +45,7 @@ public class RoleController {
                     HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Add role failed!")
                             .status(HttpStatus.BAD_REQUEST)
                             .build(),
@@ -54,18 +54,18 @@ public class RoleController {
     }
 
     @DeleteMapping("/disable/{id}")
-    public ResponseEntity<ResponseDto> disableRole(@PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> disableRole(@PathVariable UUID id) {
         try {
             roleService.remove(id);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Role disabled!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Role not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
@@ -74,18 +74,18 @@ public class RoleController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponseDto> deleteRole(@PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> deleteRole(@PathVariable UUID id) {
         try {
             roleService.delete(id);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Role deleted!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Role not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),

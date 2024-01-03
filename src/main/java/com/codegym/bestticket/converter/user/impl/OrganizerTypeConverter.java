@@ -1,12 +1,13 @@
 package com.codegym.bestticket.converter.user.impl;
 
-import com.codegym.bestticket.dto.request.organizer.OrganizerTypeRequestDTO;
-import com.codegym.bestticket.entity.organizer.OrganizerType;
+import com.codegym.bestticket.converter.user.IOrganizerTypeConverter;
+import com.codegym.bestticket.entity.user.OrganizerType;
+import com.codegym.bestticket.payload.request.organizer.OrganizerTypeRequestDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrganizerTypeConverter {
+public class OrganizerTypeConverter implements IOrganizerTypeConverter {
     public OrganizerTypeRequestDTO entityToDto(OrganizerType organizerType) {
         OrganizerTypeRequestDTO organizerTypeRequestDTO = new OrganizerTypeRequestDTO();
         BeanUtils.copyProperties(organizerType, organizerTypeRequestDTO);
@@ -14,7 +15,7 @@ public class OrganizerTypeConverter {
     }
 
     public OrganizerType dtoToEntity(OrganizerTypeRequestDTO organizerTypeRequestDTO) {
-        OrganizerType organizerType= new OrganizerType();
+        OrganizerType organizerType = new OrganizerType();
         BeanUtils.copyProperties(organizerTypeRequestDTO, organizerType);
         return organizerType;
     }

@@ -1,11 +1,20 @@
 package com.codegym.bestticket.service.impl.user;
 
+<<<<<<< HEAD
 import com.codegym.bestticket.converter.user.impl.LoginConverter;
 import com.codegym.bestticket.converter.user.impl.RegisterConverter;
 import com.codegym.bestticket.dto.request.user.LoginRequestDTO;
 import com.codegym.bestticket.dto.request.user.RegisterRequestDTO;
 import com.codegym.bestticket.dto.response.user.LoginResponseDTO;
 import com.codegym.bestticket.dto.response.user.RegisterResponseDTO;
+=======
+import com.codegym.bestticket.converter.user.LoginConverter;
+import com.codegym.bestticket.converter.user.RegisterConverter;
+import com.codegym.bestticket.payload.request.user.LoginRequestDTO;
+import com.codegym.bestticket.payload.request.user.RegisterRequestDTO;
+import com.codegym.bestticket.payload.response.user.LoginResponseDTO;
+import com.codegym.bestticket.payload.response.user.RegisterResponseDTO;
+>>>>>>> b443a7ace48527560c855f611c0b22a40f4cbd0b
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.exception.EmailAlreadyExistsException;
 import com.codegym.bestticket.exception.EmailNotFoundException;

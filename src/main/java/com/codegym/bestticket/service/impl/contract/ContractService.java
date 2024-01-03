@@ -1,11 +1,11 @@
 package com.codegym.bestticket.service.impl.contract;
 
 import com.codegym.bestticket.constant.EContractStatus;
-import com.codegym.bestticket.dto.request.contract.ContractRequestDTO;
-import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
+import com.codegym.bestticket.payload.request.contract.ContractRequestDTO;
+import com.codegym.bestticket.payload.response.contract.ContractResponseDTO;
 import com.codegym.bestticket.entity.contract.Contract;
-import com.codegym.bestticket.entity.customer.Customer;
-import com.codegym.bestticket.entity.organizer.Organizer;
+import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.repository.contract.IContractRepository;
 import com.codegym.bestticket.service.IContractService;
 import lombok.AllArgsConstructor;
