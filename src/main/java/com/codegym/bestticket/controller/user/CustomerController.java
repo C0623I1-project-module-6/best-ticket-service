@@ -1,8 +1,8 @@
 package com.codegym.bestticket.controller.user;
 
-import com.codegym.bestticket.dto.CustomerDTO;
+import com.codegym.bestticket.dto.request.customer.CustomerRequestDTO;
 import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.dto.response.user.CustomerDtoResponse;
+import com.codegym.bestticket.dto.response.customer.CustomerResponseDTO;
 import com.codegym.bestticket.service.ICustomerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -31,13 +31,13 @@ public class CustomerController {
     @GetMapping("")
     public ResponseEntity<ResponseDto> getCustomers() {
         try {
-            List<CustomerDtoResponse> customerDtoResponses =
+            List<CustomerResponseDTO> customerResponsDTOS =
                     customerService.findAll();
             return new ResponseEntity<>(
                     ResponseDto.builder()
                             .message("Customer list")
                             .status(HttpStatus.OK)
-                            .data(customerDtoResponses)
+                            .data(customerResponsDTOS)
                             .build(),
                     HttpStatus.OK);
         } catch (RuntimeException e) {
@@ -53,13 +53,13 @@ public class CustomerController {
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto> getCustomer(@PathVariable UUID id) {
         try {
-            CustomerDtoResponse customerDtoResponse =
+            CustomerResponseDTO customerResponseDTO =
                     customerService.findById(id);
             return new ResponseEntity<>(
                     ResponseDto.builder()
-                            .message("Customer" + customerDtoResponse.getId())
+                            .message("Customer" + customerResponseDTO.getId())
                             .status(HttpStatus.OK)
-                            .data(customerDtoResponse)
+                            .data(customerResponseDTO)
                             .build(),
                     HttpStatus.OK);
         } catch (RuntimeException e) {
@@ -73,9 +73,9 @@ public class CustomerController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addCustomer(@RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<ResponseDto> addCustomer(@RequestBody CustomerRequestDTO customerRequestDTO) {
         try {
-            if (customerDTO == null) {
+            if (customerRequestDTO == null) {
                 return new ResponseEntity<>(
                         ResponseDto.builder()
                                 .message("Request not found!")
@@ -83,12 +83,12 @@ public class CustomerController {
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            CustomerDtoResponse customerDtoResponse = customerService.create(customerDTO);
+            CustomerResponseDTO customerResponseDTO = customerService.create(customerRequestDTO);
             return new ResponseEntity<>(
                     ResponseDto.builder()
                             .message("Add customer successfully!!!")
                             .status(HttpStatus.CREATED)
-                            .data(customerDtoResponse)
+                            .data(customerResponseDTO)
                             .build(),
                     HttpStatus.CREATED);
         } catch (RuntimeException e) {
@@ -103,9 +103,9 @@ public class CustomerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDto> editCustomer(@PathVariable UUID id,
-                                                    @RequestBody CustomerDTO customerDTO) {
+                                                    @RequestBody CustomerRequestDTO customerRequestDTO) {
         try {
-            if (customerDTO == null) {
+            if (customerRequestDTO == null) {
                 return new ResponseEntity<>(
                         ResponseDto.builder()
                                 .message("Request not found!")
@@ -113,12 +113,12 @@ public class CustomerController {
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            CustomerDtoResponse customerDtoResponse = customerService.update(id, customerDTO);
+            CustomerResponseDTO customerResponseDTO = customerService.update(id, customerRequestDTO);
             return new ResponseEntity<>(
                     ResponseDto.builder()
                             .message("Edit customer successfully!!!")
                             .status(HttpStatus.OK)
-                            .data(customerDtoResponse)
+                            .data(customerResponseDTO)
                             .build(),
                     HttpStatus.OK);
         } catch (RuntimeException e) {

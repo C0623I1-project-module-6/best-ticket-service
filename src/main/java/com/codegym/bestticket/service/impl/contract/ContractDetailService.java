@@ -5,9 +5,9 @@ import com.codegym.bestticket.dto.response.contract.ContractDetailResponseDTO;
 import com.codegym.bestticket.entity.contract.Contract;
 import com.codegym.bestticket.entity.contract.ContractDetail;
 import com.codegym.bestticket.entity.ticket.Ticket;
-import com.codegym.bestticket.repository.IContractDetailRepository;
-import com.codegym.bestticket.repository.IContractRepository;
-import com.codegym.bestticket.repository.ITicketRepository;
+import com.codegym.bestticket.repository.contract.IContractDetailRepository;
+import com.codegym.bestticket.repository.contract.IContractRepository;
+import com.codegym.bestticket.repository.ticket.ITicketRepository;
 import com.codegym.bestticket.service.IContractDetailService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
@@ -47,7 +47,7 @@ public class ContractDetailService implements IContractDetailService {
     }
 
     private Optional<ContractDetailResponseDTO> getContractDetailResponseDTO(Optional<ContractDetail> contractDetailOptional) {
-        if (contractDetailOptional.isPresent() && !contractDetailOptional.get().getIsDelete()) {
+        if (contractDetailOptional.isPresent() && !contractDetailOptional.get().getIsDeleted()) {
             ContractDetail contractDetail = contractDetailOptional.get();
             ContractDetailResponseDTO contractDetailResponseDTO = new ContractDetailResponseDTO();
             BeanUtils.copyProperties(contractDetail, contractDetailResponseDTO);

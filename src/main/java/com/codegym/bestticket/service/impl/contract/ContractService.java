@@ -4,7 +4,7 @@ import com.codegym.bestticket.constant.EContractStatus;
 import com.codegym.bestticket.dto.request.contract.ContractRequestDTO;
 import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
 import com.codegym.bestticket.entity.contract.Contract;
-import com.codegym.bestticket.repository.IContractRepository;
+import com.codegym.bestticket.repository.contract.IContractRepository;
 import com.codegym.bestticket.service.IContractService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
@@ -39,7 +39,7 @@ public class ContractService implements IContractService {
     @Override
     public Optional<ContractResponseDTO> findById(UUID id) {
         Optional<Contract> contractOptional = iContractRepository.findById(id);
-        if (contractOptional.isPresent() && !contractOptional.get().getIsDelete()) {
+        if (contractOptional.isPresent() && !contractOptional.get().getIsDeleted()) {
             Contract contract = contractOptional.get();
             ContractResponseDTO contractResponseDTO = new ContractResponseDTO();
             BeanUtils.copyProperties(contract, contractResponseDTO);

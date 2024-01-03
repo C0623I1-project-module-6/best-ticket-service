@@ -3,7 +3,7 @@ package com.codegym.bestticket.service.impl.ticket;
 import com.codegym.bestticket.dto.request.ticket.TicketRequestDTO;
 import com.codegym.bestticket.dto.response.ticket.TicketResponseDTO;
 import com.codegym.bestticket.entity.ticket.Ticket;
-import com.codegym.bestticket.repository.ITicketRepository;
+import com.codegym.bestticket.repository.ticket.ITicketRepository;
 import com.codegym.bestticket.service.ITicketService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -24,7 +24,7 @@ public class TicketService implements ITicketService {
         Iterable<Ticket> tickets = ticketRepository.findAll();
 
         return StreamSupport.stream(tickets.spliterator(), true)
-                .filter(ticket -> !ticket.getIsDelete())
+                .filter(ticket -> !ticket.getIsDeleted())
                 .map(ticket -> {
                     TicketRequestDTO ticketRequestDTO = TicketRequestDTO.builder().build();
                     BeanUtils.copyProperties(ticket, ticketRequestDTO);
@@ -37,7 +37,7 @@ public class TicketService implements ITicketService {
     public TicketResponseDTO getTicketById(UUID id) {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
         assert ticket != null;
-        if (Boolean.FALSE.equals(ticket.getIsDelete())) {
+        if (Boolean.FALSE.equals(ticket.getIsDeleted())) {
             TicketResponseDTO ticketResponseDTO1 = TicketResponseDTO.builder().build();
 
             BeanUtils.copyProperties(ticket, ticketResponseDTO1);
