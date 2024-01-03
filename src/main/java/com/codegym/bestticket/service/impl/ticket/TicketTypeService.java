@@ -75,6 +75,4 @@ public class TicketTypeService implements ITicketTypeService {
 
         ticketTypeRepository.save(ticketType);
     }
-
-
 }

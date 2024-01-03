@@ -35,8 +35,7 @@ public class Contract {
 
     private String date;
 
-    @Column(columnDefinition = "DECIMAL(10, 2)")
-    private Double amount;
+    private Double totalAmount;
 
     @Column(length = 30)
     private String status;

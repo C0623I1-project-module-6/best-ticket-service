@@ -4,6 +4,8 @@ import com.codegym.bestticket.constant.EContractStatus;
 import com.codegym.bestticket.dto.request.contract.ContractRequestDTO;
 import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
 import com.codegym.bestticket.entity.contract.Contract;
+import com.codegym.bestticket.entity.customer.Customer;
+import com.codegym.bestticket.entity.organizer.Organizer;
 import com.codegym.bestticket.repository.contract.IContractRepository;
 import com.codegym.bestticket.service.IContractService;
 import lombok.AllArgsConstructor;
@@ -11,6 +13,10 @@ import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,7 +27,6 @@ import java.util.stream.StreamSupport;
 @Service
 public class ContractService implements IContractService {
     private final IContractRepository iContractRepository;
-
 
     @Override
     public Iterable<ContractResponseDTO> findAll() {
@@ -51,6 +56,11 @@ public class ContractService implements IContractService {
 
     @Override
     public void save(ContractRequestDTO contractRequestDTO) {
+        if (contractRequestDTO.getId() == null) {
+            contractRequestDTO.setDate(String.valueOf(Timestamp.from(Instant.now())));
+            contractRequestDTO.setCreatedAt(Timestamp.from(Instant.now()));
+        }
+        contractRequestDTO.setUpdatedAt(Timestamp.from(Instant.now()));
         Contract contract = new Contract();
         BeanUtils.copyProperties(contractRequestDTO, contract);
         iContractRepository.save(contract);
@@ -68,4 +78,46 @@ public class ContractService implements IContractService {
     public void delete(UUID id) {
         iContractRepository.deleteById(id);
     }
+
+    @Override
+    public Iterable<ContractResponseDTO> searchAllByCustomer(Customer customer) {
+        Iterable<Contract> contracts = iContractRepository.searchAllByCustomer(customer);
+        return StreamSupport.stream(contracts.spliterator(), false)
+                .filter(contract -> !contract.getIsDeleted())
+                .map(contract -> {
+                    ContractResponseDTO contractResponseDTO = new ContractResponseDTO();
+                    BeanUtils.copyProperties(contract, contractResponseDTO);
+                    return contractResponseDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<ContractResponseDTO> searchAllByOrganizer(Organizer organizer) {
+        Iterable<Contract> contracts = iContractRepository.searchAllByOrganizer(organizer);
+        return StreamSupport.stream(contracts.spliterator(), false)
+                .filter(contract -> !contract.getIsDeleted())
+                .map(contract -> {
+                    ContractResponseDTO contractResponseDTO = new ContractResponseDTO();
+                    BeanUtils.copyProperties(contract, contractResponseDTO);
+                    return contractResponseDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<ContractResponseDTO> searchByInput(String input) {
+        Iterable<Contract> contracts = iContractRepository.findAll();
+        List<ContractResponseDTO> contractResponseDTOS = new ArrayList<>();
+        for (Contract contract : contracts) {
+            if (input.contains(contract.getCustomer().getFullName())
+                    || input.contains(contract.getOrganizer().getName())) {
+                ContractResponseDTO contractResponseDTO = new ContractResponseDTO();
+                BeanUtils.copyProperties(contract, contractResponseDTO);
+                contractResponseDTOS.add(contractResponseDTO);
+            }
+        }
+        return contractResponseDTOS;
+    }
+
 }
