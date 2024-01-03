@@ -1,7 +1,7 @@
 package com.codegym.bestticket.controller.event;
 
 import com.codegym.bestticket.dto.EventDTO;
-import com.codegym.bestticket.dto.response.event.EventResponse;
+import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.service.EventService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,6 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.dto.request.user.RoleRequestDTO;
+import com.codegym.bestticket.payload.request.user.RoleRequestDTO;
 
 import java.util.UUID;
 

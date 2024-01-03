@@ -1,9 +1,9 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.dto.request.user.LoginRequestDTO;
-import com.codegym.bestticket.dto.request.user.RegisterRequestDTO;
-import com.codegym.bestticket.dto.response.user.LoginResponseDTO;
-import com.codegym.bestticket.dto.response.user.RegisterResponseDTO;
+import com.codegym.bestticket.payload.request.user.LoginRequestDTO;
+import com.codegym.bestticket.payload.request.user.RegisterRequestDTO;
+import com.codegym.bestticket.payload.response.user.LoginResponseDTO;
+import com.codegym.bestticket.payload.response.user.RegisterResponseDTO;
 
 import java.util.UUID;
 

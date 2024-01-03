@@ -1,7 +1,7 @@
 package com.codegym.bestticket.converter.organizer;
 
-import com.codegym.bestticket.dto.request.organizer.OrganizerRequestDTO;
-import com.codegym.bestticket.dto.response.organizer.OrganizerResponseDTO;
+import com.codegym.bestticket.payload.request.organizer.OrganizerRequestDTO;
+import com.codegym.bestticket.payload.response.organizer.OrganizerResponseDTO;
 import com.codegym.bestticket.entity.organizer.Organizer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;

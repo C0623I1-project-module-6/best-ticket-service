@@ -1,8 +1,8 @@
 package com.codegym.bestticket.controller.user;
 
-import com.codegym.bestticket.dto.request.organizer.OrganizerRequestDTO;
-import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.dto.response.organizer.OrganizerResponseDTO;
+import com.codegym.bestticket.payload.request.organizer.OrganizerRequestDTO;
+import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.response.organizer.OrganizerResponseDTO;
 import com.codegym.bestticket.service.IOrganizerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -29,12 +29,12 @@ public class OrganizerController {
     private final IOrganizerService organizerService;
 
     @GetMapping("")
-    public ResponseEntity<ResponseDto> getOrganizers() {
+    public ResponseEntity<ResponsePayload> getOrganizers() {
         try {
             List<OrganizerResponseDTO> organizerResponsDTOS =
                     organizerService.findAll();
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Organizer list")
                             .status(HttpStatus.OK)
                             .data(organizerResponsDTOS)
@@ -42,7 +42,7 @@ public class OrganizerController {
                     HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Organizer list not found!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
@@ -51,12 +51,12 @@ public class OrganizerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDto> getOrganizer(@PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> getOrganizer(@PathVariable UUID id) {
         try {
             OrganizerResponseDTO organizerResponseDTO =
                     organizerService.findById(id);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Organizer" + organizerResponseDTO.getId())
                             .status(HttpStatus.OK)
                             .data(organizerResponseDTO)
@@ -64,7 +64,7 @@ public class OrganizerController {
                     HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Organizer" + id + "not found!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
@@ -73,11 +73,11 @@ public class OrganizerController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addOrganizer(@RequestBody OrganizerRequestDTO organizerRequestDTO) {
+    public ResponseEntity<ResponsePayload> addOrganizer(@RequestBody OrganizerRequestDTO organizerRequestDTO) {
         try {
             if (organizerRequestDTO == null) {
                 return new ResponseEntity<>(
-                        ResponseDto.builder()
+                        ResponsePayload.builder()
                                 .message("Request not found!")
                                 .status(HttpStatus.BAD_REQUEST)
                                 .build(),
@@ -85,7 +85,7 @@ public class OrganizerController {
             }
             OrganizerResponseDTO organizerResponseDTO = organizerService.create(organizerRequestDTO);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Add organizer successfully!!!")
                             .status(HttpStatus.CREATED)
                             .data(organizerResponseDTO)
@@ -93,7 +93,7 @@ public class OrganizerController {
                     HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Add organizer failed!")
                             .status(HttpStatus.BAD_REQUEST)
                             .build(),
@@ -102,12 +102,12 @@ public class OrganizerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDto> editOrganizer(@PathVariable UUID id,
-                                                     @RequestBody OrganizerRequestDTO organizerRequestDTO) {
+    public ResponseEntity<ResponsePayload> editOrganizer(@PathVariable UUID id,
+                                                         @RequestBody OrganizerRequestDTO organizerRequestDTO) {
         try {
             if (organizerRequestDTO == null) {
                 return new ResponseEntity<>(
-                        ResponseDto.builder()
+                        ResponsePayload.builder()
                                 .message("Request not found!")
                                 .status(HttpStatus.BAD_REQUEST)
                                 .build(),
@@ -115,7 +115,7 @@ public class OrganizerController {
             }
             OrganizerResponseDTO organizerResponseDTO = organizerService.update(id, organizerRequestDTO);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Edit organizer successfully!!!")
                             .status(HttpStatus.OK)
                             .data(organizerResponseDTO)
@@ -123,7 +123,7 @@ public class OrganizerController {
                     HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Edit organizer failed!")
                             .status(HttpStatus.BAD_REQUEST)
                             .build(),
@@ -132,18 +132,18 @@ public class OrganizerController {
     }
 
     @DeleteMapping("/disable/{id}")
-    public ResponseEntity<ResponseDto> disableOrganizer(@PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> disableOrganizer(@PathVariable UUID id) {
         try {
             organizerService.remove(id);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Organizer disabled!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Organizer not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
@@ -152,18 +152,18 @@ public class OrganizerController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponseDto> deleteOrganizer(@PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> deleteOrganizer(@PathVariable UUID id) {
         try {
             organizerService.delete(id);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Organizer deleted!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Organizer not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),

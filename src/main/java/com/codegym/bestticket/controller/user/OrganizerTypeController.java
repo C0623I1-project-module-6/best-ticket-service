@@ -1,7 +1,7 @@
 package com.codegym.bestticket.controller.user;
 
-import com.codegym.bestticket.dto.request.organizer.OrganizerTypeRequestDTO;
-import com.codegym.bestticket.dto.ResponseDto;
+import com.codegym.bestticket.payload.request.organizer.OrganizerTypeRequestDTO;
+import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.service.IOrganizerTypeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -25,11 +25,11 @@ public class OrganizerTypeController {
     private final IOrganizerTypeService organizerTypeService;
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addOrganizerType(@RequestBody OrganizerTypeRequestDTO organizerTypeRequestDTO) {
+    public ResponseEntity<ResponsePayload> addOrganizerType(@RequestBody OrganizerTypeRequestDTO organizerTypeRequestDTO) {
         try {
             if (organizerTypeRequestDTO == null) {
                 return new ResponseEntity<>(
-                        ResponseDto.builder()
+                        ResponsePayload.builder()
                                 .message("Request not found!")
                                 .status(HttpStatus.BAD_REQUEST)
                                 .build(),
@@ -37,7 +37,7 @@ public class OrganizerTypeController {
             }
             OrganizerTypeRequestDTO resultOrganizerTypeRequestDTO = organizerTypeService.create(organizerTypeRequestDTO);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Add organizer type successfully!!!")
                             .status(HttpStatus.CREATED)
                             .data(resultOrganizerTypeRequestDTO)
@@ -45,7 +45,7 @@ public class OrganizerTypeController {
                     HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Add organizer type failed!")
                             .status(HttpStatus.BAD_REQUEST)
                             .build(),
@@ -54,18 +54,18 @@ public class OrganizerTypeController {
     }
 
     @DeleteMapping("/disable/{id}")
-    public ResponseEntity<ResponseDto> disableOrganizerType(@PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> disableOrganizerType(@PathVariable UUID id) {
         try {
             organizerTypeService.remove(id);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Organizer type disable!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Organizer type not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
@@ -74,18 +74,18 @@ public class OrganizerTypeController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponseDto> deleteOrganizerType(@PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> deleteOrganizerType(@PathVariable UUID id) {
         try {
             organizerTypeService.delete(id);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Organizer type deleted!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Organizer type not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),

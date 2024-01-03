@@ -1,9 +1,9 @@
 package com.codegym.bestticket.controller.contract;
 
-import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.dto.request.contract.ContractDetailRequestDTO;
-import com.codegym.bestticket.dto.response.contract.ContractDetailResponseDTO;
-import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
+import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.request.contract.ContractDetailRequestDTO;
+import com.codegym.bestticket.payload.response.contract.ContractDetailResponseDTO;
+import com.codegym.bestticket.payload.response.contract.ContractResponseDTO;
 import com.codegym.bestticket.entity.contract.Contract;
 import com.codegym.bestticket.service.IContractDetailService;
 import com.codegym.bestticket.service.IContractService;
@@ -36,28 +36,28 @@ public class ContractDetailController {
     private final IContractDetailService contractDetailService;
 
     @GetMapping()
-    public ResponseEntity<ResponseDto> getContractDetailList(@PathVariable UUID contractId) {
+    public ResponseEntity<ResponsePayload> getContractDetailList(@PathVariable UUID contractId) {
         Iterable<ContractDetailResponseDTO> contractDetailResponseDTOS = contractDetailService.findAllByContractId(contractId);
-        ResponseDto responseDto = ResponseDto.builder()
+        ResponsePayload responsePayload = ResponsePayload.builder()
                 .message("Fetch data successfully")
                 .status(HttpStatus.OK)
                 .data(contractDetailResponseDTOS)
                 .build();
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntity.ok(responsePayload);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDto> getContractDetail(@PathVariable UUID contractId, @PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> getContractDetail(@PathVariable UUID contractId, @PathVariable UUID id) {
         Optional<ContractDetailResponseDTO> contractDetailResponseDTO = contractDetailService.findByContractIdAndId(contractId, id);
         if (contractDetailResponseDTO.isPresent() && !contractDetailResponseDTO.get().getIsDeleted()) {
-            ResponseDto responseDto = ResponseDto.builder()
+            ResponsePayload responsePayload = ResponsePayload.builder()
                     .message("Contract detail found.")
                     .status(HttpStatus.OK)
                     .data(contractDetailResponseDTO)
                     .build();
-            return ResponseEntity.ok(responseDto);
+            return ResponseEntity.ok(responsePayload);
         } else {
-            ResponseDto errorResponse = ResponseDto.builder()
+            ResponsePayload errorResponse = ResponsePayload.builder()
                     .message("Contract detail not found")
                     .status(HttpStatus.NOT_FOUND)
                     .build();
@@ -66,7 +66,7 @@ public class ContractDetailController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addContractDetail(@PathVariable UUID contractId, @RequestBody ContractDetailRequestDTO contractDetailRequestDTO) {
+    public ResponseEntity<ResponsePayload> addContractDetail(@PathVariable UUID contractId, @RequestBody ContractDetailRequestDTO contractDetailRequestDTO) {
         try {
             Optional<ContractResponseDTO> contractOptional = contractService.findById(contractId);
             if (contractOptional.isPresent()) {
@@ -74,7 +74,7 @@ public class ContractDetailController {
                 BeanUtils.copyProperties(contractOptional.get(), contract);
                 contractDetailRequestDTO.setContract(contract);
                 contractDetailService.save(contractDetailRequestDTO);
-                return ResponseEntity.ok(ResponseDto.builder()
+                return ResponseEntity.ok(ResponsePayload.builder()
                         .message("Added successfully.")
                         .status(HttpStatus.OK)
                         .data(contractDetailRequestDTO)
@@ -83,7 +83,7 @@ public class ContractDetailController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            ResponseDto errorResponse = ResponseDto.builder()
+            ResponsePayload errorResponse = ResponsePayload.builder()
                     .message("An error occurred while adding the contract.")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
@@ -93,28 +93,28 @@ public class ContractDetailController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseDto> updateContractDetail(@PathVariable UUID contractId, @PathVariable UUID id, @RequestBody ContractDetailRequestDTO contractDetailRequestDTO) {
+    public ResponseEntity<ResponsePayload> updateContractDetail(@PathVariable UUID contractId, @PathVariable UUID id, @RequestBody ContractDetailRequestDTO contractDetailRequestDTO) {
         try {
             Optional<ContractDetailResponseDTO> contractDetailResponseDTO = contractDetailService.findByContractIdAndId(contractId, id);
             if (contractDetailResponseDTO.isPresent()) {
                 contractDetailRequestDTO.setId(id);
                 contractDetailService.save(contractDetailRequestDTO);
                 Optional<ContractDetailResponseDTO> updatedContractDetail = contractDetailService.findByContractIdAndId(contractId, id);
-                ResponseDto responseDto = ResponseDto.builder()
+                ResponsePayload responsePayload = ResponsePayload.builder()
                         .message("Update successfully.")
                         .status(HttpStatus.OK)
                         .data(updatedContractDetail)
                         .build();
-                return ResponseEntity.ok(responseDto);
+                return ResponseEntity.ok(responsePayload);
             } else {
-                ResponseDto errorResponse = ResponseDto.builder()
+                ResponsePayload errorResponse = ResponsePayload.builder()
                         .message("Update failed. Contract not found.")
                         .status(HttpStatus.NOT_FOUND)
                         .build();
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
             }
         } catch (Exception e) {
-            ResponseDto errorResponse = ResponseDto.builder()
+            ResponsePayload errorResponse = ResponsePayload.builder()
                     .message("An error occurred while updating the contract.")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
@@ -124,17 +124,17 @@ public class ContractDetailController {
     }
 
     @DeleteMapping("/remove/{id}")
-    public ResponseEntity<ResponseDto> removeContractDetail(@PathVariable UUID contractId, @PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> removeContractDetail(@PathVariable UUID contractId, @PathVariable UUID id) {
         Optional<ContractDetailResponseDTO> contractDetailResponseDTO = contractDetailService.findByContractIdAndId(contractId, id);
         if (contractDetailResponseDTO.isPresent()) {
             contractDetailService.remove(id);
-            return ResponseEntity.ok(ResponseDto.builder()
+            return ResponseEntity.ok(ResponsePayload.builder()
                     .message("Remove successfully.")
                     .status(HttpStatus.OK)
                     .build());
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ResponseDto.builder()
+                    .body(ResponsePayload.builder()
                             .message("Contract detail not found.")
                             .status(HttpStatus.NOT_FOUND)
                             .build());
