@@ -27,7 +27,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "contracts")
-public class Contract {
+public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

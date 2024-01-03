@@ -35,7 +35,7 @@ public class ContractDetail {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "contract_id", nullable = false)
-    private Contract contract;
+    private Booking booking;
 
     @OneToMany(mappedBy = "contractDetail")
     @JsonIgnore

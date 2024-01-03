@@ -1,8 +1,8 @@
 package com.codegym.bestticket.service.impl.contract;
 
-import com.codegym.bestticket.dto.request.contract.ContractDetailRequestDTO;
-import com.codegym.bestticket.dto.response.contract.ContractDetailResponseDTO;
-import com.codegym.bestticket.entity.contract.Contract;
+import com.codegym.bestticket.dto.request.contract.BookingDetailRequestDTO;
+import com.codegym.bestticket.dto.response.contract.BookingDetailResponseDTO;
+import com.codegym.bestticket.entity.contract.Booking;
 import com.codegym.bestticket.entity.contract.ContractDetail;
 import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.repository.contract.IContractDetailRepository;
@@ -29,52 +29,52 @@ public class ContractDetailService implements IContractDetailService {
     private final ITicketRepository iTicketRepository;
 
     @Override
-    public Iterable<ContractDetailResponseDTO> findAll() {
+    public Iterable<BookingDetailResponseDTO> findAll() {
         Iterable<ContractDetail> contractDetails = iContractDetailRepository.findAll();
         return StreamSupport.stream(contractDetails.spliterator(), false)
                 .filter(contractDetail -> !contractDetail.getIsDeleted())
                 .map(contractDetail -> {
-                    ContractDetailResponseDTO contractDetailResponseDTO = new ContractDetailResponseDTO();
-                    BeanUtils.copyProperties(contractDetail, contractDetailResponseDTO);
-                    return contractDetailResponseDTO;
+                    BookingDetailResponseDTO bookingDetailResponseDTO = new BookingDetailResponseDTO();
+                    BeanUtils.copyProperties(contractDetail, bookingDetailResponseDTO);
+                    return bookingDetailResponseDTO;
                 })
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<ContractDetailResponseDTO> findById(UUID id) {
+    public Optional<BookingDetailResponseDTO> findById(UUID id) {
         Optional<ContractDetail> contractDetailOptional = iContractDetailRepository.findById(id);
         return getContractDetailResponseDTO(contractDetailOptional);
     }
 
-    private Optional<ContractDetailResponseDTO> getContractDetailResponseDTO(Optional<ContractDetail> contractDetailOptional) {
+    private Optional<BookingDetailResponseDTO> getContractDetailResponseDTO(Optional<ContractDetail> contractDetailOptional) {
         if (contractDetailOptional.isPresent() && !contractDetailOptional.get().getIsDeleted()) {
             ContractDetail contractDetail = contractDetailOptional.get();
-            ContractDetailResponseDTO contractDetailResponseDTO = new ContractDetailResponseDTO();
-            BeanUtils.copyProperties(contractDetail, contractDetailResponseDTO);
-            return Optional.of(contractDetailResponseDTO);
+            BookingDetailResponseDTO bookingDetailResponseDTO = new BookingDetailResponseDTO();
+            BeanUtils.copyProperties(contractDetail, bookingDetailResponseDTO);
+            return Optional.of(bookingDetailResponseDTO);
         } else {
             return Optional.empty();
         }
     }
 
     @Override
-    public Iterable<ContractDetailResponseDTO> findAllByContractId(UUID contractId) {
-        Optional<Contract> contract = iContractRepository.findById(contractId);
+    public Iterable<BookingDetailResponseDTO> findAllByContractId(UUID contractId) {
+        Optional<Booking> contract = iContractRepository.findById(contractId);
 
         Iterable<ContractDetail> contractDetailsOfContract = iContractDetailRepository.findAllByContractId(contractId);
         updateContractTotalAmount(contractDetailsOfContract, contract);
         return StreamSupport.stream(contractDetailsOfContract.spliterator(), false)
                 .filter(contractDetail -> !contractDetail.getIsDeleted())
                 .map(contractDetail -> {
-                    ContractDetailResponseDTO contractDetailResponseDTO = new ContractDetailResponseDTO();
-                    BeanUtils.copyProperties(contractDetail, contractDetailResponseDTO);
-                    return contractDetailResponseDTO;
+                    BookingDetailResponseDTO bookingDetailResponseDTO = new BookingDetailResponseDTO();
+                    BeanUtils.copyProperties(contractDetail, bookingDetailResponseDTO);
+                    return bookingDetailResponseDTO;
                 })
                 .collect(Collectors.toList());
     }
 
-    private void updateContractTotalAmount(Iterable<ContractDetail> contractDetailsOfContract, Optional<Contract> contract) {
+    private void updateContractTotalAmount(Iterable<ContractDetail> contractDetailsOfContract, Optional<Booking> contract) {
         double amount = 0.0;
         for (ContractDetail contractDetail : contractDetailsOfContract) {
             if (!contractDetail.getIsDeleted()) {
@@ -91,36 +91,36 @@ public class ContractDetailService implements IContractDetailService {
     }
 
     @Override
-    public Optional<ContractDetailResponseDTO> findByContractIdAndId(UUID contractId, UUID id) {
+    public Optional<BookingDetailResponseDTO> findByContractIdAndId(UUID contractId, UUID id) {
         Optional<ContractDetail> contractDetailOptional = iContractDetailRepository.findByContractIdAndId(contractId, id);
         return getContractDetailResponseDTO(contractDetailOptional);
     }
 
     @Override
-    public void save(ContractDetailRequestDTO contractDetailRequestDTO) {
-        Optional<Contract> contract = Optional.ofNullable(contractDetailRequestDTO.getContract());
-        assert contractDetailRequestDTO.getContract() != null;
-        Iterable<ContractDetail> contractDetailsOfContract = iContractDetailRepository.findAllByContractId(contractDetailRequestDTO.getContract().getId());
-        calculateAmount(contractDetailRequestDTO);
+    public void save(BookingDetailRequestDTO bookingDetailRequestDTO) {
+        Optional<Booking> contract = Optional.ofNullable(bookingDetailRequestDTO.getBooking());
+        assert bookingDetailRequestDTO.getBooking() != null;
+        Iterable<ContractDetail> contractDetailsOfContract = iContractDetailRepository.findAllByContractId(bookingDetailRequestDTO.getBooking().getId());
+        calculateAmount(bookingDetailRequestDTO);
         updateContractTotalAmount(contractDetailsOfContract, contract);
-        saveContractDetail(contractDetailRequestDTO);
+        saveContractDetail(bookingDetailRequestDTO);
     }
 
-    private void calculateAmount(ContractDetailRequestDTO contractDetailRequestDTO) {
+    private void calculateAmount(BookingDetailRequestDTO bookingDetailRequestDTO) {
 
         double amount = 0.0;
-        for (Ticket ticket : contractDetailRequestDTO.getTickets()) {
+        for (Ticket ticket : bookingDetailRequestDTO.getTickets()) {
             amount += ticket.getQuantity() * ticket.getPrice();
         }
-        contractDetailRequestDTO.getContract().setTotalAmount(amount);
-        Contract contract = contractDetailRequestDTO.getContract();
-        Iterable<ContractDetail> contractDetails = iContractDetailRepository.findAllByContractId(contract.getId());
-        updateContractTotalAmount(contractDetails, Optional.of(contract));
+        bookingDetailRequestDTO.getBooking().setTotalAmount(amount);
+        Booking booking = bookingDetailRequestDTO.getBooking();
+        Iterable<ContractDetail> contractDetails = iContractDetailRepository.findAllByContractId(booking.getId());
+        updateContractTotalAmount(contractDetails, Optional.of(booking));
     }
 
-    private void saveContractDetail(ContractDetailRequestDTO contractDetailRequestDTO) {
+    private void saveContractDetail(BookingDetailRequestDTO bookingDetailRequestDTO) {
         ContractDetail contractDetail = new ContractDetail();
-        BeanUtils.copyProperties(contractDetailRequestDTO, contractDetail);
+        BeanUtils.copyProperties(bookingDetailRequestDTO, contractDetail);
         iContractDetailRepository.save(contractDetail);
         setTicketContractDetail(contractDetail);
     }
@@ -143,10 +143,10 @@ public class ContractDetailService implements IContractDetailService {
         contractDetail.ifPresent(value -> value.setIsDeleted(true));
 
         contractDetail.ifPresent(value -> {
-            double totalAmount = value.getContract().getTotalAmount() - value.getTickets().stream()
+            double totalAmount = value.getBooking().getTotalAmount() - value.getTickets().stream()
                     .mapToDouble(ticket -> ticket.getQuantity() * ticket.getPrice())
                     .sum();
-            value.getContract().setTotalAmount(totalAmount);
+            value.getBooking().setTotalAmount(totalAmount);
         });
         contractDetail.ifPresent(iContractDetailRepository::save);
     }

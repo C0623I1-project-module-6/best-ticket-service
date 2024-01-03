@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 @Data
-public class ContractRequestDTO {
+public class BookingRequestDTO {
     private UUID id;
     private String date;
     private Double totalAmount;
