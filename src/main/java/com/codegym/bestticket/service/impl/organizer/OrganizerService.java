@@ -1,8 +1,8 @@
 package com.codegym.bestticket.service.impl.organizer;
 
 import com.codegym.bestticket.converter.organizer.OrganizerConverter;
-import com.codegym.bestticket.dto.request.organizer.OrganizerRequestDTO;
-import com.codegym.bestticket.dto.response.organizer.OrganizerResponseDTO;
+import com.codegym.bestticket.payload.request.organizer.OrganizerRequestDTO;
+import com.codegym.bestticket.payload.response.organizer.OrganizerResponseDTO;
 import com.codegym.bestticket.entity.organizer.Organizer;
 import com.codegym.bestticket.entity.organizer.OrganizerType;
 import com.codegym.bestticket.entity.user.User;

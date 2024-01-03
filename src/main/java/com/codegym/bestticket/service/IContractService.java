@@ -1,7 +1,7 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.dto.request.contract.ContractRequestDTO;
-import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
+import com.codegym.bestticket.payload.request.contract.ContractRequestDTO;
+import com.codegym.bestticket.payload.response.contract.ContractResponseDTO;
 import com.codegym.bestticket.entity.customer.Customer;
 import com.codegym.bestticket.entity.organizer.Organizer;
 

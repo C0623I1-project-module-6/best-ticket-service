@@ -1,7 +1,7 @@
 package com.codegym.bestticket.converter.bank_account;
 
-import com.codegym.bestticket.dto.request.bank_acount.BankAccountRequestDTO;
-import com.codegym.bestticket.dto.response.bank_account.BankAccountResponseDTO;
+import com.codegym.bestticket.payload.request.bank_acount.BankAccountRequestDTO;
+import com.codegym.bestticket.payload.response.bank_account.BankAccountResponseDTO;
 import com.codegym.bestticket.entity.bank_account.BankAccount;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
