@@ -1,6 +1,6 @@
 package com.codegym.bestticket.controller.user;
 
-import com.codegym.bestticket.dto.OrganizerTypeDTO;
+import com.codegym.bestticket.dto.request.organizer.OrganizerTypeRequestDTO;
 import com.codegym.bestticket.dto.ResponseDto;
 import com.codegym.bestticket.service.IOrganizerTypeService;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,14 +20,14 @@ import java.util.UUID;
 @RestController
 @CrossOrigin("*")
 @AllArgsConstructor
-@RequestMapping("/api/organizer_types")
+@RequestMapping("/api/organizer-types")
 public class OrganizerTypeController {
     private final IOrganizerTypeService organizerTypeService;
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addOrganizer(@RequestBody OrganizerTypeDTO organizerTypeDTO) {
+    public ResponseEntity<ResponseDto> addOrganizerType(@RequestBody OrganizerTypeRequestDTO organizerTypeRequestDTO) {
         try {
-            if (organizerTypeDTO == null) {
+            if (organizerTypeRequestDTO == null) {
                 return new ResponseEntity<>(
                         ResponseDto.builder()
                                 .message("Request not found!")
@@ -35,12 +35,12 @@ public class OrganizerTypeController {
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            OrganizerTypeDTO resultOrganizerTypeDTO = organizerTypeService.create(organizerTypeDTO);
+            OrganizerTypeRequestDTO resultOrganizerTypeRequestDTO = organizerTypeService.create(organizerTypeRequestDTO);
             return new ResponseEntity<>(
                     ResponseDto.builder()
                             .message("Add organizer type successfully!!!")
                             .status(HttpStatus.CREATED)
-                            .data(resultOrganizerTypeDTO)
+                            .data(resultOrganizerTypeRequestDTO)
                             .build(),
                     HttpStatus.CREATED);
         } catch (RuntimeException e) {
@@ -53,10 +53,30 @@ public class OrganizerTypeController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDto> deleteCustomer(@PathVariable UUID id) {
+    @DeleteMapping("/disable/{id}")
+    public ResponseEntity<ResponseDto> disableOrganizerType(@PathVariable UUID id) {
         try {
             organizerTypeService.remove(id);
+            return new ResponseEntity<>(
+                    ResponseDto.builder()
+                            .message("Organizer type disable!!!")
+                            .status(HttpStatus.OK)
+                            .build(),
+                    HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(
+                    ResponseDto.builder()
+                            .message("Organizer type not found or is deleted!")
+                            .status(HttpStatus.NOT_FOUND)
+                            .build(),
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<ResponseDto> deleteOrganizerType(@PathVariable UUID id) {
+        try {
+            organizerTypeService.delete(id);
             return new ResponseEntity<>(
                     ResponseDto.builder()
                             .message("Organizer type deleted!!!")

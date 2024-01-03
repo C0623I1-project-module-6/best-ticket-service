@@ -1,7 +1,7 @@
 package com.codegym.bestticket.entity.contract;
 
-import com.codegym.bestticket.entity.user.Customer;
-import com.codegym.bestticket.entity.user.Organizer;
+import com.codegym.bestticket.entity.customer.Customer;
+import com.codegym.bestticket.entity.organizer.Organizer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -3,7 +3,6 @@ package com.codegym.bestticket.service.impl.user;
 import com.codegym.bestticket.dto.response.user.BankAccountResponseDTO;
 import com.codegym.bestticket.entity.user.BankAccount;
 import com.codegym.bestticket.repository.IBankAccountRepository;
-import com.codegym.bestticket.service.IBankAccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;

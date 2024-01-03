@@ -1,7 +1,7 @@
 package com.codegym.bestticket.dto.response.contract;
 
-import com.codegym.bestticket.entity.user.Customer;
-import com.codegym.bestticket.entity.user.Organizer;
+import com.codegym.bestticket.entity.customer.Customer;
+import com.codegym.bestticket.entity.organizer.Organizer;
 import lombok.Data;
 
 import java.sql.Timestamp;
