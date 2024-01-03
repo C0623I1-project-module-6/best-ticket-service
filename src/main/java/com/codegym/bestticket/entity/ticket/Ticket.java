@@ -39,11 +39,10 @@ public class Ticket {
     private String barcode;
     private Long quantity;
     private Boolean isDeleted;
-
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "contract_detail_id")
+    @JoinColumn(name = "booking_detail_id")
     private BookingDetail bookingDetail;
 
     @ManyToOne
