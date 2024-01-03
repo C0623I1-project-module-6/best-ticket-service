@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,7 +31,12 @@ public class RoleService implements IRoleService {
 
     @Override
     public RoleRequestDTO update(UUID id, RoleRequestDTO roleRequestDTO) {
-        return null;
+        Optional<Role> optionalRole = roleRepository.findById(id);
+        if (optionalRole.isEmpty()) {
+            throw new EntityNotFoundException("Role not found is" + id);
+        }
+        Role role = Role.builder().build();
+        return roleConverter.entityToDto(role);
     }
 
     @Override
