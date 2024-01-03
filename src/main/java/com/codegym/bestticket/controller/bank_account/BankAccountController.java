@@ -3,7 +3,6 @@ package com.codegym.bestticket.controller.bank_account;
 import com.codegym.bestticket.dto.ResponseDto;
 import com.codegym.bestticket.dto.request.bank_acount.BankAccountRequestDTO;
 import com.codegym.bestticket.dto.response.bank_account.BankAccountResponseDTO;
-import com.codegym.bestticket.service.IBankAccountService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
