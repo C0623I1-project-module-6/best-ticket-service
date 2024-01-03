@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -29,8 +30,18 @@ public class RoleService implements IRoleService {
     }
 
     @Override
+<<<<<<< HEAD
+    public RoleRequestDTO update(UUID id, RoleRequestDTO roleRequestDTO) {
+        Optional<Role> optionalRole = roleRepository.findById(id);
+        if (optionalRole.isEmpty()) {
+            throw new EntityNotFoundException("Role not found is" + id);
+        }
+        Role role = Role.builder().build();
+        return roleConverter.entityToDto(role);
+=======
     public RoleRequest update(UUID id, RoleRequest roleRequest) {
         return null;
+>>>>>>> b482babb1da77147c320b86f882e7d5b2f48a0c3
     }
 
     @Override

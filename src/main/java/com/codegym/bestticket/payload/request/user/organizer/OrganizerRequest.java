@@ -10,6 +10,7 @@ public class OrganizerRequest {
     private String name;
     private String phoneNumber;
     private String email;
+    private String idCard;
     private String taxCode;
     private UUID organizerType;
     private UUID user;
