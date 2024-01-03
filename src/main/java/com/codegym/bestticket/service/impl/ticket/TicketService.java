@@ -7,6 +7,7 @@ import com.codegym.bestticket.repository.ticket.ITicketRepository;
 import com.codegym.bestticket.service.ITicketService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
