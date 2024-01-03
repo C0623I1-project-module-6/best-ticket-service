@@ -44,12 +44,14 @@ public class Ticket {
 
     @ManyToOne
     @JoinColumn(name = "contract_detail_id")
+    @JsonIgnore
     private ContractDetail contractDetail;
 
     @ManyToOne
     @JoinColumn(name = "ticket_type_id", nullable = false)
     @JsonIgnore
     private TicketType ticketType;
+
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     @JsonIgnore

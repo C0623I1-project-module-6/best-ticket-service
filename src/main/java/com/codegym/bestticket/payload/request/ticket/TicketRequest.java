@@ -1,6 +1,7 @@
 package com.codegym.bestticket.payload.request.ticket;
 
 import com.codegym.bestticket.entity.contract.ContractDetail;
+import com.codegym.bestticket.entity.event.Event;
 import com.codegym.bestticket.entity.ticket.TicketType;
 import lombok.Builder;
 import lombok.Data;
@@ -30,5 +31,7 @@ public class TicketRequest {
     private String status;
 
     private ContractDetail contractDetail;
+
+    private Event event;
 
 }

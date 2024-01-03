@@ -1,14 +1,13 @@
 package com.codegym.bestticket.payload.response.ticket;
 
 import com.codegym.bestticket.entity.contract.ContractDetail;
+import com.codegym.bestticket.entity.event.Event;
 import com.codegym.bestticket.entity.ticket.TicketType;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
 
 @Data
-@Builder
 public class TicketResponse {
     private UUID id;
 
@@ -31,4 +30,6 @@ public class TicketResponse {
     private String status;
 
     private ContractDetail contractDetail;
+
+    private Event event;
 }

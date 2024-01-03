@@ -1,10 +1,10 @@
 package com.codegym.bestticket.controller.contract;
 
+import com.codegym.bestticket.entity.contract.Contract;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.contract.ContractDetailRequest;
 import com.codegym.bestticket.payload.response.contract.ContractDetailResponse;
 import com.codegym.bestticket.payload.response.contract.ContractResponse;
-import com.codegym.bestticket.entity.contract.Contract;
 import com.codegym.bestticket.service.IContractDetailService;
 import com.codegym.bestticket.service.IContractService;
 import lombok.AllArgsConstructor;

@@ -10,6 +10,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
 
@@ -20,8 +23,7 @@ public class TicketService implements ITicketService {
     private final ITicketRepository ticketRepository;
 
     @Override
-
-    public Iterable<TicketRequest> getAllTicket() {
+    public Iterable<TicketRequest> showTicket(Pageable pageable) {
         Iterable<Ticket> tickets = ticketRepository.findAll();
 
         return StreamSupport.stream(tickets.spliterator(), true)
@@ -39,7 +41,7 @@ public class TicketService implements ITicketService {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
         assert ticket != null;
         if (Boolean.FALSE.equals(ticket.getIsDeleted())) {
-            TicketResponse ticketResponse1 = TicketResponse.builder().build();
+            TicketResponse ticketResponse1 = new TicketResponse();
 
             BeanUtils.copyProperties(ticket, ticketResponse1);
             return ticketResponse1;
@@ -76,5 +78,31 @@ public class TicketService implements ITicketService {
         ticket.setIsDeleted(false);
         ticketRepository.save(ticket);
 
+    }
+
+    @Override
+    public Iterable<Ticket> searchTicketByStatus(String status) {
+
+        return ticketRepository.searchTicketByStatus(status);
+    }
+
+    @Override
+    public Iterable<Ticket> searchAllByTimeBefore() {
+        return ticketRepository.searchTicketByTimeBefore();
+    }
+
+
+//    @Override
+//    public Iterable<Ticket> searchAllByTimeBefore() {
+//        LocalDate currentDate = LocalDate.now();
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        String formattedDate = currentDate.format(formatter);
+//        return ticketRepository.searchAllByTimeBefore(formattedDate);
+//    }
+
+    @Override
+    public Iterable<Ticket> searchTicketByTimeBefore() {
+        LocalDate currentDate = LocalDate.now();
+        return ticketRepository.searchTicketByTimeBefore(currentDate);
     }
 }

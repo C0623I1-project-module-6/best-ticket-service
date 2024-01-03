@@ -1,5 +1,6 @@
 package com.codegym.bestticket.entity.event;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,10 +39,11 @@ public class Event {
     private Boolean isDeleted;
     @ManyToOne
     @JoinColumn(name = "event_type_id")
+    @JsonIgnore
     private EventType eventType;
     @ManyToMany
     @JoinTable(
-            name = "event_time",
+            name = "event_times",
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "time_id"))
     private Set<Time> times;
