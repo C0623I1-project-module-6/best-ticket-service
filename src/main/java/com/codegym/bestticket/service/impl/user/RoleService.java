@@ -23,7 +23,7 @@ public class RoleService implements IRoleService {
     public RoleRequestDTO create(RoleRequestDTO roleRequestDTO) {
         Role role =
                 roleConverter.dtoToEntity(roleRequestDTO);
-        role.setIsDeleted(false);
+//        role.(false);
         roleRepository.save(role);
         return roleConverter.entityToDto(role);
     }
@@ -37,7 +37,7 @@ public class RoleService implements IRoleService {
     public void remove(UUID id) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Role type not found"));
-        role.setIsDeleted(true);
+//        role.setIsDeleted(true);
         roleRepository.save(role);
     }
 

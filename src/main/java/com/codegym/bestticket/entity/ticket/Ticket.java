@@ -1,6 +1,7 @@
 package com.codegym.bestticket.entity.ticket;
 
 import com.codegym.bestticket.entity.contract.ContractDetail;
+import com.codegym.bestticket.entity.event.Event;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,7 +47,7 @@ public class Ticket {
     private Long quantity;
     @Column(name = "is_deleted")
     private Boolean isDeleted;
-//    private String status;
+    private String status;
     @ManyToOne
     @JoinColumn(name = "contract_detail_id")
     private ContractDetail contractDetail;
@@ -54,6 +55,10 @@ public class Ticket {
     @JoinColumn(name = "ticket_type_id", nullable = false)
     @JsonIgnore
     private TicketType ticketType;
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    @JsonIgnore
+    private Event event;
 
     private Double price;
 }
