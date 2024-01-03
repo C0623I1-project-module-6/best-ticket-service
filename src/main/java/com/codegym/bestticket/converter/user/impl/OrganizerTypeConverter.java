@@ -1,4 +1,4 @@
-package com.codegym.bestticket.converter.organizer;
+package com.codegym.bestticket.converter.user.impl;
 
 import com.codegym.bestticket.dto.request.organizer.OrganizerTypeRequestDTO;
 import com.codegym.bestticket.entity.organizer.OrganizerType;

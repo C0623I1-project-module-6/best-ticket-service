@@ -1,6 +1,6 @@
 package com.codegym.bestticket.service.impl.user;
 
-import com.codegym.bestticket.converter.user.RoleConverter;
+import com.codegym.bestticket.converter.user.impl.RoleConverter;
 import com.codegym.bestticket.dto.request.user.RoleRequestDTO;
 import com.codegym.bestticket.entity.user.Role;
 import com.codegym.bestticket.repository.user.IRoleRepository;
@@ -24,7 +24,7 @@ public class RoleService implements IRoleService {
     public RoleRequestDTO create(RoleRequestDTO roleRequestDTO) {
         Role role =
                 roleConverter.dtoToEntity(roleRequestDTO);
-        role.setIsDeleted(false);
+//        role.(false);
         roleRepository.save(role);
         return roleConverter.entityToDto(role);
     }
@@ -43,7 +43,7 @@ public class RoleService implements IRoleService {
     public void remove(UUID id) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Role type not found"));
-        role.setIsDeleted(true);
+//        role.setIsDeleted(true);
         roleRepository.save(role);
     }
 

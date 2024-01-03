@@ -1,4 +1,4 @@
-package com.codegym.bestticket.entity.bank_account;
+package com.codegym.bestticket.entity.user;
 
 import com.codegym.bestticket.entity.user.User;
 import jakarta.persistence.Column;

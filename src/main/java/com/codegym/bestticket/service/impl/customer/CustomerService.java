@@ -1,6 +1,6 @@
 package com.codegym.bestticket.service.impl.customer;
 
-import com.codegym.bestticket.converter.customer.CustomerConverter;
+import com.codegym.bestticket.converter.user.impl.CustomerConverter;
 import com.codegym.bestticket.dto.request.customer.CustomerRequestDTO;
 import com.codegym.bestticket.dto.response.customer.CustomerResponseDTO;
 import com.codegym.bestticket.entity.customer.Customer;

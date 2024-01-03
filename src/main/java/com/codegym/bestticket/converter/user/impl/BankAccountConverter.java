@@ -1,8 +1,8 @@
-package com.codegym.bestticket.converter.bank_account;
+package com.codegym.bestticket.converter.user.impl;
 
 import com.codegym.bestticket.dto.request.bank_acount.BankAccountRequestDTO;
 import com.codegym.bestticket.dto.response.bank_account.BankAccountResponseDTO;
-import com.codegym.bestticket.entity.bank_account.BankAccount;
+import com.codegym.bestticket.entity.user.BankAccount;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 

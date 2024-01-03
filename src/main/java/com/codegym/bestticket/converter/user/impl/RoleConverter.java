@@ -1,4 +1,4 @@
-package com.codegym.bestticket.converter.user;
+package com.codegym.bestticket.converter.user.impl;
 
 import com.codegym.bestticket.dto.request.user.RoleRequestDTO;
 import com.codegym.bestticket.entity.user.Role;

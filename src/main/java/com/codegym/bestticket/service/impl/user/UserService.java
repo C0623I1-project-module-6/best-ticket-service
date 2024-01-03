@@ -1,7 +1,7 @@
 package com.codegym.bestticket.service.impl.user;
 
-import com.codegym.bestticket.converter.user.LoginConverter;
-import com.codegym.bestticket.converter.user.RegisterConverter;
+import com.codegym.bestticket.converter.user.impl.LoginConverter;
+import com.codegym.bestticket.converter.user.impl.RegisterConverter;
 import com.codegym.bestticket.dto.request.user.LoginRequestDTO;
 import com.codegym.bestticket.dto.request.user.RegisterRequestDTO;
 import com.codegym.bestticket.dto.response.user.LoginResponseDTO;

@@ -1,4 +1,4 @@
-package com.codegym.bestticket.converter.user;
+package com.codegym.bestticket.converter.user.impl;
 
 import com.codegym.bestticket.dto.request.user.RegisterRequestDTO;
 import com.codegym.bestticket.dto.response.user.RegisterResponseDTO;
