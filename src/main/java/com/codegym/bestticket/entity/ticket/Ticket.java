@@ -1,6 +1,6 @@
 package com.codegym.bestticket.entity.ticket;
 
-import com.codegym.bestticket.entity.contract.ContractDetail;
+import com.codegym.bestticket.entity.booking.BookingDetail;
 import com.codegym.bestticket.entity.event.Event;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
@@ -44,7 +44,7 @@ public class Ticket {
 
     @ManyToOne
     @JoinColumn(name = "contract_detail_id")
-    private ContractDetail contractDetail;
+    private BookingDetail bookingDetail;
 
     @ManyToOne
     @JoinColumn(name = "ticket_type_id", nullable = false)

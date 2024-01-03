@@ -1,6 +1,6 @@
-package com.codegym.bestticket.payload.response.contract;
+package com.codegym.bestticket.payload.response.booking;
 
-import com.codegym.bestticket.entity.contract.Contract;
+import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.entity.ticket.Ticket;
 import lombok.Data;
 
@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-public class ContractDetailResponse {
+public class BookingDetailResponse {
     private UUID id;
-    private Contract contract;
+    private Booking booking;
     private List<Ticket> tickets;
     private Double amount;
     private Boolean isDeleted;

@@ -1,12 +1,10 @@
-package com.codegym.bestticket.controller.contract;
+package com.codegym.bestticket.controller.booking;
 
-import com.codegym.bestticket.constant.EContractStatus;
+import com.codegym.bestticket.constant.EBookingStatus;
 import com.codegym.bestticket.payload.ResponsePayload;
-import com.codegym.bestticket.payload.request.contract.ContractRequest;
-import com.codegym.bestticket.payload.response.contract.ContractResponse;
-import com.codegym.bestticket.payload.response.user.customer.CustomerResponse;
-import com.codegym.bestticket.service.IContractService;
-import com.codegym.bestticket.service.ICustomerService;
+import com.codegym.bestticket.payload.request.booking.BookingRequest;
+import com.codegym.bestticket.payload.response.booking.BookingResponse;
+import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
@@ -29,69 +27,55 @@ import java.util.logging.Level;
 @CrossOrigin(value = "*")
 @Log
 @RestController
-@RequestMapping("/api/contracts")
-public class ContractController {
-    private final IContractService contractService;
-    private final ICustomerService customerService;
+@RequestMapping("/api/bookings")
+public class BookingController {
+    private final IBookingService bookingService;
 
     @GetMapping()
-    public ResponseEntity<ResponsePayload> getContractList() {
-        Iterable<ContractResponse> contractResponseDTOS = contractService.findAll();
+    public ResponseEntity<ResponsePayload> getBookingList() {
+        Iterable<BookingResponse> bookingResponses = bookingService.findAll();
         ResponsePayload responsePayload = ResponsePayload.builder()
                 .message("Fetch data successfully.")
                 .status(HttpStatus.OK)
-                .data(contractResponseDTOS)
+                .data(bookingResponses)
                 .build();
         return ResponseEntity.ok(responsePayload);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponsePayload> getContract(@PathVariable UUID id) {
-        Optional<ContractResponse> contractOptional = contractService.findById(id);
-        if (contractOptional.isPresent()) {
-            ContractResponse contractResponse = contractOptional.get();
+    public ResponseEntity<ResponsePayload> getBooking(@PathVariable UUID id) {
+        Optional<BookingResponse> bookingResponseOptional = bookingService.findById(id);
+        if (bookingResponseOptional.isPresent()) {
+            BookingResponse bookingResponse = bookingResponseOptional.get();
             ResponsePayload responsePayload = ResponsePayload.builder()
-                    .message("Contract found.")
+                    .message("Booking found.")
                     .status(HttpStatus.OK)
-                    .data(contractResponse)
+                    .data(bookingResponse)
                     .build();
             return ResponseEntity.ok(responsePayload);
         } else {
             ResponsePayload errorResponse = ResponsePayload.builder()
-                    .message("Contract not found.")
+                    .message("Booking not found.")
                     .status(HttpStatus.NOT_FOUND)
                     .build();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
     }
 
-    @GetMapping("/contracts-by-customer/{id}")
-    public ResponseEntity<ResponsePayload> getContractsByCustomer(@PathVariable UUID id) {
-        CustomerResponse customerResponse = customerService.findById(id);
-        Iterable<ContractResponse> contractList = contractService.findAll();
-
-        return ResponseEntity.status(HttpStatus.OK).body(ResponsePayload.builder()
-                        .message("Test")
-                        .status(HttpStatus.OK)
-                        .data(null)
-                .build());
-    }
-
-
     @PostMapping("/add")
-    public ResponseEntity<ResponsePayload> addContract(@RequestBody ContractRequest contractRequest) {
+    public ResponseEntity<ResponsePayload> addBooking(@RequestBody BookingRequest bookingRequest) {
         try {
-            contractRequest.setStatus(String.valueOf(EContractStatus.ACTIVE));
-            contractRequest.setIsDeleted(false);
-            contractService.save(contractRequest);
+            bookingRequest.setStatus(String.valueOf(EBookingStatus.ACTIVE));
+            bookingRequest.setIsDeleted(false);
+            bookingService.save(bookingRequest);
             return ResponseEntity.ok(ResponsePayload.builder()
                     .message("Add successfully.")
                     .status(HttpStatus.OK)
-                    .data(contractRequest)
+                    .data(bookingRequest)
                     .build());
         } catch (Exception e) {
             ResponsePayload errorResponse = ResponsePayload.builder()
-                    .message("An error occurred while adding the contract.")
+                    .message("An error occurred while adding the booking.")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
             log.log(Level.WARNING, e.getMessage(), e);
@@ -100,30 +84,30 @@ public class ContractController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ResponsePayload> updateContract(@PathVariable UUID id, @RequestBody ContractRequest contractRequest) {
+    public ResponseEntity<ResponsePayload> updateBooking(@PathVariable UUID id, @RequestBody BookingRequest bookingRequest) {
         try {
-            Optional<ContractResponse> contractOptional = contractService.findById(id);
-            if (contractOptional.isPresent()) {
-                contractRequest.setId(id);
-                contractRequest.setIsDeleted(false);
-                contractService.save(contractRequest);
-                Optional<ContractResponse> updatedContract = contractService.findById(id);
+            Optional<BookingResponse> bookingOptional = bookingService.findById(id);
+            if (bookingOptional.isPresent()) {
+                bookingRequest.setId(id);
+                bookingRequest.setIsDeleted(false);
+                bookingService.save(bookingRequest);
+                Optional<BookingResponse> updatedBooking = bookingService.findById(id);
                 ResponsePayload responsePayload = ResponsePayload.builder()
                         .message("Update successfully.")
                         .status(HttpStatus.OK)
-                        .data(updatedContract)
+                        .data(updatedBooking)
                         .build();
                 return ResponseEntity.ok(responsePayload);
             } else {
                 ResponsePayload errorResponse = ResponsePayload.builder()
-                        .message("Update failed. Contract not found.")
+                        .message("Update failed. Booking not found.")
                         .status(HttpStatus.NOT_FOUND)
                         .build();
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
             }
         } catch (Exception e) {
             ResponsePayload errorResponse = ResponsePayload.builder()
-                    .message("An error occurred while updating the contract.")
+                    .message("An error occurred while updating the booking.")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
             log.log(Level.WARNING, e.getMessage(), e);
@@ -133,18 +117,18 @@ public class ContractController {
 
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<ResponsePayload> remove(@PathVariable UUID id) {
-        Optional<ContractResponse> contractOptional = contractService.findById(id);
-        if (contractOptional.isPresent()) {
-            contractService.remove(id);
+        Optional<BookingResponse> bookingOptional = bookingService.findById(id);
+        if (bookingOptional.isPresent()) {
+            bookingService.remove(id);
             return ResponseEntity.ok(ResponsePayload.builder()
                     .message("Remove successfully.")
                     .status(HttpStatus.OK)
-                    .data(contractOptional)
+                    .data(bookingOptional)
                     .build());
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ResponsePayload.builder()
-                            .message("Contract not found.")
+                            .message("Booking not found.")
                             .status(HttpStatus.NOT_FOUND)
                             .build());
         }
@@ -154,7 +138,7 @@ public class ContractController {
     public ResponseEntity<ResponsePayload> search(@PathVariable String input) {
         ResponsePayload responsePayload = ResponsePayload.builder()
                 .message("Test")
-                .data(contractService.searchByInput(input))
+                .data(bookingService.searchByInput(input))
                 .status(HttpStatus.OK)
                 .build();
         return ResponseEntity.ok(responsePayload);
