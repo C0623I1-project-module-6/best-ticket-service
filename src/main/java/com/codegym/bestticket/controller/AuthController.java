@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/auths")
+@RequestMapping("/api/auth")
 @AllArgsConstructor
 public class AuthController {
     private final IUserService iUserService;
