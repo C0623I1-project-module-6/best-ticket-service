@@ -1,14 +1,14 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.dto.request.ticket.TicketRequestDTO;
-import com.codegym.bestticket.dto.response.ticket.TicketResponseDTO;
+import com.codegym.bestticket.payload.request.ticket.TicketRequest;
+import com.codegym.bestticket.payload.response.ticket.TicketResponse;
 
 import java.util.UUID;
 
 public interface ITicketService {
-    Iterable<TicketRequestDTO> getAllTicket();
-    TicketResponseDTO getTicketById(UUID id);
-    TicketRequestDTO createTicket(TicketRequestDTO ticketRequestDTO);
-    void updateTicket(TicketResponseDTO ticketResponseDTO);
+    Iterable<TicketRequest> getAllTicket();
+    TicketResponse getTicketById(UUID id);
+    TicketRequest createTicket(TicketRequest ticketRequest);
+    void updateTicket(TicketResponse ticketResponse);
     void deleteTicketById(UUID id);
 }

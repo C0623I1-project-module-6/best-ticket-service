@@ -1,8 +1,8 @@
 package com.codegym.bestticket.entity.ticket;
 
 import com.codegym.bestticket.entity.contract.ContractDetail;
+import com.codegym.bestticket.entity.event.Event;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,28 +31,29 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "ticket_code")
     private String ticketCode;
-
     private String seat;
-
     private String time;
-
     private String location;
-
     private String promotion;
-
     private String barcode;
     private Long quantity;
-    @Column(name = "is_deleted")
     private Boolean isDeleted;
-//    private String status;
+
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "contract_detail_id")
     private ContractDetail contractDetail;
+
     @ManyToOne
     @JoinColumn(name = "ticket_type_id", nullable = false)
     @JsonIgnore
     private TicketType ticketType;
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    @JsonIgnore
+    private Event event;
 
+    private Double price;
 }

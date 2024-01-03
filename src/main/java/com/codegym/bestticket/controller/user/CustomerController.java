@@ -1,8 +1,8 @@
 package com.codegym.bestticket.controller.user;
 
-import com.codegym.bestticket.dto.request.customer.CustomerRequestDTO;
-import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.dto.response.customer.CustomerResponseDTO;
+import com.codegym.bestticket.payload.request.CustomerRequest;
+import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.response.user.customer.CustomerResponse;
 import com.codegym.bestticket.service.ICustomerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -29,12 +29,12 @@ public class CustomerController {
     private final ICustomerService customerService;
 
     @GetMapping("")
-    public ResponseEntity<ResponseDto> getCustomers() {
+    public ResponseEntity<ResponsePayload> getCustomers() {
         try {
-            List<CustomerResponseDTO> customerResponsDTOS =
+            List<CustomerResponse> customerResponsDTOS =
                     customerService.findAll();
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Customer list")
                             .status(HttpStatus.OK)
                             .data(customerResponsDTOS)
@@ -42,7 +42,7 @@ public class CustomerController {
                     HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Customer list not found!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
@@ -51,20 +51,20 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDto> getCustomer(@PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> getCustomer(@PathVariable UUID id) {
         try {
-            CustomerResponseDTO customerResponseDTO =
+            CustomerResponse customerResponse =
                     customerService.findById(id);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
-                            .message("Customer" + customerResponseDTO.getId())
+                    ResponsePayload.builder()
+                            .message("Customer" + customerResponse.getId())
                             .status(HttpStatus.OK)
-                            .data(customerResponseDTO)
+                            .data(customerResponse)
                             .build(),
                     HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Customer" + id + "not found")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
@@ -73,27 +73,27 @@ public class CustomerController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseDto> addCustomer(@RequestBody CustomerRequestDTO customerRequestDTO) {
+    public ResponseEntity<ResponsePayload> addCustomer(@RequestBody CustomerRequest customerRequest) {
         try {
-            if (customerRequestDTO == null) {
+            if (customerRequest == null) {
                 return new ResponseEntity<>(
-                        ResponseDto.builder()
+                        ResponsePayload.builder()
                                 .message("Request not found!")
                                 .status(HttpStatus.BAD_REQUEST)
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            CustomerResponseDTO customerResponseDTO = customerService.create(customerRequestDTO);
+            CustomerResponse customerResponse = customerService.create(customerRequest);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Add customer successfully!!!")
                             .status(HttpStatus.CREATED)
-                            .data(customerResponseDTO)
+                            .data(customerResponse)
                             .build(),
                     HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Add customer failed!")
                             .status(HttpStatus.BAD_REQUEST)
                             .build(),
@@ -102,28 +102,28 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDto> editCustomer(@PathVariable UUID id,
-                                                    @RequestBody CustomerRequestDTO customerRequestDTO) {
+    public ResponseEntity<ResponsePayload> editCustomer(@PathVariable UUID id,
+                                                        @RequestBody CustomerRequest customerRequest) {
         try {
-            if (customerRequestDTO == null) {
+            if (customerRequest == null) {
                 return new ResponseEntity<>(
-                        ResponseDto.builder()
+                        ResponsePayload.builder()
                                 .message("Request not found!")
                                 .status(HttpStatus.BAD_REQUEST)
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            CustomerResponseDTO customerResponseDTO = customerService.update(id, customerRequestDTO);
+            CustomerResponse customerResponse = customerService.update(id, customerRequest);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Edit customer successfully!!!")
                             .status(HttpStatus.OK)
-                            .data(customerResponseDTO)
+                            .data(customerResponse)
                             .build(),
                     HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Edit customer failed!")
                             .status(HttpStatus.BAD_REQUEST)
                             .build(),
@@ -132,18 +132,18 @@ public class CustomerController {
     }
 
     @DeleteMapping("/disable/{id}")
-    public ResponseEntity<ResponseDto> disableCustomer(@PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> disableCustomer(@PathVariable UUID id) {
         try {
             customerService.remove(id);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Customer disabled!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Customer not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
@@ -152,18 +152,18 @@ public class CustomerController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponseDto> deleteCustomer(@PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> deleteCustomer(@PathVariable UUID id) {
         try {
             customerService.delete(id);
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Customer deleted!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    ResponseDto.builder()
+                    ResponsePayload.builder()
                             .message("Customer not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),

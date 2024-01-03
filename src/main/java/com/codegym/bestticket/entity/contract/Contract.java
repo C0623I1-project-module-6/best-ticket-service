@@ -1,7 +1,7 @@
 package com.codegym.bestticket.entity.contract;
 
-import com.codegym.bestticket.entity.customer.Customer;
-import com.codegym.bestticket.entity.organizer.Organizer;
+import com.codegym.bestticket.entity.user.customer.Customer;
+import com.codegym.bestticket.entity.user.organizer.Organizer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,35 +28,26 @@ import java.util.UUID;
 @Setter
 @Table(name = "contracts")
 public class Contract {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
     private String date;
-
     @Column(columnDefinition = "DECIMAL(10, 2)")
-    private Double amount;
-
+    private Double totalAmount;
     @Column(length = 30)
     private String status;
-
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createdAt;
-
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp updatedAt;
-
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
-
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "organizer_id")
     private Organizer organizer;
-
     @Column(name = "is_deleted", columnDefinition = "DEFAULT 0")
     private Boolean isDeleted;
 }

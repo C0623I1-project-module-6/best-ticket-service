@@ -31,21 +31,12 @@ public class ContractDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "contract_id", nullable = false)
     private Contract contract;
-
     @OneToMany(mappedBy = "contractDetail")
     @JsonIgnore
     private List<Ticket> tickets;
-
-    private Integer quantity;
-
-    @Column(name = "ticket_price", columnDefinition = "DECIMAL(10, 2)")
-    private Double ticketPrice;
-
-    @Column(name = "is_deleted")
     private Boolean isDeleted;
 }

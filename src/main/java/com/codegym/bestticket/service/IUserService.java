@@ -1,15 +1,15 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.dto.request.user.LoginRequestDTO;
-import com.codegym.bestticket.dto.request.user.RegisterRequestDTO;
-import com.codegym.bestticket.dto.response.user.LoginResponseDTO;
-import com.codegym.bestticket.dto.response.user.RegisterResponseDTO;
+import com.codegym.bestticket.payload.request.user.LoginRequest;
+import com.codegym.bestticket.payload.request.user.RegisterRequest;
+import com.codegym.bestticket.payload.response.user.LoginResponse;
+import com.codegym.bestticket.payload.response.user.RegisterResponse;
 
 import java.util.UUID;
 
 public interface IUserService {
-    RegisterResponseDTO register(RegisterRequestDTO registerRequestDTO);
-    LoginResponseDTO login(LoginRequestDTO loginRequestDTO);
+    RegisterResponse register(RegisterRequest registerRequest);
+    LoginResponse login(LoginRequest loginRequest);
     void remove(UUID id);
     void delete(UUID id);
 }
