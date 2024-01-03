@@ -1,8 +1,8 @@
 package com.codegym.bestticket.controller.user;
 
-import com.codegym.bestticket.payload.request.organizer.OrganizerRequestDTO;
+import com.codegym.bestticket.payload.request.user.organizer.OrganizerRequest;
 import com.codegym.bestticket.payload.ResponsePayload;
-import com.codegym.bestticket.payload.response.organizer.OrganizerResponseDTO;
+import com.codegym.bestticket.payload.response.user.organizer.OrganizerResponse;
 import com.codegym.bestticket.service.IOrganizerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -31,7 +31,7 @@ public class OrganizerController {
     @GetMapping("")
     public ResponseEntity<ResponsePayload> getOrganizers() {
         try {
-            List<OrganizerResponseDTO> organizerResponsDTOS =
+            List<OrganizerResponse> organizerResponsDTOS =
                     organizerService.findAll();
             return new ResponseEntity<>(
                     ResponsePayload.builder()
@@ -53,13 +53,13 @@ public class OrganizerController {
     @GetMapping("/{id}")
     public ResponseEntity<ResponsePayload> getOrganizer(@PathVariable UUID id) {
         try {
-            OrganizerResponseDTO organizerResponseDTO =
+            OrganizerResponse organizerResponse =
                     organizerService.findById(id);
             return new ResponseEntity<>(
                     ResponsePayload.builder()
-                            .message("Organizer" + organizerResponseDTO.getId())
+                            .message("Organizer" + organizerResponse.getId())
                             .status(HttpStatus.OK)
-                            .data(organizerResponseDTO)
+                            .data(organizerResponse)
                             .build(),
                     HttpStatus.OK);
         } catch (RuntimeException e) {
@@ -73,9 +73,9 @@ public class OrganizerController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ResponsePayload> addOrganizer(@RequestBody OrganizerRequestDTO organizerRequestDTO) {
+    public ResponseEntity<ResponsePayload> addOrganizer(@RequestBody OrganizerRequest organizerRequest) {
         try {
-            if (organizerRequestDTO == null) {
+            if (organizerRequest == null) {
                 return new ResponseEntity<>(
                         ResponsePayload.builder()
                                 .message("Request not found!")
@@ -83,12 +83,12 @@ public class OrganizerController {
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            OrganizerResponseDTO organizerResponseDTO = organizerService.create(organizerRequestDTO);
+            OrganizerResponse organizerResponse = organizerService.create(organizerRequest);
             return new ResponseEntity<>(
                     ResponsePayload.builder()
                             .message("Add organizer successfully!!!")
                             .status(HttpStatus.CREATED)
-                            .data(organizerResponseDTO)
+                            .data(organizerResponse)
                             .build(),
                     HttpStatus.CREATED);
         } catch (RuntimeException e) {
@@ -103,9 +103,9 @@ public class OrganizerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponsePayload> editOrganizer(@PathVariable UUID id,
-                                                         @RequestBody OrganizerRequestDTO organizerRequestDTO) {
+                                                         @RequestBody OrganizerRequest organizerRequest) {
         try {
-            if (organizerRequestDTO == null) {
+            if (organizerRequest == null) {
                 return new ResponseEntity<>(
                         ResponsePayload.builder()
                                 .message("Request not found!")
@@ -113,12 +113,12 @@ public class OrganizerController {
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            OrganizerResponseDTO organizerResponseDTO = organizerService.update(id, organizerRequestDTO);
+            OrganizerResponse organizerResponse = organizerService.update(id, organizerRequest);
             return new ResponseEntity<>(
                     ResponsePayload.builder()
                             .message("Edit organizer successfully!!!")
                             .status(HttpStatus.OK)
-                            .data(organizerResponseDTO)
+                            .data(organizerResponse)
                             .build(),
                     HttpStatus.OK);
         } catch (RuntimeException e) {

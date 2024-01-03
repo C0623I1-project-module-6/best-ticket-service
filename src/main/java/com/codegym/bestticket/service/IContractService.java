@@ -1,27 +1,27 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.payload.request.contract.ContractRequestDTO;
-import com.codegym.bestticket.payload.response.contract.ContractResponseDTO;
-import com.codegym.bestticket.entity.customer.Customer;
-import com.codegym.bestticket.entity.organizer.Organizer;
+import com.codegym.bestticket.payload.request.contract.ContractRequest;
+import com.codegym.bestticket.payload.response.contract.ContractResponse;
+import com.codegym.bestticket.entity.user.customer.Customer;
+import com.codegym.bestticket.entity.user.organizer.Organizer;
 
 import java.util.Optional;
 import java.util.UUID;
 
 public interface IContractService {
-    Iterable<ContractResponseDTO> findAll();
+    Iterable<ContractResponse> findAll();
 
-    Optional<ContractResponseDTO> findById(UUID id);
+    Optional<ContractResponse> findById(UUID id);
 
-    void save(ContractRequestDTO contractRequestDTO);
+    void save(ContractRequest contractRequest);
 
     void remove(UUID id);
 
     void delete(UUID id);
 
-    Iterable<ContractResponseDTO> searchAllByCustomer(Customer customer);
+    Iterable<ContractResponse> searchAllByCustomer(Customer customer);
 
-    Iterable<ContractResponseDTO> searchAllByOrganizer(Organizer organizer);
+    Iterable<ContractResponse> searchAllByOrganizer(Organizer organizer);
 
-    Iterable<ContractResponseDTO> searchByInput(String input);
+    Iterable<ContractResponse> searchByInput(String input);
 }
