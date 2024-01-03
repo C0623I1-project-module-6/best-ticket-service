@@ -44,6 +44,7 @@ public class UserService implements IUserService {
             throw new PhoneNumberAlreadyExistsException("Phone number already exists.");
         }
         User user = User.builder()
+                .email(registerRequestDTO.getEmail())
                 .isDeleted(false)
                 .build();
         userRepository.save(user);
