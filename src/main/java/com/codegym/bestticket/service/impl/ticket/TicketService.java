@@ -21,8 +21,8 @@ public class TicketService implements ITicketService {
 
 
     @Override
-    public Iterable<TicketRequestDTO> getAllTicket() {
-        Iterable<Ticket> tickets = ticketRepository.findAll();
+    public Iterable<TicketRequestDTO> getAllTicket(Pageable pageable) {
+        Iterable<Ticket> tickets = ticketRepository.findAll(pageable);
 
         return StreamSupport.stream(tickets.spliterator(), true)
                 .filter(ticket -> !ticket.getIsDeleted())

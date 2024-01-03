@@ -7,6 +7,8 @@ import com.codegym.bestticket.payload.response.ticket.TicketResponseDTO;
 import com.codegym.bestticket.service.ITicketService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,8 +30,8 @@ public class TicketController {
     private final ITicketService ticketService;
 
     @GetMapping
-    public ResponseEntity<ResponsePayload> getAllTicket() {
-        Iterable<TicketRequestDTO> ticketRequestDTOS = ticketService.getAllTicket();
+    public ResponseEntity<ResponsePayload> getAllTicket(@PageableDefault(page = 0,size = 0)Pageable pageable) {
+        Iterable<TicketRequestDTO> ticketRequestDTOS = ticketService.getAllTicket(pageable);
         ResponsePayload responsePayload;
         if (ticketRequestDTOS == null) {
             responsePayload = ResponsePayload.builder()
