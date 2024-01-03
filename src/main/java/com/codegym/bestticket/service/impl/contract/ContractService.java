@@ -8,16 +8,13 @@ import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.repository.IContractRepository;
 import com.codegym.bestticket.service.IContractService;
-import com.google.api.client.util.DateTime;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

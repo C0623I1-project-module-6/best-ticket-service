@@ -4,9 +4,17 @@ import com.codegym.bestticket.constant.EContractStatus;
 import com.codegym.bestticket.dto.ResponseDto;
 import com.codegym.bestticket.dto.request.contract.ContractRequestDTO;
 import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
+import com.codegym.bestticket.dto.response.user.CustomerDtoResponse;
+import com.codegym.bestticket.entity.contract.Contract;
+import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.service.IContractService;
+import com.codegym.bestticket.service.ICustomerService;
+import com.codegym.bestticket.service.IUserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
+import org.hibernate.engine.spi.EntityEntry;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -30,6 +39,7 @@ import java.util.logging.Level;
 @RequestMapping("/api/contracts")
 public class ContractController {
     private final IContractService contractService;
+    private final ICustomerService customerService;
 
     @GetMapping()
     public ResponseEntity<ResponseDto> getContractList() {
@@ -61,6 +71,17 @@ public class ContractController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
     }
+
+    @GetMapping("/contracts-by-customer/{id}")
+    public ResponseEntity<ResponseDto> getContractsByCustomer(@PathVariable UUID id) {
+        CustomerDtoResponse customerDtoResponse = customerService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.builder()
+                        .message("Test")
+                        .status(HttpStatus.OK)
+                        .data(null)
+                .build());
+    }
+
 
     @PostMapping("/add")
     public ResponseEntity<ResponseDto> addContract(@RequestBody ContractRequestDTO contractRequestDTO) {
