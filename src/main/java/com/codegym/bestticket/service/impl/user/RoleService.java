@@ -30,7 +30,8 @@ public class RoleService implements IRoleService {
     }
 
     @Override
-    public RoleDto update(UUID id, RoleDto roleRequest) {
+
+    public RoleDto update(UUID id, RoleDto roleDto) {
         Optional<Role> optionalRole = roleRepository.findById(id);
         if (optionalRole.isEmpty()) {
             throw new EntityNotFoundException("Role not found is" + id);

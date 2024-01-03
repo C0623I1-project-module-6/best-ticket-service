@@ -1,6 +1,6 @@
 package com.codegym.bestticket.constant;
 
-public enum EContractStatus {
+public enum EBookingStatus {
     ACTIVE,
     PENDING,
     INACTIVE

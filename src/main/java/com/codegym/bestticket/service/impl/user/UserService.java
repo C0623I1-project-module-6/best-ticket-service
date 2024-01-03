@@ -1,5 +1,6 @@
 package com.codegym.bestticket.service.impl.user;
 
+import com.codegym.bestticket.converter.user.ILoginConverter;
 import com.codegym.bestticket.converter.user.IRegisterConverter;
 import com.codegym.bestticket.converter.user.impl.LoginConverter;
 import com.codegym.bestticket.entity.user.User;
@@ -27,7 +28,7 @@ import java.util.UUID;
 public class UserService implements IUserService {
     private final IUserRepository userRepository;
     private final IRegisterConverter registerConverter;
-    private final LoginConverter loginConverter;
+    private final ILoginConverter loginConverter;
 
     @Override
     public RegisterResponse register(RegisterRequest registerRequest) {
@@ -44,6 +45,7 @@ public class UserService implements IUserService {
             throw new PhoneNumberAlreadyExistsException("Phone number already exists.");
         }
         User user = registerConverter.dtoToEntity(registerRequest);
+        user.setIsDeleted(false);
         userRepository.save(user);
         return registerConverter.entityToDto(user);
     }

@@ -1,4 +1,4 @@
-package com.codegym.bestticket.payload.response.contract;
+package com.codegym.bestticket.payload.response.booking;
 
 
 import com.codegym.bestticket.entity.user.Customer;
@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 @Data
-public class ContractResponse {
+public class BookingResponse {
     private UUID id;
     private String Date;
     private Double totalAmount;

@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS bank_accounts
     foreign key (user_id) references users (id)
 );
 
-CREATE TABLE IF NOT EXISTS contracts
+CREATE TABLE IF NOT EXISTS bookings
 (
     id         BINARY(36) PRIMARY KEY,
     `date`     DATETIME       NOT NULL,
@@ -46,14 +46,14 @@ CREATE TABLE IF NOT EXISTS contracts
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS contract_details
+CREATE TABLE IF NOT EXISTS booking_details
 (
     id           BINARY(36) PRIMARY KEY,
-    contract_id  BINARY(36),
+    booking_id  BINARY(36),
     quantity     INT            NOT NULL,
     ticket_price DECIMAL(10, 2) NOT NULL,
-     FOREIGN KEY (contract_id)
-        REFERENCES contracts (id)
+     FOREIGN KEY (booking_id)
+        REFERENCES bookings (id)
 );
 
 
@@ -74,11 +74,11 @@ CREATE TABLE IF NOT EXISTS tickets
     promotion          VARCHAR(5),
     barcode            VARCHAR(20),
     ticket_type_id     BINARY(36),
-    contract_detail_id BINARY(16),
+    booking_detail_id BINARY(16),
     FOREIGN KEY (ticket_type_id)
         REFERENCES ticket_types (id),
-    FOREIGN KEY (contract_detail_id)
-        REFERENCES contract_details (id)
+    FOREIGN KEY (booking_detail_id)
+        REFERENCES booking_details (id)
 );
 
 

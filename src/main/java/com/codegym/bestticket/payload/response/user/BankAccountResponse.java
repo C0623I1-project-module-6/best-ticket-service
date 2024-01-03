@@ -6,6 +6,7 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
+
 public class BankAccountResponse {
     private UUID id;
     private String accountName;

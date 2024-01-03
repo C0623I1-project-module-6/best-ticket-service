@@ -1,6 +1,5 @@
 package com.codegym.bestticket.service;
 
-
 import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
@@ -9,7 +8,7 @@ import com.codegym.bestticket.payload.response.booking.BookingResponse;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface IContractService {
+public interface IBookingService {
     Iterable<BookingResponse> findAll();
 
     Optional<BookingResponse> findById(UUID id);

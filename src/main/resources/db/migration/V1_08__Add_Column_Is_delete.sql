@@ -1,8 +1,8 @@
 ALTER TABLE bank_accounts
     ADD COLUMN is_deleted BIT DEFAULT 0;
-ALTER TABLE contract_details
+ALTER TABLE booking_details
     ADD COLUMN is_deleted BIT DEFAULT 0;
-ALTER TABLE contracts
+ALTER TABLE bookings
     ADD COLUMN is_deleted BIT DEFAULT 0;
 ALTER TABLE customers
     ADD COLUMN is_deleted BIT DEFAULT 0;

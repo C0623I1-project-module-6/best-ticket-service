@@ -1,7 +1,7 @@
-ALTER TABLE contracts
+ALTER TABLE bookings
     DROP FOREIGN KEY individual_id,
     DROP COLUMN individual_id;
-ALTER TABLE contracts
+ALTER TABLE bookings
     DROP FOREIGN KEY organizer_id,
     DROP COLUMN enterprise_id;
 
@@ -35,12 +35,12 @@ CREATE TABLE IF NOT EXISTS organizers
 
 CREATE INDEX index_organizer_id ON organizers (id);
 
-ALTER TABLE contracts
+ALTER TABLE bookings
     ADD COLUMN organizer_id BINARY(16),
     ADD CONSTRAINT organizer_id FOREIGN KEY (organizer_id) REFERENCES organizers (id);
 
 CREATE INDEX index_event_id ON events (id);
-ALTER TABLE contract_details
+ALTER TABLE booking_details
     ADD COLUMN event_id BINARY(16),
     ADD CONSTRAINT event_id FOREIGN KEY (event_id) REFERENCES events (id);
 
