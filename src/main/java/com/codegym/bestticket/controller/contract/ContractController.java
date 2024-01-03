@@ -4,17 +4,12 @@ import com.codegym.bestticket.constant.EContractStatus;
 import com.codegym.bestticket.dto.ResponseDto;
 import com.codegym.bestticket.dto.request.contract.ContractRequestDTO;
 import com.codegym.bestticket.dto.response.contract.ContractResponseDTO;
-import com.codegym.bestticket.dto.response.user.CustomerDtoResponse;
+import com.codegym.bestticket.dto.response.customer.CustomerResponseDTO;
 import com.codegym.bestticket.entity.contract.Contract;
-import com.codegym.bestticket.entity.user.Customer;
-import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.service.IContractService;
 import com.codegym.bestticket.service.ICustomerService;
-import com.codegym.bestticket.service.IUserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
-import org.hibernate.engine.spi.EntityEntry;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -74,7 +69,9 @@ public class ContractController {
 
     @GetMapping("/contracts-by-customer/{id}")
     public ResponseEntity<ResponseDto> getContractsByCustomer(@PathVariable UUID id) {
-        CustomerDtoResponse customerDtoResponse = customerService.findById(id);
+        CustomerResponseDTO customerResponseDTO = customerService.findById(id);
+        Iterable<ContractResponseDTO> contractList = contractService.findAll();
+
         return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.builder()
                         .message("Test")
                         .status(HttpStatus.OK)

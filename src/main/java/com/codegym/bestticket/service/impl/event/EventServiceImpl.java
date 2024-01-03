@@ -3,7 +3,7 @@ package com.codegym.bestticket.service.impl.event;
 import com.codegym.bestticket.converter.event.impl.EventConverterImpl;
 import com.codegym.bestticket.dto.EventDTO;
 import com.codegym.bestticket.entity.event.Event;
-import com.codegym.bestticket.repository.IEventRepository;
+import com.codegym.bestticket.repository.event.IEventRepository;
 import com.codegym.bestticket.service.EventService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;

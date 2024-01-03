@@ -1,5 +1,8 @@
 package com.codegym.bestticket.entity.user;
 
+import com.codegym.bestticket.entity.bank_account.BankAccount;
+import com.codegym.bestticket.entity.customer.Customer;
+import com.codegym.bestticket.entity.organizer.Organizer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,6 +45,7 @@ public class User {
     private String phoneNumber;
     @Column(nullable = false, unique = true)
     private String email;
+
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
@@ -54,11 +58,13 @@ public class User {
     private Organizer organizer;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<BankAccount> bankAccounts;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JsonIgnore
     private Set<Role> roles;
 
 
