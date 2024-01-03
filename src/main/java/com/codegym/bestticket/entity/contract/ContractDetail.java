@@ -41,10 +41,6 @@ public class ContractDetail {
     @JsonIgnore
     private List<Ticket> tickets;
 
-    private Integer quantity;
-
-    @Column(name = "ticket_price", columnDefinition = "DECIMAL(10, 2)")
-    private Double ticketPrice;
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;

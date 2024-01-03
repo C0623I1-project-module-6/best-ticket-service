@@ -30,7 +30,7 @@ public class TicketType {
 
     private String name;
 
-    private Double price;
+//    private Double price;
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
