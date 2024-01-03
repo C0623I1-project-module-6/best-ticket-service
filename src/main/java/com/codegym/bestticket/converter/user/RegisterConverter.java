@@ -1,22 +1,22 @@
 package com.codegym.bestticket.converter.user;
 
-import com.codegym.bestticket.dto.request.user.RegisterRequestDTO;
-import com.codegym.bestticket.dto.response.user.RegisterResponseDTO;
+import com.codegym.bestticket.payload.request.user.RegisterRequest;
+import com.codegym.bestticket.payload.response.user.RegisterResponse;
 import com.codegym.bestticket.entity.user.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RegisterConverter {
-    public RegisterResponseDTO entityToDto(User user) {
-        RegisterResponseDTO registerResponseDTO = new RegisterResponseDTO();
-        BeanUtils.copyProperties(user, registerResponseDTO);
-        return registerResponseDTO;
+    public RegisterResponse entityToDto(User user) {
+        RegisterResponse registerResponse = new RegisterResponse();
+        BeanUtils.copyProperties(user, registerResponse);
+        return registerResponse;
     }
 
-    public User dtoToEntity(RegisterRequestDTO registerRequestDTO) {
+    public User dtoToEntity(RegisterRequest registerRequest) {
         User user = new User();
-        BeanUtils.copyProperties(registerRequestDTO, user);
+        BeanUtils.copyProperties(registerRequest, user);
         return user;
     }
 
