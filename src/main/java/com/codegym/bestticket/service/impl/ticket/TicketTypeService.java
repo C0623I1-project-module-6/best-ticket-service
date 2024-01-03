@@ -1,8 +1,8 @@
 package com.codegym.bestticket.service.impl.ticket;
 
+import com.codegym.bestticket.dto.request.ticket_type.TicketTypeRequestDTO;
+import com.codegym.bestticket.dto.response.ticket_type.TicketTypeResponseDTO;
 import com.codegym.bestticket.entity.ticket.TicketType;
-import com.codegym.bestticket.payload.request.ticket.TicketTypeRequest;
-import com.codegym.bestticket.payload.response.ticket.TicketTypeResponse;
 import com.codegym.bestticket.repository.ticket.ITicketTypeRepository;
 import com.codegym.bestticket.service.ITicketTypeService;
 import lombok.AllArgsConstructor;
@@ -20,40 +20,40 @@ public class TicketTypeService implements ITicketTypeService {
     private final ITicketTypeRepository ticketTypeRepository;
 
     @Override
-    public List<TicketTypeRequest> getAllTicketType() {
+    public List<TicketTypeRequestDTO> getAllTicketType() {
         Iterable<TicketType> ticketTypes = ticketTypeRepository.findAll();
 
         return StreamSupport.stream(ticketTypes.spliterator(), true)
                 .filter(ticketType -> !ticketType.getIsDeleted())
                 .map(ticketType -> {
-                    TicketTypeRequest ticketTypeRequest = new TicketTypeRequest();
-                    BeanUtils.copyProperties(ticketType, ticketTypeRequest);
-                    return ticketTypeRequest;
+                    TicketTypeRequestDTO ticketTypeRequestDTO = TicketTypeRequestDTO.builder().build();
+                    BeanUtils.copyProperties(ticketType, ticketTypeRequestDTO);
+                    return ticketTypeRequestDTO;
                 })
                 .toList();
 
     }
 
     @Override
-    public TicketTypeResponse getTicketTypeById(UUID id) {
+    public TicketTypeResponseDTO getTicketTypeById(UUID id) {
         TicketType ticketType = ticketTypeRepository.findById(id).orElse(null);
 
-        TicketTypeResponse ticketTypeResponse = new TicketTypeResponse();
+        TicketTypeResponseDTO ticketTypeResponseDTO = TicketTypeResponseDTO.builder().build();
         assert ticketType != null;
         if (Boolean.FALSE.equals(ticketType.getIsDeleted())) {
-            BeanUtils.copyProperties(ticketType, ticketTypeResponse);
-            return ticketTypeResponse;
+            BeanUtils.copyProperties(ticketType, ticketTypeResponseDTO);
+            return ticketTypeResponseDTO;
         }
         return null;
 
     }
 
     @Override
-    public TicketTypeRequest createTicketType(TicketTypeRequest ticketTypeRequest) {
+    public TicketTypeRequestDTO createTicketType(TicketTypeRequestDTO ticketTypeRequestDTO) {
         TicketType ticketType = new TicketType();
-        BeanUtils.copyProperties(ticketTypeRequest, ticketType);
+        BeanUtils.copyProperties(ticketTypeRequestDTO, ticketType);
         ticketType = ticketTypeRepository.save(ticketType);
-        TicketTypeRequest resultTicketRequestDTO = new TicketTypeRequest();
+        TicketTypeRequestDTO resultTicketRequestDTO = TicketTypeRequestDTO.builder().build();
         BeanUtils.copyProperties(ticketType, resultTicketRequestDTO);
 
         return resultTicketRequestDTO;
@@ -68,10 +68,10 @@ public class TicketTypeService implements ITicketTypeService {
     }
 
     @Override
-    public void updateTicketType(TicketTypeResponse ticketTypeResponse) {
-        TicketType ticketType = ticketTypeRepository.findById(ticketTypeResponse.getId()).orElse(null);
+    public void updateTicketType(TicketTypeResponseDTO ticketTypeResponseDTO) {
+        TicketType ticketType = ticketTypeRepository.findById(ticketTypeResponseDTO.getId()).orElse(null);
         assert ticketType != null;
-        BeanUtils.copyProperties(ticketTypeResponse, ticketType);
+        BeanUtils.copyProperties(ticketTypeResponseDTO, ticketType);
 
         ticketTypeRepository.save(ticketType);
     }

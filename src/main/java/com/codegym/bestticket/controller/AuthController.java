@@ -1,10 +1,10 @@
 package com.codegym.bestticket.controller;
 
-import com.codegym.bestticket.payload.ResponsePayload;
-import com.codegym.bestticket.payload.request.user.LoginRequest;
-import com.codegym.bestticket.payload.request.user.RegisterRequest;
-import com.codegym.bestticket.payload.response.user.LoginResponse;
-import com.codegym.bestticket.payload.response.user.RegisterResponse;
+import com.codegym.bestticket.dto.ResponseDto;
+import com.codegym.bestticket.dto.request.user.LoginRequestDTO;
+import com.codegym.bestticket.dto.request.user.RegisterRequestDTO;
+import com.codegym.bestticket.dto.response.user.LoginResponseDTO;
+import com.codegym.bestticket.dto.response.user.RegisterResponseDTO;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -28,27 +28,27 @@ public class AuthController {
     private final IUserService iUserService;
 
     @PostMapping("/register")
-    public ResponseEntity<ResponsePayload> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<ResponseDto> register(@RequestBody RegisterRequestDTO registerRequestDTO) {
       try{
-          if (registerRequest == null) {
+          if (registerRequestDTO == null) {
               return new ResponseEntity<>(
-                      ResponsePayload.builder()
+                      ResponseDto.builder()
                               .message("Request not found!")
                               .status(HttpStatus.BAD_REQUEST)
                               .build(),
                       HttpStatus.BAD_REQUEST);
           }
-          RegisterResponse registerResponse = iUserService.register(registerRequest);
+          RegisterResponseDTO registerResponseDTO = iUserService.register(registerRequestDTO);
           return new ResponseEntity<>(
-                  ResponsePayload.builder()
+                  ResponseDto.builder()
                           .message("Register successfully!!!")
                           .status(HttpStatus.CREATED)
-                          .data(registerResponse)
+                          .data(registerResponseDTO)
                           .build(),
                   HttpStatus.CREATED);
       }catch (RuntimeException e){
           return new ResponseEntity<>(
-                  ResponsePayload.builder()
+                  ResponseDto.builder()
                           .message("Register failed!!!")
                           .status(HttpStatus.BAD_REQUEST)
                           .build(),
@@ -57,27 +57,27 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponsePayload> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ResponseDto> login(@RequestBody LoginRequestDTO loginRequestDTO) {
         try {
-            if (loginRequest == null) {
+            if (loginRequestDTO == null) {
                 return new ResponseEntity<>(
-                        ResponsePayload.builder()
+                        ResponseDto.builder()
                                 .message("Request not found!")
                                 .status(HttpStatus.BAD_REQUEST)
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            LoginResponse loginResponse = iUserService.login(loginRequest);
+            LoginResponseDTO loginResponseDTO = iUserService.login(loginRequestDTO);
             return new ResponseEntity<>(
-                    ResponsePayload.builder()
+                    ResponseDto.builder()
                             .message("Login successfully!!!")
                             .status(HttpStatus.OK)
-                            .data(loginResponse)
+                            .data(loginResponseDTO)
                             .build(),
                     HttpStatus.CREATED);
         }catch (RuntimeException e){
             return new ResponseEntity<>(
-                    ResponsePayload.builder()
+                    ResponseDto.builder()
                             .message("Login failed!!!")
                             .status(HttpStatus.UNAUTHORIZED)
                             .build(),
@@ -86,18 +86,18 @@ public class AuthController {
     }
 
     @DeleteMapping("/disable/{id}")
-    public ResponseEntity<ResponsePayload> disableUser(@PathVariable UUID id) {
+    public ResponseEntity<ResponseDto> disableUser(@PathVariable UUID id) {
         try {
             iUserService.remove(id);
             return new ResponseEntity<>(
-                    ResponsePayload.builder()
+                    ResponseDto.builder()
                             .message("User disabled!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    ResponsePayload.builder()
+                    ResponseDto.builder()
                             .message("User not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),
@@ -106,18 +106,18 @@ public class AuthController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<ResponsePayload> deleteUser(@PathVariable UUID id) {
+    public ResponseEntity<ResponseDto> deleteUser(@PathVariable UUID id) {
         try {
             iUserService.delete(id);
             return new ResponseEntity<>(
-                    ResponsePayload.builder()
+                    ResponseDto.builder()
                             .message("User disabled!!!")
                             .status(HttpStatus.OK)
                             .build(),
                     HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(
-                    ResponsePayload.builder()
+                    ResponseDto.builder()
                             .message("User not found or is deleted!")
                             .status(HttpStatus.NOT_FOUND)
                             .build(),

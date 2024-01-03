@@ -7,8 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface IContractDetailRepository extends JpaRepository<ContractDetail, UUID> {
-    Iterable<ContractDetail> findAllByContractId(UUID contractId);
-
-    Optional<ContractDetail> findByContractIdAndId(UUID contractId, UUID id);
+      Iterable<ContractDetail> findAllByContractId(UUID contractId);
+      Optional<ContractDetail> findByContractIdAndId(UUID contractId, UUID id);
 }
 

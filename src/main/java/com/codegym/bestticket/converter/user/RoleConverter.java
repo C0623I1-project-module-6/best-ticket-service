@@ -1,21 +1,21 @@
 package com.codegym.bestticket.converter.user;
 
-import com.codegym.bestticket.payload.request.user.RoleRequest;
+import com.codegym.bestticket.dto.request.user.RoleRequestDTO;
 import com.codegym.bestticket.entity.user.Role;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RoleConverter {
-    public RoleRequest entityToDto(Role role) {
-        RoleRequest roleRequest = new RoleRequest();
-        BeanUtils.copyProperties(role, roleRequest);
-        return roleRequest;
+    public RoleRequestDTO entityToDto(Role role) {
+        RoleRequestDTO roleRequestDTO = new RoleRequestDTO();
+        BeanUtils.copyProperties(role, roleRequestDTO);
+        return roleRequestDTO;
     }
 
-    public Role dtoToEntity(RoleRequest roleRequest) {
+    public Role dtoToEntity(RoleRequestDTO roleRequestDTO) {
         Role role= new Role();
-        BeanUtils.copyProperties(roleRequest, role);
+        BeanUtils.copyProperties(roleRequestDTO, role);
         return role;
     }
 }

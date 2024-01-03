@@ -1,8 +1,8 @@
 package com.codegym.bestticket.entity.user;
 
 import com.codegym.bestticket.entity.bank_account.BankAccount;
-import com.codegym.bestticket.entity.user.customer.Customer;
-import com.codegym.bestticket.entity.user.organizer.Organizer;
+import com.codegym.bestticket.entity.customer.Customer;
+import com.codegym.bestticket.entity.organizer.Organizer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,17 +41,22 @@ public class User {
     private String username;
     @Column(nullable = false)
     private String password;
-    @Column(length = 15, nullable = false, unique = true)
+    @Column(name = "phone_number", length = 15, nullable = false, unique = true)
     private String phoneNumber;
     @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(name = "is_deleted")
     private Boolean isDeleted;
+
     @OneToOne(mappedBy = "user")
     @JsonIgnore
     private Customer customer;
+
     @OneToOne(mappedBy = "user")
     @JsonIgnore
     private Organizer organizer;
+
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<BankAccount> bankAccounts;

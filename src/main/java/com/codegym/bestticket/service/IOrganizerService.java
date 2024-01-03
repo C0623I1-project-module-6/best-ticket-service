@@ -1,7 +1,7 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.payload.request.user.organizer.OrganizerRequest;
-import com.codegym.bestticket.payload.response.user.organizer.OrganizerResponse;
+import com.codegym.bestticket.dto.request.organizer.OrganizerRequestDTO;
+import com.codegym.bestticket.dto.response.organizer.OrganizerResponseDTO;
 
 import java.util.List;
 import java.util.UUID;
@@ -9,14 +9,14 @@ import java.util.UUID;
 ;
 
 public interface IOrganizerService {
-    OrganizerResponse create(OrganizerRequest organizerRequest);
+    OrganizerResponseDTO create(OrganizerRequestDTO organizerRequestDTO);
 
-    OrganizerResponse update(UUID id, OrganizerRequest organizerRequest);
+    OrganizerResponseDTO update(UUID id, OrganizerRequestDTO organizerRequestDTO);
 
     void remove(UUID id);
     void delete(UUID id);
 
-    List<OrganizerResponse> findAll();
+    List<OrganizerResponseDTO> findAll();
 
-    OrganizerResponse findById(UUID id);
+    OrganizerResponseDTO findById(UUID id);
 }

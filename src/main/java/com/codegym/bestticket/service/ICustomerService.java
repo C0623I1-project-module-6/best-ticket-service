@@ -1,18 +1,18 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.payload.request.CustomerRequest;
-import com.codegym.bestticket.payload.response.user.customer.CustomerResponse;
+import com.codegym.bestticket.dto.request.customer.CustomerRequestDTO;
+import com.codegym.bestticket.dto.response.customer.CustomerResponseDTO;
 
 import java.util.List;
 import java.util.UUID;
 
 
 public interface ICustomerService {
-    CustomerResponse create(CustomerRequest customerRequest);
-    CustomerResponse update (UUID id, CustomerRequest customerRequest);
+    CustomerResponseDTO create(CustomerRequestDTO customerRequestDTO);
+    CustomerResponseDTO update (UUID id, CustomerRequestDTO customerRequestDTO);
     void remove(UUID id);
     void delete(UUID id);
-    List<CustomerResponse> findAll();
-    CustomerResponse findById(UUID id);
+    List<CustomerResponseDTO> findAll();
+    CustomerResponseDTO findById(UUID id);
 
 }

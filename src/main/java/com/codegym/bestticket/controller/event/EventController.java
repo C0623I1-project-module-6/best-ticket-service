@@ -1,8 +1,8 @@
 package com.codegym.bestticket.controller.event;
 
 import com.codegym.bestticket.dto.EventDTO;
-import com.codegym.bestticket.payload.response.event.EventResponse;
-import com.codegym.bestticket.service.IEventService;
+import com.codegym.bestticket.dto.response.event.EventResponse;
+import com.codegym.bestticket.service.EventService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,30 +23,30 @@ import java.util.UUID;
 @RequestMapping("/api/event")
 public class EventController {
 
-    private final IEventService IEventService;
+    private final EventService eventService;
 
-    public EventController(IEventService IEventService) {
-        this.IEventService = IEventService;
+    public EventController(EventService eventService) {
+        this.eventService = eventService;
     }
 
     @GetMapping("/events")
     public ResponseEntity<EventResponse> getAllEvent(){
         EventResponse eventResponse=new EventResponse();
-        eventResponse.setEventDTOS(IEventService.findAll());
+        eventResponse.setEventDTOS(eventService.findAll());
         return new ResponseEntity<>(eventResponse, HttpStatus.OK);
     }
 
     @GetMapping("/{event_id}")
     public ResponseEntity<EventResponse> getEventById(@PathVariable("event_id") UUID event_id){
         EventResponse eventResponse = new EventResponse();
-        eventResponse.setEventDTO(IEventService.findEventById(event_id));
+        eventResponse.setEventDTO(eventService.findEventById(event_id));
         return new ResponseEntity<>(eventResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{event_id}")
     public ResponseEntity<String> deleteEvent(@PathVariable("event_id") UUID event_id) {
         try {
-            IEventService.removeEvent(event_id);
+            eventService.removeEvent(event_id);
             return new ResponseEntity<>("Event deleted successfully", HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>("Event not found", HttpStatus.NOT_FOUND);
@@ -58,7 +58,7 @@ public class EventController {
                                                    @RequestBody EventDTO eventDTO){
         EventResponse eventResponse = new EventResponse();
         try {
-            EventDTO event = IEventService.updateEvent(event_id, eventDTO);
+            EventDTO event = eventService.updateEvent(event_id, eventDTO);
             eventResponse.setEventDTO(event);
             eventResponse.setMessage("Update successfully");
             return new ResponseEntity<>(eventResponse, HttpStatus.OK);
@@ -80,7 +80,7 @@ public class EventController {
                 throw new IllegalArgumentException("EventDTO is not null");
             }
 
-            EventDTO createdEventDTO = IEventService.createEvent(eventDTO);
+            EventDTO createdEventDTO = eventService.createEvent(eventDTO);
             eventResponse.setEventDTO(createdEventDTO);
             eventResponse.setMessage("Event created successfully");
 

@@ -1,5 +1,6 @@
 package com.codegym.bestticket.entity.event;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,7 +15,6 @@ import lombok.Setter;
 
 import java.util.List;
 import java.util.UUID;
-
 @Entity
 @Getter
 @Setter
@@ -26,7 +26,9 @@ public class EventType {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     private String name;
+
     @OneToMany(mappedBy = "eventType")
     private List<Event> events;
 

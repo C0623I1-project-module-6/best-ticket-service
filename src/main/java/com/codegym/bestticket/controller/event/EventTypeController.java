@@ -1,7 +1,7 @@
 package com.codegym.bestticket.controller.event;
 
-import com.codegym.bestticket.payload.response.event.EventTypeResponse;
-import com.codegym.bestticket.service.IEventTypeService;
+import com.codegym.bestticket.dto.response.event_type.EventTypeResponse;
+import com.codegym.bestticket.service.EventTypeService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +18,9 @@ import java.util.UUID;
 @CrossOrigin(value = "*")
 @RequestMapping("/api/event-type")
 public class EventTypeController {
-    private final IEventTypeService eventTypeService;
+    private final EventTypeService eventTypeService;
 
-    public EventTypeController(IEventTypeService eventTypeService) {
+    public EventTypeController(EventTypeService eventTypeService) {
         this.eventTypeService = eventTypeService;
     }
     @GetMapping("/")
