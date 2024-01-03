@@ -1,8 +1,8 @@
 package com.codegym.bestticket.service.impl.ticket;
 
-import com.codegym.bestticket.payload.request.ticket.TicketRequestDTO;
-import com.codegym.bestticket.payload.response.ticket.TicketResponseDTO;
 import com.codegym.bestticket.entity.ticket.Ticket;
+import com.codegym.bestticket.payload.request.ticket.TicketRequest;
+import com.codegym.bestticket.payload.response.ticket.TicketResponse;
 import com.codegym.bestticket.repository.ticket.ITicketRepository;
 import com.codegym.bestticket.service.ITicketService;
 import lombok.AllArgsConstructor;
@@ -18,52 +18,51 @@ public class TicketService implements ITicketService {
 
     private final ITicketRepository ticketRepository;
 
-
     @Override
-    public Iterable<TicketRequestDTO> getAllTicket() {
+    public Iterable<TicketRequest> getAllTicket() {
         Iterable<Ticket> tickets = ticketRepository.findAll();
 
         return StreamSupport.stream(tickets.spliterator(), true)
                 .filter(ticket -> !ticket.getIsDeleted())
                 .map(ticket -> {
-                    TicketRequestDTO ticketRequestDTO = TicketRequestDTO.builder().build();
-                    BeanUtils.copyProperties(ticket, ticketRequestDTO);
-                    return ticketRequestDTO;
+                    TicketRequest ticketRequest = new TicketRequest();
+                    BeanUtils.copyProperties(ticket, ticketRequest);
+                    return ticketRequest;
                 })
                 .toList();
     }
 
     @Override
-    public TicketResponseDTO getTicketById(UUID id) {
+    public TicketResponse getTicketById(UUID id) {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
         assert ticket != null;
         if (Boolean.FALSE.equals(ticket.getIsDeleted())) {
-            TicketResponseDTO ticketResponseDTO1 = TicketResponseDTO.builder().build();
+            TicketResponse ticketResponse1 = TicketResponse.builder().build();
 
-            BeanUtils.copyProperties(ticket, ticketResponseDTO1);
-            return ticketResponseDTO1;
+            BeanUtils.copyProperties(ticket, ticketResponse1);
+            return ticketResponse1;
         }
         return null;
     }
 
     @Override
-    public TicketRequestDTO createTicket(TicketRequestDTO ticketRequestDTO) {
+    public TicketRequest createTicket(TicketRequest ticketRequest) {
         Ticket ticket = Ticket.builder().build();
 
-        BeanUtils.copyProperties(ticketRequestDTO, ticket);
+        BeanUtils.copyProperties(ticketRequest, ticket);
         ticket = ticketRepository.save(ticket);
 
-        TicketRequestDTO ticketRequestDTO1 = TicketRequestDTO.builder().build();
-        BeanUtils.copyProperties(ticket, ticketRequestDTO1);
+        TicketRequest ticketRequest1 =  new TicketRequest();
+        BeanUtils.copyProperties(ticket, ticketRequest1);
 
-        return ticketRequestDTO1;
+        return ticketRequest1;
     }
 
     @Override
-    public void updateTicket(TicketResponseDTO ticketResponseDTO) {
-        Ticket ticket = ticketRepository.findById(ticketResponseDTO.getId()).orElse(null);
+    public void updateTicket(TicketResponse ticketResponse) {
+        Ticket ticket = ticketRepository.findById(ticketResponse.getId()).orElse(null);
         assert ticket != null;
-        BeanUtils.copyProperties(ticketResponseDTO, ticket);
+        BeanUtils.copyProperties(ticketResponse, ticket);
 
         ticketRepository.save(ticket);
     }

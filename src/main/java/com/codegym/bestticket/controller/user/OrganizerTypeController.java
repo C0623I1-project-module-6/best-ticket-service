@@ -1,6 +1,6 @@
 package com.codegym.bestticket.controller.user;
 
-import com.codegym.bestticket.payload.request.organizer.OrganizerTypeRequestDTO;
+import com.codegym.bestticket.payload.request.user.organizer.OrganizerTypeRequest;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.service.IOrganizerTypeService;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,9 +25,9 @@ public class OrganizerTypeController {
     private final IOrganizerTypeService organizerTypeService;
 
     @PostMapping("/add")
-    public ResponseEntity<ResponsePayload> addOrganizerType(@RequestBody OrganizerTypeRequestDTO organizerTypeRequestDTO) {
+    public ResponseEntity<ResponsePayload> addOrganizerType(@RequestBody OrganizerTypeRequest organizerTypeRequest) {
         try {
-            if (organizerTypeRequestDTO == null) {
+            if (organizerTypeRequest == null) {
                 return new ResponseEntity<>(
                         ResponsePayload.builder()
                                 .message("Request not found!")
@@ -35,12 +35,12 @@ public class OrganizerTypeController {
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            OrganizerTypeRequestDTO resultOrganizerTypeRequestDTO = organizerTypeService.create(organizerTypeRequestDTO);
+            OrganizerTypeRequest resultOrganizerTypeRequest = organizerTypeService.create(organizerTypeRequest);
             return new ResponseEntity<>(
                     ResponsePayload.builder()
                             .message("Add organizer type successfully!!!")
                             .status(HttpStatus.CREATED)
-                            .data(resultOrganizerTypeRequestDTO)
+                            .data(resultOrganizerTypeRequest)
                             .build(),
                     HttpStatus.CREATED);
         } catch (RuntimeException e) {
