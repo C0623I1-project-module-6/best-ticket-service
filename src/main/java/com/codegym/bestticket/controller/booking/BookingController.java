@@ -6,6 +6,7 @@ import com.codegym.bestticket.payload.response.booking.BookingResponse;
 import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,13 +32,8 @@ public class BookingController {
     private final IBookingService bookingService;
 
     @GetMapping
-    public ResponseEntity<ResponsePayload> getBookingList() {
-        ResponsePayload responsePayload = ResponsePayload.builder()
-                .message("Fetch data successfully.")
-                .status(HttpStatus.OK)
-                .data(bookingService.findAll())
-                .build();
-        return ResponseEntity.ok(responsePayload);
+    public ResponseEntity<ResponsePayload> getBookingList(Pageable pageable) {
+        return ResponseEntity.ok(bookingService.findAll(pageable));
     }
 
     @GetMapping("/{id}")

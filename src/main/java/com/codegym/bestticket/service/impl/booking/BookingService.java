@@ -5,6 +5,7 @@ import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.entity.user.customer.Customer;
 import com.codegym.bestticket.entity.user.organizer.Organizer;
 import com.codegym.bestticket.exception.BookingSaveException;
+import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
 import com.codegym.bestticket.payload.response.booking.BookingResponse;
 import com.codegym.bestticket.repository.booking.IBookingRepository;
@@ -12,7 +13,11 @@ import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -27,21 +32,22 @@ import java.util.stream.StreamSupport;
 @AllArgsConstructor
 @Log
 @Service
-public final class BookingService implements IBookingService {
+@Transactional
+public class BookingService implements IBookingService {
     private final IBookingRepository iBookingRepository;
 
-    @Override
-    public Iterable<BookingResponse> findAll() {
-        Iterable<Booking> bookings = iBookingRepository.findAll();
-        return StreamSupport.stream(bookings.spliterator(), false)
-                .filter(booking -> !booking.getIsDeleted())
-                .map(booking -> {
-                    BookingResponse bookingResponse = new BookingResponse();
-                    BeanUtils.copyProperties(booking, bookingResponse);
-                    return bookingResponse;
-                })
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public Iterable<BookingResponse> findAll() {
+//        Iterable<Booking> bookings = iBookingRepository.findAll();
+//        return StreamSupport.stream(bookings.spliterator(), false)
+//                .filter(booking -> !booking.getIsDeleted())
+//                .map(booking -> {
+//                    BookingResponse bookingResponse = new BookingResponse();
+//                    BeanUtils.copyProperties(booking, bookingResponse);
+//                    return bookingResponse;
+//                })
+//                .collect(Collectors.toList());
+//    }
 
     @Override
     public Optional<BookingResponse> findById(UUID id) {
@@ -148,6 +154,21 @@ public final class BookingService implements IBookingService {
             }
         }
         return bookingResponses;
+    }
+
+
+    //Developing functions
+    public ResponsePayload createResponsePayload(String message, HttpStatus status, Object data) {
+        return ResponsePayload.builder()
+                .message(message)
+                .status(status)
+                .data(data)
+                .build();
+    }
+    @Override
+    public ResponsePayload findAll(Pageable pageable) {
+        Page<Booking> bookingPage = iBookingRepository.findAll(pageable);
+        return createResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingPage);
     }
 
 }
