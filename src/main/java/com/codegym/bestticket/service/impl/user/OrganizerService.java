@@ -54,7 +54,7 @@ public class OrganizerService implements IOrganizerService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Add organizer failed!")
-                    .status(HttpStatus.CREATED)
+                    .status(HttpStatus.BAD_REQUEST)
                     .build();
         }
     }

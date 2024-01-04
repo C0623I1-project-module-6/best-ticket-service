@@ -74,7 +74,7 @@ public class CustomerService implements ICustomerService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Edit customer failed!")
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.BAD_REQUEST)
                     .build();
         }
     }
@@ -92,7 +92,7 @@ public class CustomerService implements ICustomerService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Customer list not found!")
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.NOT_FOUND)
                     .build();
         }
 
@@ -112,7 +112,7 @@ public class CustomerService implements ICustomerService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Customer by " + id + "not found or is deleted")
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.NOT_FOUND)
                     .build();
         }
     }
