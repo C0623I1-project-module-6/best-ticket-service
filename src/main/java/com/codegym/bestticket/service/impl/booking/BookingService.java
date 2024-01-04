@@ -78,11 +78,13 @@ public final class BookingService implements IBookingService {
         bookingRequest.setCreatedAt(Timestamp.from(Instant.now()));
         bookingRequest.setStatus(String.valueOf(EBookingStatus.ACTIVE));
         bookingRequest.setIsDeleted(false);
+        Booking booking = new Booking();
+        BeanUtils.copyProperties(bookingRequest, booking);
+        iBookingRepository.save(booking);
     }
 
     private void updateExistingBooking(BookingRequest bookingRequest, Booking existingBooking) {
         BeanUtils.copyProperties(bookingRequest, existingBooking);
-        // Consider additional validation or logic for updates
         existingBooking.setUpdatedAt(Timestamp.from(Instant.now()));
         iBookingRepository.save(existingBooking);
     }

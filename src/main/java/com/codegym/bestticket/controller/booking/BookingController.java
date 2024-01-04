@@ -81,23 +81,12 @@ public class BookingController {
     @PutMapping("/update/{id}")
     public ResponseEntity<ResponsePayload> updateBooking(@PathVariable UUID id, @RequestBody BookingRequest bookingRequest) {
         try {
-            Optional<BookingResponse> bookingOptional = bookingService.findById(id);
-            if (bookingOptional.isPresent()) {
-                bookingService.save(bookingRequest, id);
-                Optional<BookingResponse> updatedBooking = bookingService.findById(id);
-                ResponsePayload responsePayload = ResponsePayload.builder()
-                        .message("Update successfully.")
-                        .status(HttpStatus.OK)
-                        .data(updatedBooking)
-                        .build();
-                return ResponseEntity.ok(responsePayload);
-            } else {
-                ResponsePayload errorResponse = ResponsePayload.builder()
-                        .message("Update failed. Booking not found.")
-                        .status(HttpStatus.NOT_FOUND)
-                        .build();
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-            }
+            bookingService.save(bookingRequest, id);
+            ResponsePayload response = ResponsePayload.builder()
+                    .message("Save booking successfully!")
+                    .status(HttpStatus.OK)
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
             ResponsePayload errorResponse = ResponsePayload.builder()
                     .message("An error occurred while updating the booking.")
@@ -110,7 +99,7 @@ public class BookingController {
 
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<ResponsePayload> remove(@PathVariable UUID id) {
-            bookingService.remove(id);
+        bookingService.remove(id);
         if (bookingService.findById(id).isEmpty()) {
             return ResponseEntity.ok(ResponsePayload.builder()
                     .message("Remove successfully.")
