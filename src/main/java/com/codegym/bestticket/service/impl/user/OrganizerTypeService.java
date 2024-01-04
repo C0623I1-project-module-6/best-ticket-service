@@ -2,8 +2,8 @@ package com.codegym.bestticket.service.impl.user;
 
 
 import com.codegym.bestticket.converter.user.IOrganizerTypeConverter;
+import com.codegym.bestticket.dto.user.OrganizerTypeDto;
 import com.codegym.bestticket.entity.user.OrganizerType;
-import com.codegym.bestticket.payload.request.user.OrganizerTypeRequest;
 import com.codegym.bestticket.repository.user.IOrganizerTypeRepository;
 import com.codegym.bestticket.service.IOrganizerTypeService;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,16 +21,16 @@ public class OrganizerTypeService implements IOrganizerTypeService {
     private final IOrganizerTypeRepository organizerTypeRepository;
 
     @Override
-    public OrganizerTypeRequest create(OrganizerTypeRequest organizerTypeRequest) {
+    public OrganizerTypeDto create(OrganizerTypeDto organizerTypeDto) {
         OrganizerType organizerType =
-                organizerTypeConverter.dtoToEntity(organizerTypeRequest);
+                organizerTypeConverter.dtoToEntity(organizerTypeDto);
         organizerType.setIsDeleted(false);
         organizerTypeRepository.save(organizerType);
         return organizerTypeConverter.entityToDto(organizerType);
     }
 
     @Override
-    public OrganizerTypeRequest update(UUID id, OrganizerTypeRequest organizerTypeRequest) {
+    public OrganizerTypeDto update(UUID id, OrganizerTypeDto organizerTypeDto) {
         return null;
     }
 

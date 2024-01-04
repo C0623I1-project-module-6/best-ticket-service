@@ -23,19 +23,17 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<ResponsePayload> register(@RequestBody RegisterRequest registerRequest) {
         if (registerRequest == null) {
-            new ResponseEntity<>("Request not found", HttpStatus.BAD_REQUEST);
+            new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }
-        ResponsePayload responsePayload = userService.register(registerRequest);
-        return new ResponseEntity<>(responsePayload, HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.register(registerRequest), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<ResponsePayload> login(@RequestBody LoginRequest loginRequest) {
         if (loginRequest == null) {
-            new ResponseEntity<>("Request not found", HttpStatus.BAD_REQUEST);
+            new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }
-        ResponsePayload responsePayload = userService.login(loginRequest);
-        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
+        return new ResponseEntity<>(userService.login(loginRequest), HttpStatus.OK);
     }
 
 }

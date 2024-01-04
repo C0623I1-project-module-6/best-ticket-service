@@ -2,13 +2,14 @@ package com.codegym.bestticket.service.impl.user;
 
 import com.codegym.bestticket.converter.user.ILoginConverter;
 import com.codegym.bestticket.converter.user.IRegisterConverter;
+import com.codegym.bestticket.converter.user.IUserConverter;
+import com.codegym.bestticket.dto.user.UserDto;
+import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.entity.user.User;
-import com.codegym.bestticket.exception.DeleteUserException;
 import com.codegym.bestticket.exception.EmailAlreadyExistsException;
-import com.codegym.bestticket.exception.InvalidUserException;
 import com.codegym.bestticket.exception.InvalidPasswordException;
-import com.codegym.bestticket.exception.LoginFailedException;
-import com.codegym.bestticket.exception.RegisterFailedException;
+import com.codegym.bestticket.exception.InvalidUserException;
 import com.codegym.bestticket.exception.UsernameAlreadyExistsException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
@@ -16,11 +17,14 @@ import com.codegym.bestticket.payload.request.user.RegisterRequest;
 import com.codegym.bestticket.payload.response.user.LoginResponse;
 import com.codegym.bestticket.payload.response.user.RegisterResponse;
 import com.codegym.bestticket.repository.user.ICustomerRepository;
+import com.codegym.bestticket.repository.user.IOrganizerRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +38,8 @@ public class UserService implements IUserService {
     private final ICustomerRepository customerRepository;
     private final IRegisterConverter registerConverter;
     private final ILoginConverter loginConverter;
+    private final IUserConverter userConverter;
+    private final IOrganizerRepository organizerRepository;
 
     @Override
     public ResponsePayload register(RegisterRequest registerRequest) {
@@ -55,7 +61,7 @@ public class UserService implements IUserService {
                     .status(HttpStatus.CREATED)
                     .data(registerResponse)
                     .build();
-        } catch (RegisterFailedException e) {
+        } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Register failed")
                     .status(HttpStatus.BAD_REQUEST)
@@ -65,8 +71,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponsePayload login(LoginRequest loginRequest) {
-        try
-        {
+        try {
             User user = userRepository.findByUsername(loginRequest.getUsername());
             if (user == null) {
                 user = userRepository.findByEmail(loginRequest.getEmail());
@@ -86,11 +91,11 @@ public class UserService implements IUserService {
             }
             LoginResponse loginResponse = loginConverter.entityToDto(user);
             return ResponsePayload.builder()
-                .message("Login successfully!!!")
+                    .message("Login successfully!!!")
                     .status(HttpStatus.OK)
                     .data(loginResponse)
                     .build();
-        } catch (LoginFailedException e){
+        } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Login failed.")
                     .status(HttpStatus.BAD_REQUEST)
@@ -101,7 +106,7 @@ public class UserService implements IUserService {
 
     @Override
     public ResponsePayload delete(UUID id) {
-        try{
+        try {
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("User is not found"));
             user.setIsDeleted(true);
@@ -110,16 +115,42 @@ public class UserService implements IUserService {
                     .message("User deleted!!!")
                     .status(HttpStatus.OK)
                     .build();
-        }catch (DeleteUserException e){
+        } catch (EntityNotFoundException e) {
             return ResponsePayload.builder()
                     .message("User not found or is deleted!")
                     .status(HttpStatus.BAD_REQUEST)
                     .build();
         }
-
     }
 
+    @Override
+    public ResponsePayload findAll(Pageable pageable) {
+        try {
+            Page<User> users = userRepository.findAllByIsDeletedFalse(pageable);
+            Page<UserDto> userDtos = users.map(user -> {
+                UserDto userDto = userConverter.entityToDto(user);
+                Customer customer = customerRepository.findByUserIdAndIsDeletedFalse(userDto.getId())
+                        .orElse(null);
+                userDto.setCustomer(customer);
+                Organizer organizer = organizerRepository.findByUserIdAndIsDeletedFalse(userDto.getId())
+                        .orElse(null);
+                userDto.setOrganizer(organizer);
+                return userDto;
+            });
+            return ResponsePayload.builder()
+                    .message("User list!!!")
+                    .status(HttpStatus.OK)
+                    .data(userDtos)
+                    .build();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            return ResponsePayload.builder()
+                    .message("User list not found")
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
+        }
 
+    }
 }
 
 

@@ -1,16 +1,18 @@
 package com.codegym.bestticket.service.impl.user;
 
 import com.codegym.bestticket.converter.user.ICustomerConverter;
+import com.codegym.bestticket.dto.user.CustomerDto;
 import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.User;
-import com.codegym.bestticket.payload.request.user.CustomerRequest;
+import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.response.user.CustomerResponse;
-import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.repository.user.ICustomerRepository;
+import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.service.ICustomerService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,58 +28,92 @@ public class CustomerService implements ICustomerService {
     private final IUserRepository userRepository;
 
     @Override
-    public CustomerResponse create(CustomerRequest customerRequest) {
-        UUID userid = customerRequest.getUser();
-        User user = userRepository.findById(userid)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        Customer customer = customerConverter.dtoToEntity(customerRequest);
-        customer.setUser(user);
-        customer.setIsDeleted(false);
-        customerRepository.save(customer);
-        return customerConverter.entityToDto(customer);
-    }
-
-    @Override
-    public CustomerResponse update(UUID id, CustomerRequest customerRequest) {
-        Optional<Customer> optionalCustomer = customerRepository.findById(id);
-        if (optionalCustomer.isEmpty()) {
-            throw new EntityNotFoundException("Customer not found is" + id);
+    public ResponsePayload create(CustomerDto customerDto) {
+        try {
+            UUID userid = customerDto.getUser();
+            User user = userRepository.findById(userid)
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            Customer customer = customerConverter.dtoToEntity(customerDto);
+            customer.setUser(user);
+            customer.setIsDeleted(false);
+            customerRepository.save(customer);
+            CustomerResponse customerResponse = customerConverter.entityToDto(customer);
+            return ResponsePayload.builder()
+                    .message("Add customer successfully!!!")
+                    .status(HttpStatus.CREATED)
+                    .data(customerResponse)
+                    .build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .message("Add customer failed!")
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build();
         }
-        Customer customer = optionalCustomer.get();
-        String oldIdCard = customer.getIdCard();
-        customerConverter.dtoToEntity(customerRequest);
-        customer.setIdCard(oldIdCard);
-        customerRepository.save(customer);
-        return customerConverter.entityToDto(customer);
     }
 
     @Override
-    public void remove(UUID id) {
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer is not found"));
-        customer.setIsDeleted(true);
-        customerRepository.save(customer);
+    public ResponsePayload update(UUID id, CustomerDto customerDto) {
+        try {
+            Optional<Customer> optionalCustomer = customerRepository.findById(id);
+            if (optionalCustomer.isEmpty()) {
+                throw new EntityNotFoundException("Customer not found is" + id);
+            }
+            Customer customer = optionalCustomer.get();
+            String oldIdCard = customer.getIdCard();
+            String oldPhoneNumber = customer.getPhoneNumber();
+            customerConverter.dtoToEntity(customerDto);
+            customer.setIdCard(oldIdCard);
+            customer.setPhoneNumber(oldPhoneNumber);
+            customerRepository.save(customer);
+            CustomerResponse customerResponse = customerConverter.entityToDto(customer);
+            return ResponsePayload.builder()
+                    .message("Edit customer successfully!!!")
+                    .status(HttpStatus.OK)
+                    .data(customerResponse)
+                    .build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .message("Edit customer failed!")
+                    .status(HttpStatus.OK)
+                    .build();
+        }
     }
 
     @Override
-    public void delete(UUID id) {
-        customerRepository.deleteById(id);
+    public ResponsePayload findAll() {
+        try {
+            List<CustomerResponse> customerResponses = customerConverter.entitiesToDTOs(
+                    customerRepository.findAllByIsDeletedFalse());
+            return ResponsePayload.builder()
+                    .message("Customer list!!!")
+                    .status(HttpStatus.OK)
+                    .data(customerResponses)
+                    .build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .message("Customer list not found!")
+                    .status(HttpStatus.OK)
+                    .build();
+        }
+
     }
 
     @Override
-    public List<CustomerResponse> findAll() {
-        return customerConverter.entitiesToDTOs(
-                customerRepository.findAllByIsDeletedFalse());
-    }
-
-    @Override
-    public CustomerResponse findById(UUID id) {
-        Customer customer =
-                customerRepository.findByIdAndIsDeletedFalse(id);
-        if (customer != null) {
-            return customerConverter.entityToDto(customer);
-        } else {
-            throw new EntityNotFoundException("Customer not found or is deleted");
+    public ResponsePayload findById(UUID id) {
+        try {
+            Customer customer = customerRepository.findByIdAndIsDeletedFalse(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Id not found!"));
+            CustomerResponse customerResponse = customerConverter.entityToDto(customer);
+            return ResponsePayload.builder()
+                    .message("Customer by " + id)
+                    .status(HttpStatus.OK)
+                    .data(customerResponse)
+                    .build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .message("Customer by " + id + "not found or is deleted")
+                    .status(HttpStatus.OK)
+                    .build();
         }
     }
 

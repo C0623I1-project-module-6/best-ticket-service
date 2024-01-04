@@ -1,5 +1,7 @@
 package com.codegym.bestticket.dto.user;
 
+import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.user.Organizer;
 import lombok.Data;
 
 import java.util.UUID;
@@ -11,5 +13,8 @@ public class UserDto {
     private String password;
     private String email;
     private String avatar;
+    private Customer customer;
+    private Organizer organizer;
+    private Boolean isDeleted;
 
 }

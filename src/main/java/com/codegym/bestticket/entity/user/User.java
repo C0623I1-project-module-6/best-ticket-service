@@ -46,10 +46,8 @@ public class User {
     private String avatar;
     private Boolean isDeleted;
     @OneToOne(mappedBy = "user")
-    @JsonIgnore
     private Customer customer;
     @OneToOne(mappedBy = "user")
-    @JsonIgnore
     private Organizer organizer;
     @OneToMany(mappedBy = "user")
     @JsonIgnore

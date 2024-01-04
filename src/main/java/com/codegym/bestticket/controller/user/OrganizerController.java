@@ -1,7 +1,7 @@
 package com.codegym.bestticket.controller.user;
 
+import com.codegym.bestticket.dto.user.OrganizerDto;
 import com.codegym.bestticket.payload.ResponsePayload;
-import com.codegym.bestticket.payload.request.user.OrganizerRequest;
 import com.codegym.bestticket.payload.response.user.OrganizerResponse;
 import com.codegym.bestticket.service.IOrganizerService;
 import jakarta.persistence.EntityNotFoundException;
@@ -31,13 +31,13 @@ public class OrganizerController {
     @GetMapping("")
     public ResponseEntity<ResponsePayload> getOrganizers() {
         try {
-            List<OrganizerResponse> organizerResponsDTOS =
+            List<OrganizerResponse> organizerResponsesDTOS =
                     organizerService.findAll();
             return new ResponseEntity<>(
                     ResponsePayload.builder()
                             .message("Organizer list")
                             .status(HttpStatus.OK)
-                            .data(organizerResponsDTOS)
+                            .data(organizerResponsesDTOS)
                             .build(),
                     HttpStatus.OK);
         } catch (RuntimeException e) {
@@ -73,9 +73,9 @@ public class OrganizerController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ResponsePayload> addOrganizer(@RequestBody OrganizerRequest organizerRequest) {
+    public ResponseEntity<ResponsePayload> addOrganizer(@RequestBody OrganizerDto organizerDto) {
         try {
-            if (organizerRequest == null) {
+            if (organizerDto == null) {
                 return new ResponseEntity<>(
                         ResponsePayload.builder()
                                 .message("Request not found!")
@@ -83,7 +83,7 @@ public class OrganizerController {
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            OrganizerResponse organizerResponse = organizerService.create(organizerRequest);
+            OrganizerResponse organizerResponse = organizerService.create(organizerDto);
             return new ResponseEntity<>(
                     ResponsePayload.builder()
                             .message("Add organizer successfully!!!")
@@ -103,9 +103,9 @@ public class OrganizerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponsePayload> editOrganizer(@PathVariable UUID id,
-                                                         @RequestBody OrganizerRequest organizerRequest) {
+                                                         @RequestBody OrganizerDto organizerDto) {
         try {
-            if (organizerRequest == null) {
+            if (organizerDto == null) {
                 return new ResponseEntity<>(
                         ResponsePayload.builder()
                                 .message("Request not found!")
@@ -113,7 +113,7 @@ public class OrganizerController {
                                 .build(),
                         HttpStatus.BAD_REQUEST);
             }
-            OrganizerResponse organizerResponse = organizerService.update(id, organizerRequest);
+            OrganizerResponse organizerResponse = organizerService.update(id, organizerDto);
             return new ResponseEntity<>(
                     ResponsePayload.builder()
                             .message("Edit organizer successfully!!!")
