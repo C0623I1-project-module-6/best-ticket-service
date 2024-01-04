@@ -46,7 +46,7 @@ public class CustomerService implements ICustomerService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Add customer failed!")
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
     }
@@ -74,7 +74,7 @@ public class CustomerService implements ICustomerService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Edit customer failed!")
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
     }
@@ -92,7 +92,7 @@ public class CustomerService implements ICustomerService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Customer list not found!")
-                    .status(HttpStatus.NOT_FOUND)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
 
@@ -112,7 +112,7 @@ public class CustomerService implements ICustomerService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Customer by " + id + "not found or is deleted")
-                    .status(HttpStatus.NOT_FOUND)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
     }

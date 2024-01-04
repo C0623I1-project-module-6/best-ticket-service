@@ -37,7 +37,7 @@ public class OrganizerTypeService implements IOrganizerTypeService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Add organizer type failed!")
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
 
@@ -57,7 +57,7 @@ public class OrganizerTypeService implements IOrganizerTypeService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Organizer type by" + id + "not found!")
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
 

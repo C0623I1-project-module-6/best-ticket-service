@@ -54,7 +54,7 @@ public class OrganizerService implements IOrganizerService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Add organizer failed!")
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
     }
@@ -87,7 +87,7 @@ public class OrganizerService implements IOrganizerService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Edit organizer failed!")
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
     }
@@ -105,7 +105,7 @@ public class OrganizerService implements IOrganizerService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Organizer list not found!")
-                    .status(HttpStatus.NOT_FOUND)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
 
@@ -125,7 +125,7 @@ public class OrganizerService implements IOrganizerService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Organizer by" + id + "not found or is deleted!")
-                    .status(HttpStatus.NOT_FOUND)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
 

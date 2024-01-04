@@ -64,7 +64,7 @@ public class UserService implements IUserService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Register failed")
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
     }
@@ -98,7 +98,7 @@ public class UserService implements IUserService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Login failed.")
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
 
@@ -118,7 +118,7 @@ public class UserService implements IUserService {
         } catch (EntityNotFoundException e) {
             return ResponsePayload.builder()
                     .message("User not found or is deleted!")
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
     }
@@ -146,7 +146,7 @@ public class UserService implements IUserService {
             e.printStackTrace();
             return ResponsePayload.builder()
                     .message("User list not found")
-                    .status(HttpStatus.NOT_FOUND)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
 

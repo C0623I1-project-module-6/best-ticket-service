@@ -37,7 +37,7 @@ public class RoleService implements IRoleService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Add role failed!")
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
     }
@@ -61,7 +61,7 @@ public class RoleService implements IRoleService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Update role failed!")
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
     }
@@ -80,7 +80,7 @@ public class RoleService implements IRoleService {
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
                     .message("Role not found or is deleted ")
-                    .status(HttpStatus.NOT_FOUND)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
     }
