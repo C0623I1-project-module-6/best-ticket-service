@@ -1,6 +1,7 @@
 package com.codegym.bestticket.service;
 
 import com.codegym.bestticket.entity.ticket.Ticket;
+import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.ticket.TicketRequest;
 import com.codegym.bestticket.payload.response.ticket.TicketResponse;
 import org.springframework.data.domain.Pageable;
@@ -16,8 +17,8 @@ public interface ITicketService {
     void deleteTicketById(UUID id);
 
     Iterable<Ticket> searchTicketByStatus(String status);
-    Iterable<Ticket> searchAllByTimeBefore();
-    Iterable<Ticket> searchTicketByTimeBefore();
+    Iterable<ResponsePayload> searchTicketByTimeBefore();
+    Iterable<ResponsePayload> searchTicketByTimeAfter();
 
 
 

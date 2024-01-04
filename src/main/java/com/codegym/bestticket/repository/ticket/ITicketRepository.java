@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface ITicketRepository extends JpaRepository<Ticket, UUID> {
     Iterable<Ticket> searchTicketByStatus(String status);
-    Iterable<Ticket> searchTicketByTimeBefore(LocalDate time);
+
 }

@@ -29,31 +29,31 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<ResponsePayload> register(@RequestBody RegisterRequest registerRequest) {
-      try{
-          if (registerRequest == null) {
-              return new ResponseEntity<>(
-                      ResponsePayload.builder()
-                              .message("Request not found!")
-                              .status(HttpStatus.BAD_REQUEST)
-                              .build(),
-                      HttpStatus.BAD_REQUEST);
-          }
-          RegisterResponse registerResponse = iUserService.register(registerRequest);
-          return new ResponseEntity<>(
-                  ResponsePayload.builder()
-                          .message("Register successfully!!!")
-                          .status(HttpStatus.CREATED)
-                          .data(registerResponse)
-                          .build(),
-                  HttpStatus.CREATED);
-      }catch (RuntimeException e){
-          return new ResponseEntity<>(
-                  ResponsePayload.builder()
-                          .message("Register failed!!!")
-                          .status(HttpStatus.BAD_REQUEST)
-                          .build(),
-                  HttpStatus.BAD_REQUEST);
-      }
+        try {
+            if (registerRequest == null) {
+                return new ResponseEntity<>(
+                        ResponsePayload.builder()
+                                .message("Request not found!")
+                                .status(HttpStatus.BAD_REQUEST)
+                                .build(),
+                        HttpStatus.BAD_REQUEST);
+            }
+            RegisterResponse registerResponse = iUserService.register(registerRequest);
+            return new ResponseEntity<>(
+                    ResponsePayload.builder()
+                            .message("Register successfully!!!")
+                            .status(HttpStatus.CREATED)
+                            .data(registerResponse)
+                            .build(),
+                    HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(
+                    ResponsePayload.builder()
+                            .message("Register failed!!!")
+                            .status(HttpStatus.BAD_REQUEST)
+                            .build(),
+                    HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/login")
@@ -75,7 +75,7 @@ public class AuthController {
                             .data(loginResponse)
                             .build(),
                     HttpStatus.CREATED);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return new ResponseEntity<>(
                     ResponsePayload.builder()
                             .message("Login failed!!!")

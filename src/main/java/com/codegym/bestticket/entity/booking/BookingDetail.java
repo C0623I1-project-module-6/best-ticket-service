@@ -25,16 +25,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "contract_details")
+@Table(name = "booking_details")
 public class BookingDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "contract_id", nullable = false)
+    @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
-    @OneToMany(mappedBy = "contractDetail")
+    @OneToMany(mappedBy = "bookingDetail")
     @JsonIgnore
     private List<Ticket> tickets;
     private Boolean isDeleted;

@@ -1,4 +1,4 @@
-CREATE TABLE individuals
+CREATE TABLE IF NOT EXISTS individuals
 (
     id                 BINARY(36) PRIMARY KEY,
     full_name          VARCHAR(50),

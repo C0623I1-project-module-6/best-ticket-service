@@ -1,7 +1,8 @@
 package com.codegym.bestticket.payload.response.booking;
 
-import com.codegym.bestticket.entity.user.customer.Customer;
-import com.codegym.bestticket.entity.user.organizer.Organizer;
+
+import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.user.Organizer;
 import lombok.Data;
 
 import java.sql.Timestamp;

@@ -46,6 +46,7 @@ public class Event {
             name = "event_times",
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "time_id"))
+    @JsonIgnore
     private Set<Time> times;
 
 

@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
 import java.util.UUID;
 
 @RestController
@@ -151,9 +150,14 @@ public class TicketController {
         return new ResponseEntity<>(ResponsePayload.builder().data(tickets).build(), HttpStatus.OK);
     }
 
-    @GetMapping("/search/time")
-    public ResponseEntity<ResponsePayload> searchTicketByTimeBefore() {
-        Iterable<Ticket> tickets = ticketService.searchAllByTimeBefore();
-        return new ResponseEntity<>(ResponsePayload.builder().data(tickets).build(), HttpStatus.OK);
+    @GetMapping("/search/time/before")
+    public ResponseEntity<Iterable<ResponsePayload>> searchTicketByTimeBefore() {
+        Iterable<ResponsePayload> responsePayload = ticketService.searchTicketByTimeBefore();
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
+    }
+    @GetMapping("/search/time/after")
+    public ResponseEntity<Iterable<ResponsePayload>> searchTicketByTimeAfter() {
+        Iterable<ResponsePayload> responsePayload = ticketService.searchTicketByTimeAfter();
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 }

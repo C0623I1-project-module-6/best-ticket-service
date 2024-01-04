@@ -1,6 +1,8 @@
 package com.codegym.bestticket.service.impl.ticket;
 
+import com.codegym.bestticket.constant.ETicketMessage;
 import com.codegym.bestticket.entity.ticket.Ticket;
+import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.ticket.TicketRequest;
 import com.codegym.bestticket.payload.response.ticket.TicketResponse;
 import com.codegym.bestticket.repository.ticket.ITicketRepository;
@@ -8,13 +10,12 @@ import com.codegym.bestticket.service.ITicketService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -57,7 +58,7 @@ public class TicketService implements ITicketService {
         BeanUtils.copyProperties(ticketRequest, ticket);
         ticket = ticketRepository.save(ticket);
 
-        TicketRequest ticketRequest1 =  new TicketRequest();
+        TicketRequest ticketRequest1 = new TicketRequest();
         BeanUtils.copyProperties(ticket, ticketRequest1);
 
         return ticketRequest1;
@@ -87,34 +88,63 @@ public class TicketService implements ITicketService {
         return ticketRepository.searchTicketByStatus(status);
     }
 
+
     @Override
-    public Iterable<Ticket> searchAllByTimeBefore() {
-        return null;
+    public Iterable<ResponsePayload> searchTicketByTimeBefore() {
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        Iterable<Ticket> tickets = ticketRepository.findAll();
+
+        return StreamSupport.stream(tickets.spliterator(), true)
+                .filter(ticket -> !ticket.getIsDeleted())
+                .map(ticket -> {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    LocalDateTime dateTime = LocalDateTime.parse(ticket.getTime(), formatter);
+
+                    TicketRequest ticketRequest = new TicketRequest();
+                    if (dateTime.isBefore(currentDate)) {
+                        BeanUtils.copyProperties(ticket, ticketRequest);
+                        return ResponsePayload.builder()
+                                .message(String.valueOf(ETicketMessage.SUCCESS))
+                                .status(HttpStatus.OK)
+                                .data(ticketRequest)
+                                .build();
+                    } else {
+                        return ResponsePayload.builder()
+                                .message(String.valueOf(ETicketMessage.FAIL))
+                                .status(HttpStatus.BAD_REQUEST)
+                                .build();
+                    }
+                })
+                .filter(payload -> payload.getData() != null)
+                .toList();
     }
 
-//    @Override
-//    public Iterable<Ticket> searchAllByTimeBefore() {
-//        return ticketRepository.searchTicketByTimeBefore();
-//    }
-
     @Override
-    public Iterable<Ticket> searchTicketByTimeBefore() {
-        LocalDate date = LocalDate.now();
-
-        Iterable<Ticket> tickets =  ticketRepository.searchTicketByTimeBefore(date);
+    public Iterable<ResponsePayload> searchTicketByTimeAfter() {
+        LocalDateTime currentDate = LocalDateTime.now();
+        Iterable<Ticket> tickets = ticketRepository.findAll();
         return StreamSupport.stream(tickets.spliterator(), true)
-                .peek(ticket -> {
-                    String time = ticket.getTime();
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-                    LocalDate currentDate = LocalDate.now();
-                    LocalDate customDate = LocalDate.parse(time, formatter);
-                    if (currentDate.isEqual(customDate)) {
-                        System.out.println("Ngày hiện tại bằng với ngày có sẵn.");
-                    } else if (currentDate.isBefore(customDate)) {
-                        System.out.println("Ngày hiện tại trước ngày có sẵn.");
+                .filter(ticket -> !ticket.getIsDeleted())
+                .map(ticket -> {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    LocalDateTime dateTime = LocalDateTime.parse(ticket.getTime(), formatter);
+                    TicketRequest ticketRequest = new TicketRequest();
+                    if (dateTime.isAfter(currentDate)) {
+                        BeanUtils.copyProperties(ticket, ticketRequest);
+                        return ResponsePayload.builder()
+                                .message(String.valueOf(ETicketMessage.SUCCESS))
+                                .status(HttpStatus.OK)
+                                .data(ticketRequest)
+                                .build();
                     } else {
-                        System.out.println("Ngày hiện tại sau ngày có sẵn.");
+                        return ResponsePayload.builder()
+                                .message(String.valueOf(ETicketMessage.FAIL))
+                                .status(HttpStatus.BAD_REQUEST)
+                                .build();
                     }
-                }).collect(Collectors.toList());
+                })
+                .filter(payload -> payload.getData() != null)
+                .toList();
     }
 }
