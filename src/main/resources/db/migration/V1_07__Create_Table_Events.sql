@@ -9,11 +9,12 @@ CREATE TABLE events
     id            BINARY(36) PRIMARY KEY,
     name          VARCHAR(50)  NOT NULL,
     address       VARCHAR(255) NOT NULL
+
 );
 
 CREATE TABLE times
 (
-    id   BINARY(36) PRIMARY KEY ,
+    id   BINARY(36) PRIMARY KEY,
     time datetime
 );
 

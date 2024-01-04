@@ -52,7 +52,7 @@ CREATE TABLE contract_details
     contract_id  binary(36),
     quantity     INT            NOT NULL,
     ticket_price DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (contract_id)
+     FOREIGN KEY (contract_id)
         REFERENCES contracts (id)
 );
 
@@ -66,19 +66,19 @@ CREATE TABLE ticket_types
 
 CREATE TABLE tickets
 (
-    id             binary(36) PRIMARY KEY,
-    ticket_code    VARCHAR(55) UNIQUE NOT NULL,
-    seat           VARCHAR(10),
-    `time`         DATETIME,
-    location       VARCHAR(30),
-    promotion      VARCHAR(5),
-    barcode        VARCHAR(20),
-    ticket_type_id binary(36),
+    id                 binary(36) PRIMARY KEY,
+    ticket_code        VARCHAR(55) UNIQUE NOT NULL,
+    seat               VARCHAR(10),
+    `time`             DATETIME,
+    location           VARCHAR(30),
+    promotion          VARCHAR(5),
+    barcode            VARCHAR(20),
+    ticket_type_id     binary(36),
     contract_detail_id BINARY(16),
     FOREIGN KEY (ticket_type_id)
         REFERENCES ticket_types (id),
     FOREIGN KEY (contract_detail_id)
-        REFERENCES contract_details(id)
+        REFERENCES contract_details (id)
 );
 
 

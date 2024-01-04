@@ -29,9 +29,7 @@ public class TicketType {
 
     private String name;
 
-    private Double price;
-
-    private Boolean isDelete;
+    private Boolean isDeleted;
 
     @OneToMany(mappedBy = "ticketType")
     private Set<Ticket> tickets;

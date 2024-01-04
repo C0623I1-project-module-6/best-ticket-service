@@ -1,7 +1,11 @@
 package com.codegym.bestticket.entity.event;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 import java.util.UUID;
@@ -12,15 +16,14 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "EVENT_TYPES")
+@Table(name = "event_types")
 public class EventType {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @Column(name = "name")
     private String name;
 
     @ManyToMany(mappedBy = "eventTypes")
     private Set<Event> events;
+
 }

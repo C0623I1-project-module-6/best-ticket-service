@@ -1,17 +1,16 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.dto.request.ticket_type.TicketTypeRequestDTO;
-import com.codegym.bestticket.dto.response.ticket_type.TicketTypeResponseDTO;
+import com.codegym.bestticket.payload.request.ticket.TicketTypeRequest;
+import com.codegym.bestticket.payload.response.ticket.TicketTypeResponse;
 
-import java.util.List;
 import java.util.UUID;
 
 
 public interface ITicketTypeService {
 
-    List<TicketTypeRequestDTO> getAllTicketType();
-    TicketTypeResponseDTO getTicketTypeById(UUID id);
-    TicketTypeRequestDTO createTicketType(TicketTypeRequestDTO ticketTypeRequestDTO);
+    Iterable<TicketTypeRequest> getAllTicketType();
+    TicketTypeResponse getTicketTypeById(UUID id);
+    TicketTypeRequest createTicketType(TicketTypeRequest ticketTypeRequest);
     void deleteTicketType(UUID id);
-    void updateTicketType(TicketTypeResponseDTO ticketTypeResponseDTO);
+    void updateTicketType(TicketTypeResponse ticketTypeResponse);
 }

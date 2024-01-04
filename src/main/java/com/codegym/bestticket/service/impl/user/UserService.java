@@ -2,18 +2,21 @@ package com.codegym.bestticket.service.impl.user;
 
 import com.codegym.bestticket.converter.user.LoginConverter;
 import com.codegym.bestticket.converter.user.RegisterConverter;
-import com.codegym.bestticket.dto.ResponseDto;
-import com.codegym.bestticket.dto.request.user.RegisterDtoRequest;
-import com.codegym.bestticket.dto.request.user.LoginDtoRequest;
-import com.codegym.bestticket.dto.response.user.LoginDtoResponse;
+import com.codegym.bestticket.payload.request.user.LoginRequest;
+import com.codegym.bestticket.payload.request.user.RegisterRequest;
+import com.codegym.bestticket.payload.response.user.LoginResponse;
+import com.codegym.bestticket.payload.response.user.RegisterResponse;
 import com.codegym.bestticket.entity.user.User;
+import com.codegym.bestticket.exception.EmailAlreadyExistsException;
+import com.codegym.bestticket.exception.EmailNotFoundException;
+import com.codegym.bestticket.exception.InvalidPasswordException;
 import com.codegym.bestticket.exception.PhoneNumberAlreadyExistsException;
-import com.codegym.bestticket.repository.IUserRepository;
+import com.codegym.bestticket.exception.UsernameAlreadyExistsException;
+import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -27,36 +30,56 @@ public class UserService implements IUserService {
     private final LoginConverter loginConverter;
 
     @Override
-    public ResponseDto register(RegisterDtoRequest registerDtoRequest) {
+    public RegisterResponse register(RegisterRequest registerRequest) {
+        if (userRepository.existsByUsername(
+                registerRequest.getUsername())) {
+            throw new UsernameAlreadyExistsException("Username already exists.");
+        }
+        if (userRepository.existsByEmail(
+                registerRequest.getEmail())) {
+            throw new EmailAlreadyExistsException("Email already exists.");
+        }
         if (userRepository.existsByPhoneNumber(
-                registerDtoRequest.getPhoneNumber())){
+                registerRequest.getPhoneNumber())) {
             throw new PhoneNumberAlreadyExistsException("Phone number already exists.");
         }
-        User user = registerConverter.dtoToEntity(registerDtoRequest);
+        User user = User.builder()
+                .isDeleted(false)
+                .build();
         userRepository.save(user);
-        registerConverter.entityToDto(user);
-        return new ResponseDto(user);
+        return registerConverter.entityToDto(user);
     }
 
     @Override
-    public LoginDtoResponse login(LoginDtoRequest loginDtoRequest) {
-        String password = loginDtoRequest.getPassword();
-        if (password != null) {
-            User user = userRepository.findByPhoneNumber(loginDtoRequest.getPhoneNumber());
-            if (user != null) {
-                if (user.getPassword() != null && password.equals(user.getPassword())) {
-                   return loginConverter.entityToDto(user);
-                }
-            }
+    public LoginResponse login(LoginRequest loginRequest) {
+        User user = userRepository.findByEmail(loginRequest.getEmail());
+        if (user == null) {
+            user = userRepository.findByPhoneNumber(loginRequest.getPhoneNumber());
         }
-        return null;
+        if (user == null) {
+            throw new EmailNotFoundException("Email not found.");
+        }
+        String password = loginRequest.getPassword();
+        if (password == null || password.isEmpty()) {
+            throw new InvalidPasswordException("Password is not blank.");
+        }
+        if (!password.equals(user.getPassword())) {
+            throw new InvalidPasswordException("Password is incorrect.");
+        }
+        return loginConverter.entityToDto(user);
     }
 
     @Override
     public void remove(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User is not found"));
-        userRepository.delete(user);
+        user.setIsDeleted(true);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void delete(UUID id) {
+        userRepository.deleteById(id);
     }
 
 }

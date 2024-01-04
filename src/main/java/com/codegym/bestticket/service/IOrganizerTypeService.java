@@ -1,15 +1,14 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.dto.OrganizerTypeDTO;
-import com.codegym.bestticket.dto.response.user.OrganizerDtoResponse;
-import com.codegym.bestticket.entity.user.OrganizerType;
+import com.codegym.bestticket.payload.request.user.organizer.OrganizerTypeRequest;
 
 import java.util.UUID;
 
 public interface IOrganizerTypeService {
-    OrganizerTypeDTO create(OrganizerTypeDTO organizerTypeDTO);
+    OrganizerTypeRequest create(OrganizerTypeRequest organizerTypeRequest);
 
-    OrganizerTypeDTO update(UUID id, OrganizerTypeDTO organizerTypeDTO);
+    OrganizerTypeRequest update(UUID id, OrganizerTypeRequest organizerTypeRequest);
 
     void remove(UUID id);
+    void delete(UUID id);
 }
