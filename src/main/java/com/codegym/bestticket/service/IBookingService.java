@@ -1,9 +1,9 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.payload.request.booking.BookingRequest;
-import com.codegym.bestticket.payload.response.booking.BookingResponse;
 import com.codegym.bestticket.entity.user.customer.Customer;
 import com.codegym.bestticket.entity.user.organizer.Organizer;
+import com.codegym.bestticket.payload.request.booking.BookingRequest;
+import com.codegym.bestticket.payload.response.booking.BookingResponse;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -13,7 +13,9 @@ public interface IBookingService {
 
     Optional<BookingResponse> findById(UUID id);
 
-    void save(BookingRequest bookingRequest);
+//    void save(BookingRequest bookingRequest);
+
+    void save(BookingRequest bookingRequest, UUID input);
 
     void remove(UUID id);
 

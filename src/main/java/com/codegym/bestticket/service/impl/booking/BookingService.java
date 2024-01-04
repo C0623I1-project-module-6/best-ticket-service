@@ -4,6 +4,7 @@ import com.codegym.bestticket.constant.EBookingStatus;
 import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.entity.user.customer.Customer;
 import com.codegym.bestticket.entity.user.organizer.Organizer;
+import com.codegym.bestticket.exception.BookingSaveException;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
 import com.codegym.bestticket.payload.response.booking.BookingResponse;
 import com.codegym.bestticket.repository.booking.IBookingRepository;
@@ -19,13 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Log
 @Service
-public class BookingService implements IBookingService {
+public final class BookingService implements IBookingService {
     private final IBookingRepository iBookingRepository;
 
     @Override
@@ -55,11 +57,37 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public void save(BookingRequest bookingRequest) {
-        if (bookingRequest.getId() == null) {
-            bookingRequest.setDate(String.valueOf(Timestamp.from(Instant.now())));
-            bookingRequest.setCreatedAt(Timestamp.from(Instant.now()));
+    public void save(BookingRequest bookingRequest, UUID id) {
+        try {
+            Optional<Booking> bookingOptional = iBookingRepository.findById(id);
+            if (bookingRequest.getId() == null) {
+                createNewBooking(bookingRequest);
+            } else if (bookingOptional.isPresent()) {
+                updateExistingBooking(bookingRequest, bookingOptional.get());
+            } else {
+                createNewBookingFromRequest(bookingRequest);
+            }
+        } catch (Exception e) {
+            log.log(Level.WARNING, e.getMessage(), e);
+            throw new BookingSaveException("Failed to save booking", e);
         }
+    }
+
+    private void createNewBooking(BookingRequest bookingRequest) {
+        bookingRequest.setDate(String.valueOf(Timestamp.from(Instant.now())));
+        bookingRequest.setCreatedAt(Timestamp.from(Instant.now()));
+        bookingRequest.setStatus(String.valueOf(EBookingStatus.ACTIVE));
+        bookingRequest.setIsDeleted(false);
+    }
+
+    private void updateExistingBooking(BookingRequest bookingRequest, Booking existingBooking) {
+        BeanUtils.copyProperties(bookingRequest, existingBooking);
+        // Consider additional validation or logic for updates
+        existingBooking.setUpdatedAt(Timestamp.from(Instant.now()));
+        iBookingRepository.save(existingBooking);
+    }
+
+    private void createNewBookingFromRequest(BookingRequest bookingRequest) {
         bookingRequest.setUpdatedAt(Timestamp.from(Instant.now()));
         Booking booking = new Booking();
         BeanUtils.copyProperties(bookingRequest, booking);

@@ -1,6 +1,5 @@
 package com.codegym.bestticket.controller.booking;
 
-import com.codegym.bestticket.constant.EBookingStatus;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
 import com.codegym.bestticket.payload.response.booking.BookingResponse;
@@ -31,13 +30,12 @@ import java.util.logging.Level;
 public class BookingController {
     private final IBookingService bookingService;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<ResponsePayload> getBookingList() {
-        Iterable<BookingResponse> bookingResponses = bookingService.findAll();
         ResponsePayload responsePayload = ResponsePayload.builder()
                 .message("Fetch data successfully.")
                 .status(HttpStatus.OK)
-                .data(bookingResponses)
+                .data(bookingService.findAll())
                 .build();
         return ResponseEntity.ok(responsePayload);
     }
@@ -46,11 +44,10 @@ public class BookingController {
     public ResponseEntity<ResponsePayload> getBooking(@PathVariable UUID id) {
         Optional<BookingResponse> bookingResponseOptional = bookingService.findById(id);
         if (bookingResponseOptional.isPresent()) {
-            BookingResponse bookingResponse = bookingResponseOptional.get();
             ResponsePayload responsePayload = ResponsePayload.builder()
                     .message("Booking found.")
                     .status(HttpStatus.OK)
-                    .data(bookingResponse)
+                    .data(bookingResponseOptional)
                     .build();
             return ResponseEntity.ok(responsePayload);
         } else {
@@ -65,9 +62,7 @@ public class BookingController {
     @PostMapping("/add")
     public ResponseEntity<ResponsePayload> addBooking(@RequestBody BookingRequest bookingRequest) {
         try {
-            bookingRequest.setStatus(String.valueOf(EBookingStatus.ACTIVE));
-            bookingRequest.setIsDeleted(false);
-            bookingService.save(bookingRequest);
+            bookingService.save(bookingRequest, null);
             return ResponseEntity.ok(ResponsePayload.builder()
                     .message("Add successfully.")
                     .status(HttpStatus.OK)
@@ -88,9 +83,7 @@ public class BookingController {
         try {
             Optional<BookingResponse> bookingOptional = bookingService.findById(id);
             if (bookingOptional.isPresent()) {
-                bookingRequest.setId(id);
-                bookingRequest.setIsDeleted(false);
-                bookingService.save(bookingRequest);
+                bookingService.save(bookingRequest, id);
                 Optional<BookingResponse> updatedBooking = bookingService.findById(id);
                 ResponsePayload responsePayload = ResponsePayload.builder()
                         .message("Update successfully.")
@@ -117,13 +110,11 @@ public class BookingController {
 
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<ResponsePayload> remove(@PathVariable UUID id) {
-        Optional<BookingResponse> bookingOptional = bookingService.findById(id);
-        if (bookingOptional.isPresent()) {
             bookingService.remove(id);
+        if (bookingService.findById(id).isEmpty()) {
             return ResponseEntity.ok(ResponsePayload.builder()
                     .message("Remove successfully.")
                     .status(HttpStatus.OK)
-                    .data(bookingOptional)
                     .build());
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -134,7 +125,7 @@ public class BookingController {
         }
     }
 
-    @GetMapping("/search/{input}")
+    @GetMapping("/search/keyword?={input}")
     public ResponseEntity<ResponsePayload> search(@PathVariable String input) {
         ResponsePayload responsePayload = ResponsePayload.builder()
                 .message("Test")

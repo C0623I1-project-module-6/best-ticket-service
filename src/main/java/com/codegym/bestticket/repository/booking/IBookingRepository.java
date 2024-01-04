@@ -10,6 +10,5 @@ import java.util.UUID;
 
 public interface IBookingRepository extends JpaRepository<Booking, UUID> {
     Iterable<Booking> searchAllByCustomer(Customer customer);
-
     Iterable<Booking> searchAllByOrganizer(Organizer organizer);
 }
