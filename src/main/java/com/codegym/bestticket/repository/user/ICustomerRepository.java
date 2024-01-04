@@ -12,4 +12,5 @@ public interface ICustomerRepository extends JpaRepository<Customer, UUID> {
     List<Customer> findAllByIsDeletedFalse();
 
     Customer findByIdAndIsDeletedFalse(UUID id);
+    Customer findByPhoneNumber(String phoneNumber);
 }
