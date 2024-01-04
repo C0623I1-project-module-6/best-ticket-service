@@ -26,7 +26,7 @@ public class OrganizerConverter implements IOrganizerConverter {
         return organizer;
     }
 
-    public List<OrganizerResponse> entitiesToDTOs(List<Organizer> organizers) {
+    public List<OrganizerResponse> entitiesToDtos(List<Organizer> organizers) {
         return organizers.stream()
                 .map(this::entityToDto)
                 .collect(Collectors.toList());

@@ -82,7 +82,7 @@ public class CustomerService implements ICustomerService {
     @Override
     public ResponsePayload findAll() {
         try {
-            List<CustomerResponse> customerResponses = customerConverter.entitiesToDTOs(
+            List<CustomerResponse> customerResponses = customerConverter.entitiesToDtos(
                     customerRepository.findAllByIsDeletedFalse());
             return ResponsePayload.builder()
                     .message("Customer list!!!")
@@ -116,5 +116,4 @@ public class CustomerService implements ICustomerService {
                     .build();
         }
     }
-
 }

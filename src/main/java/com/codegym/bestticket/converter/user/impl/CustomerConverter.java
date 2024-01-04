@@ -26,7 +26,7 @@ public class CustomerConverter implements ICustomerConverter {
         return customer;
     }
 
-    public List<CustomerResponse> entitiesToDTOs(List<Customer> customers) {
+    public List<CustomerResponse> entitiesToDtos(List<Customer> customers) {
         return customers.stream()
                 .map(this::entityToDto)
                 .collect(Collectors.toList());

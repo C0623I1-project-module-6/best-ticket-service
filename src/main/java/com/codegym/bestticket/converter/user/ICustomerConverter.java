@@ -11,5 +11,5 @@ public interface ICustomerConverter {
 
     Customer dtoToEntity(CustomerDto customerDto);
 
-    List<CustomerResponse> entitiesToDTOs(List<Customer> customers);
+    List<CustomerResponse> entitiesToDtos(List<Customer> customers);
 }

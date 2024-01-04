@@ -28,9 +28,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponsePayload> deleteUser(@PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> remove(@PathVariable UUID id) {
         if (id == null) {
-            new ResponseEntity<>("Id not found.", HttpStatus.NOT_FOUND);
+            new ResponseEntity<>("Id not found!", HttpStatus.NOT_FOUND);
         }
         ResponsePayload responsePayload = userService.delete(id);
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);

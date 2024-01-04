@@ -30,19 +30,25 @@ public class OrganizerService implements IOrganizerService {
 
     @Override
     public OrganizerResponse create(OrganizerDto organizerDto) {
-        UUID userId = organizerDto.getUser();
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        UUID organizerTypeId = organizerDto.getOrganizerType();
-        OrganizerType organizerType = organizerTypeRepository.findById(organizerTypeId)
-                .orElseThrow(() -> new EntityNotFoundException("Organizer type not found"));
-        Organizer organizer = organizerConverter.dtoToEntity(organizerDto);
-        organizer.setUser(user);
-        organizer.setOrganizerType(organizerType);
-        organizer.setIsDeleted(false);
-        organizerRepository.save(organizer);
-        return organizerConverter.entityToDto(organizer);
+        try {
+            UUID userId = organizerDto.getUser();
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            UUID organizerTypeId = organizerDto.getOrganizerType();
+            OrganizerType organizerType = organizerTypeRepository.findById(organizerTypeId)
+                    .orElseThrow(() -> new EntityNotFoundException("Organizer type not found"));
+            Organizer organizer = organizerConverter.dtoToEntity(organizerDto);
+            organizer.setUser(user);
+            organizer.setOrganizerType(organizerType);
+            organizer.setIsDeleted(false);
+            organizerRepository.save(organizer);
+            return organizerConverter.entityToDto(organizer);
+        } catch (RuntimeException e) {
+
+        }
+        return null;
     }
+
 
     @Override
     public OrganizerResponse update(UUID id, OrganizerDto organizerDto) {
@@ -79,7 +85,7 @@ public class OrganizerService implements IOrganizerService {
 
     @Override
     public List<OrganizerResponse> findAll() {
-        return organizerConverter.entitiesToDTOs(
+        return organizerConverter.entitiesToDtos(
                 organizerRepository.findAllByIsDeletedFalse());
     }
 

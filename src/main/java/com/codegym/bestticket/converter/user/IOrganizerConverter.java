@@ -11,5 +11,5 @@ public interface IOrganizerConverter {
 
     Organizer dtoToEntity(OrganizerDto organizerDto);
 
-    List<OrganizerResponse> entitiesToDTOs(List<Organizer> organizers);
+    List<OrganizerResponse> entitiesToDtos(List<Organizer> organizers);
 }
