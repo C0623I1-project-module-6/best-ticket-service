@@ -1,6 +1,6 @@
 package com.codegym.bestticket.controller.event;
 
-import com.codegym.bestticket.dto.EventDTO;
+import com.codegym.bestticket.dto.event.EventDTO;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.service.IEventService;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,14 +30,14 @@ public class EventController {
     }
 
     @GetMapping("/events")
-    public ResponseEntity<EventResponse> getAllEvent(){
-        EventResponse eventResponse=new EventResponse();
+    public ResponseEntity<EventResponse> getAllEvent() {
+        EventResponse eventResponse = new EventResponse();
         eventResponse.setEventDTOS(IEventService.findAll());
         return new ResponseEntity<>(eventResponse, HttpStatus.OK);
     }
 
     @GetMapping("/{event_id}")
-    public ResponseEntity<EventResponse> getEventById(@PathVariable("event_id") UUID event_id){
+    public ResponseEntity<EventResponse> getEventById(@PathVariable("event_id") UUID event_id) {
         EventResponse eventResponse = new EventResponse();
         eventResponse.setEventDTO(IEventService.findEventById(event_id));
         return new ResponseEntity<>(eventResponse, HttpStatus.OK);
@@ -53,9 +53,10 @@ public class EventController {
 
         }
     }
+
     @PutMapping("/{event_id}")
     public ResponseEntity<EventResponse> editEvent(@PathVariable("event_id") UUID event_id,
-                                                   @RequestBody EventDTO eventDTO){
+                                                   @RequestBody EventDTO eventDTO) {
         EventResponse eventResponse = new EventResponse();
         try {
             EventDTO event = IEventService.updateEvent(event_id, eventDTO);

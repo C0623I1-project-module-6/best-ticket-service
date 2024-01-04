@@ -1,6 +1,6 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.payload.request.user.organizer.OrganizerTypeRequest;
+import com.codegym.bestticket.payload.request.user.OrganizerTypeRequest;
 
 import java.util.UUID;
 

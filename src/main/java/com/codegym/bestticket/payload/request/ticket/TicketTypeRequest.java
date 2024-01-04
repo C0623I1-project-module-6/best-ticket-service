@@ -1,6 +1,5 @@
 package com.codegym.bestticket.payload.request.ticket;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;

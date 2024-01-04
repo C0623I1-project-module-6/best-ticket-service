@@ -1,7 +1,7 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.payload.request.CustomerRequest;
-import com.codegym.bestticket.payload.response.user.customer.CustomerResponse;
+import com.codegym.bestticket.payload.request.user.CustomerRequest;
+import com.codegym.bestticket.payload.response.user.CustomerResponse;
 
 import java.util.List;
 import java.util.UUID;

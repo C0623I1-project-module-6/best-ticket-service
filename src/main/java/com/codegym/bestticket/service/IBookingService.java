@@ -1,11 +1,11 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.entity.user.customer.Customer;
-import com.codegym.bestticket.entity.user.organizer.Organizer;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
 import com.codegym.bestticket.payload.response.booking.BookingResponse;
 import org.springframework.data.domain.Pageable;
+import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.user.Organizer;
 
 import java.util.Optional;
 import java.util.UUID;

@@ -1,6 +1,6 @@
 package com.codegym.bestticket.converter.event;
 
-import com.codegym.bestticket.dto.EventTypeDTO;
+import com.codegym.bestticket.dto.event.EventTypeDTO;
 import com.codegym.bestticket.entity.event.EventType;
 
 import java.util.List;

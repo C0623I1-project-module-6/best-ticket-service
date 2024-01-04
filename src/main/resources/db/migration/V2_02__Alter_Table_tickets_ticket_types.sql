@@ -11,3 +11,4 @@ ADD COLUMN event_id BINARY(16),
 
 ALTER TABLE tickets
     ADD COLUMN status VARCHAR(45);
+

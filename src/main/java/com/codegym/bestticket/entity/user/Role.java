@@ -30,6 +30,7 @@ public class Role {
     private UUID id;
     @Column( length = 50)
     private String name;
+    private Boolean isDeleted;
     @ManyToMany(mappedBy = "roles")
     @JsonIgnore
     private List<User> users;

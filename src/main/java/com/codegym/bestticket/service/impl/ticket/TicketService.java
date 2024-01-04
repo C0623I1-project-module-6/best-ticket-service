@@ -52,7 +52,7 @@ public class TicketService implements ITicketService {
         BeanUtils.copyProperties(ticketRequest, ticket);
         ticket = ticketRepository.save(ticket);
 
-        TicketRequest ticketRequest1 =  new TicketRequest();
+        TicketRequest ticketRequest1 = new TicketRequest();
         BeanUtils.copyProperties(ticket, ticketRequest1);
 
         return ticketRequest1;

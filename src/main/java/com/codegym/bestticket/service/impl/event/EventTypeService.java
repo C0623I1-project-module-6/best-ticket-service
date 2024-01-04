@@ -1,7 +1,7 @@
 package com.codegym.bestticket.service.impl.event;
 
 import com.codegym.bestticket.converter.event.IEventTypeConverter;
-import com.codegym.bestticket.dto.EventTypeDTO;
+import com.codegym.bestticket.dto.event.EventTypeDTO;
 import com.codegym.bestticket.entity.event.EventType;
 import com.codegym.bestticket.repository.event.IEventTypeRepository;
 import com.codegym.bestticket.service.IEventTypeService;
