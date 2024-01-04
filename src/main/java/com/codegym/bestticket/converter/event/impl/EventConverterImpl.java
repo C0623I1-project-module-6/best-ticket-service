@@ -24,8 +24,6 @@ public class EventConverterImpl implements EventConverter {
                 .map(this::entityToDTO)
                 .collect(Collectors.toList());
     }
-
-
     @Override
     public Event dtoToEntity(EventDTO element) {
         Event result = new Event();

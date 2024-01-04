@@ -4,7 +4,7 @@ import com.codegym.bestticket.converter.event.EventTypeConverter;
 import com.codegym.bestticket.dto.EventTypeDTO;
 import com.codegym.bestticket.entity.event.EventType;
 import com.codegym.bestticket.repository.IEventTypeRepository;
-import com.codegym.bestticket.service.EventTypeService;
+import com.codegym.bestticket.service.IEventTypeService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class EventTypeServiceImpl implements EventTypeService {
+public class EventTypeServiceImpl implements IEventTypeService {
     private final EventTypeConverter eventTypeConverter;
     private final IEventTypeRepository eventTypeRepository;
 

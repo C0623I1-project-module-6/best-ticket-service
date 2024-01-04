@@ -1,14 +1,11 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.dto.EventDTO;
 import com.codegym.bestticket.dto.EventTypeDTO;
-import com.codegym.bestticket.entity.event.Event;
-import com.codegym.bestticket.entity.event.EventType;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface EventTypeService {
+public interface IEventTypeService {
     List<EventTypeDTO> findAll();
 
     EventTypeDTO findById(UUID id);

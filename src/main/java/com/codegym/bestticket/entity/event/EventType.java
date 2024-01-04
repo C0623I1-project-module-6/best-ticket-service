@@ -3,7 +3,7 @@ package com.codegym.bestticket.entity.event;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -21,7 +21,6 @@ public class EventType {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "eventType")
-    private List<Event> events;
-
+    @ManyToMany(mappedBy = "eventTypes")
+    private Set<Event> events;
 }

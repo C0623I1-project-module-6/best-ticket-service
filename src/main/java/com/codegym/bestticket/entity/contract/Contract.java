@@ -1,7 +1,7 @@
 package com.codegym.bestticket.entity.contract;
 
 import com.codegym.bestticket.entity.user.Customer;
-import com.codegym.bestticket.entity.user.Enterprise;
+import com.codegym.bestticket.entity.user.Organizer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,7 +56,7 @@ public class Contract {
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "organizer_id")
-    private Enterprise organizer;
+    private Organizer organizer;
 
     @Column(name = "is_delete", columnDefinition = "DEFAULT 0")
     private Boolean isDelete;

@@ -13,7 +13,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "EVENTS")
-
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,9 +36,12 @@ public class Event {
     @Column(name="is_deleted")
     private Boolean isDeleted;
 
-    @ManyToOne
-    @JoinColumn(name = "event_type_id")
-    private EventType eventType;
+    @ManyToMany
+    @JoinTable(
+            name = "event_event_type",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_type_id"))
+    private Set<EventType> eventTypes;
 
     @ManyToMany
     @JoinTable(
@@ -47,6 +49,4 @@ public class Event {
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "time_id"))
     private Set<Time> times;
-
-
 }

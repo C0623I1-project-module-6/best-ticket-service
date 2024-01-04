@@ -4,7 +4,7 @@ import com.codegym.bestticket.converter.event.impl.EventConverterImpl;
 import com.codegym.bestticket.dto.EventDTO;
 import com.codegym.bestticket.entity.event.Event;
 import com.codegym.bestticket.repository.IEventRepository;
-import com.codegym.bestticket.service.EventService;
+import com.codegym.bestticket.service.IEventService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class EventServiceImpl implements EventService {
+public class EventServiceImpl implements IEventService {
     private final IEventRepository eventRepository;
     private final EventConverterImpl eventConverter;
 
@@ -32,7 +32,7 @@ public class EventServiceImpl implements EventService {
     public EventDTO findEventById(UUID event_id) {
         Event event = eventRepository.findByIdAndIsDeletedFalse(event_id);
 
-        if (event!=null) {
+        if (event!=null) { // use java8
             return eventConverter.entityToDTO(event);
         } else {
             throw new EntityNotFoundException("Event is not found or is deleted");
@@ -59,7 +59,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventDTO updateEvent(UUID event_id, EventDTO eventDTO) {
-        if (eventDTO==null) throw new  IllegalArgumentException("EventDTO is not null");
+        if (eventDTO==null) throw new  IllegalArgumentException("EventDTO is not null"); // use java8
         Event event = eventRepository.findById(event_id)
                 .orElseThrow(() -> new EntityNotFoundException("Event is not found"));
         if (eventDTO.getName() != null) {
@@ -82,6 +82,18 @@ public class EventServiceImpl implements EventService {
         }
         eventRepository.save(event);
         return eventConverter.entityToDTO(event);
+    }
+
+    @Override
+    public List<EventDTO> findByNameContaining(String text) {
+        return eventConverter.entitiesToDTOs(eventRepository.findByNameContainingAndIsDeletedFalse(text));
+    }
+
+    @Override
+    public List<EventDTO> findByEventTypeNames(List<String> eventTypeNames) {
+        List<EventDTO> list = eventConverter.entitiesToDTOs(eventRepository.findByEventTypeNamesAndIsDeletedFalse(eventTypeNames));
+        System.out.println(list.get(0));
+        return list;
     }
 
 }
