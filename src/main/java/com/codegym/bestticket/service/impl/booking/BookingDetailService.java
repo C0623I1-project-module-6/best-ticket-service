@@ -78,7 +78,7 @@ public class BookingDetailService implements IBookingDetailService {
             } else {
 
             }
-            return createBookingDetailResponsePayload("Booking detail save/update successfully!", HttpStatus.OK, bookingDetailPage);
+            return createBookingDetailResponsePayload("Booking detail save/update successfully!", HttpStatus.OK, null);
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);
             return createBookingDetailResponsePayload("Booking detail save/update failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
