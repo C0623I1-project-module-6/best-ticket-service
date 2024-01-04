@@ -1,8 +1,8 @@
 package com.codegym.bestticket.controller.user;
 
-import com.codegym.bestticket.payload.request.CustomerRequest;
 import com.codegym.bestticket.payload.ResponsePayload;
-import com.codegym.bestticket.payload.response.user.customer.CustomerResponse;
+import com.codegym.bestticket.payload.request.user.CustomerRequest;
+import com.codegym.bestticket.payload.response.user.CustomerResponse;
 import com.codegym.bestticket.service.ICustomerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;

@@ -23,36 +23,38 @@ public class EventTypeController {
     public EventTypeController(IEventTypeService eventTypeService) {
         this.eventTypeService = eventTypeService;
     }
+
     @GetMapping("/")
-    public ResponseEntity<EventTypeResponse> getAll(){
+    public ResponseEntity<EventTypeResponse> getAll() {
         EventTypeResponse eventTypeResponse = EventTypeResponse.builder()
                 .eventTypeList(eventTypeService.findAll())
                 .message("List EventTypeDTO")
                 .build();
         return new ResponseEntity<>(eventTypeResponse, HttpStatus.OK);
     }
+
     @GetMapping("/{event_type_id}")
-    public  ResponseEntity<EventTypeResponse> getById(@PathVariable("event_type_id")UUID event_type_id){
+    public ResponseEntity<EventTypeResponse> getById(@PathVariable("event_type_id") UUID event_type_id) {
         try {
-            EventTypeResponse eventTypeResponse= EventTypeResponse.builder()
+            EventTypeResponse eventTypeResponse = EventTypeResponse.builder()
                     .eventType(eventTypeService.findById(event_type_id))
                     .build();
-            return new  ResponseEntity<>(eventTypeResponse,HttpStatus.OK);
-        }catch (EntityNotFoundException e){
-            EventTypeResponse eventTypeResponse= EventTypeResponse.builder()
+            return new ResponseEntity<>(eventTypeResponse, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            EventTypeResponse eventTypeResponse = EventTypeResponse.builder()
                     .message("Not found EventType")
                     .build();
-            return new  ResponseEntity<>(eventTypeResponse,HttpStatus.OK);
+            return new ResponseEntity<>(eventTypeResponse, HttpStatus.OK);
         }
     }
 
     @DeleteMapping("/{event_type_id}")
-    public ResponseEntity<String> deleteEventType(@PathVariable("event_type_id")UUID event_type_id){
-        try{
+    public ResponseEntity<String> deleteEventType(@PathVariable("event_type_id") UUID event_type_id) {
+        try {
             eventTypeService.removeById(event_type_id);
             return new ResponseEntity<>("Event deleted successfully", HttpStatus.OK);
-        }catch (EntityNotFoundException e){
-            return new ResponseEntity<>("Not found EventType",HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>("Not found EventType", HttpStatus.OK);
         }
     }
 }

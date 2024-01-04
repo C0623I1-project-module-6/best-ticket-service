@@ -13,5 +13,5 @@ public class BankAccountRequest {
     private String accountNumber;
     private String bankName;
     private String branch;
-    private User user;
+    private UUID user;
 }
