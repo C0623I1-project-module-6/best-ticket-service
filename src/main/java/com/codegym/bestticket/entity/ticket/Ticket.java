@@ -1,6 +1,6 @@
 package com.codegym.bestticket.entity.ticket;
 
-import com.codegym.bestticket.entity.contract.ContractDetail;
+import com.codegym.bestticket.entity.booking.BookingDetail;
 import com.codegym.bestticket.entity.event.Event;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
@@ -39,13 +39,11 @@ public class Ticket {
     private String barcode;
     private Long quantity;
     private Boolean isDeleted;
-
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "contract_detail_id")
-    @JsonIgnore
-    private ContractDetail contractDetail;
+    @JoinColumn(name = "booking_detail_id")
+    private BookingDetail bookingDetail;
 
     @ManyToOne
     @JoinColumn(name = "ticket_type_id", nullable = false)

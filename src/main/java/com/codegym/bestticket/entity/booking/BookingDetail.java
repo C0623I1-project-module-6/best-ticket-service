@@ -1,8 +1,7 @@
-package com.codegym.bestticket.entity.contract;
+package com.codegym.bestticket.entity.booking;
 
 import com.codegym.bestticket.entity.ticket.Ticket;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,14 +26,14 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "contract_details")
-public class ContractDetail {
+public class BookingDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "contract_id", nullable = false)
-    private Contract contract;
+    private Booking booking;
     @OneToMany(mappedBy = "contractDetail")
     @JsonIgnore
     private List<Ticket> tickets;

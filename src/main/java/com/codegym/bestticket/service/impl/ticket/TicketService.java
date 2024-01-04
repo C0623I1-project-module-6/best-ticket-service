@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -88,21 +89,32 @@ public class TicketService implements ITicketService {
 
     @Override
     public Iterable<Ticket> searchAllByTimeBefore() {
-        return ticketRepository.searchTicketByTimeBefore();
+        return null;
     }
-
 
 //    @Override
 //    public Iterable<Ticket> searchAllByTimeBefore() {
-//        LocalDate currentDate = LocalDate.now();
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//        String formattedDate = currentDate.format(formatter);
-//        return ticketRepository.searchAllByTimeBefore(formattedDate);
+//        return ticketRepository.searchTicketByTimeBefore();
 //    }
 
     @Override
     public Iterable<Ticket> searchTicketByTimeBefore() {
-        LocalDate currentDate = LocalDate.now();
-        return ticketRepository.searchTicketByTimeBefore(currentDate);
+        LocalDate date = LocalDate.now();
+
+        Iterable<Ticket> tickets =  ticketRepository.searchTicketByTimeBefore(date);
+        return StreamSupport.stream(tickets.spliterator(), true)
+                .peek(ticket -> {
+                    String time = ticket.getTime();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+                    LocalDate currentDate = LocalDate.now();
+                    LocalDate customDate = LocalDate.parse(time, formatter);
+                    if (currentDate.isEqual(customDate)) {
+                        System.out.println("Ngày hiện tại bằng với ngày có sẵn.");
+                    } else if (currentDate.isBefore(customDate)) {
+                        System.out.println("Ngày hiện tại trước ngày có sẵn.");
+                    } else {
+                        System.out.println("Ngày hiện tại sau ngày có sẵn.");
+                    }
+                }).collect(Collectors.toList());
     }
 }
