@@ -36,29 +36,29 @@ public class EventController {
         return new ResponseEntity<>(eventResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/{event_id}")
-    public ResponseEntity<EventResponse> getEventById(@PathVariable("event_id") UUID event_id){
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventResponse> getEventById(@PathVariable("eventId") UUID eventId){
         EventResponse eventResponse = new EventResponse();
-        eventResponse.setEventDTO(IEventService.findEventById(event_id));
+        eventResponse.setEventDTO(IEventService.findEventById(eventId));
         return new ResponseEntity<>(eventResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{event_id}")
-    public ResponseEntity<String> deleteEvent(@PathVariable("event_id") UUID event_id) {
+    @DeleteMapping("/{eventId}")
+    public ResponseEntity<String> deleteEvent(@PathVariable("eventId") UUID eventId) {
         try {
-            IEventService.removeEvent(event_id);
+            IEventService.removeEvent(eventId);
             return new ResponseEntity<>("Event deleted successfully", HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>("Event not found", HttpStatus.NOT_FOUND);
 
         }
     }
-    @PutMapping("/{event_id}")
-    public ResponseEntity<EventResponse> editEvent(@PathVariable("event_id") UUID event_id,
+    @PutMapping("/{eventId}")
+    public ResponseEntity<EventResponse> editEvent(@PathVariable("eventId") UUID eventId,
                                                    @RequestBody EventDTO eventDTO){
         EventResponse eventResponse = new EventResponse();
         try {
-            EventDTO event = IEventService.updateEvent(event_id, eventDTO);
+            EventDTO event = IEventService.updateEvent(eventId, eventDTO);
             eventResponse.setEventDTO(event);
             eventResponse.setMessage("Update successfully");
             return new ResponseEntity<>(eventResponse, HttpStatus.OK);
@@ -71,7 +71,7 @@ public class EventController {
         }
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<EventResponse> createEvent(@RequestBody EventDTO eventDTO) {
         EventResponse eventResponse = new EventResponse();
 
