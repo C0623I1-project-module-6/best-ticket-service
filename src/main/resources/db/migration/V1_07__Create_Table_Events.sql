@@ -1,10 +1,10 @@
-CREATE TABLE event_types
+CREATE TABLE IF NOT EXISTS event_types
 (
     id   BINARY(36) PRIMARY KEY,
     name VARCHAR(50)
 );
 
-CREATE TABLE events
+CREATE TABLE IF NOT EXISTS events
 (
     id            BINARY(36) PRIMARY KEY,
     name          VARCHAR(50)  NOT NULL,
@@ -12,13 +12,13 @@ CREATE TABLE events
 
 );
 
-CREATE TABLE times
+CREATE TABLE IF NOT EXISTS times
 (
     id   BINARY(36) PRIMARY KEY,
-    time datetime
+    time DATETIME
 );
 
-CREATE TABLE event_times
+CREATE TABLE IF NOT EXISTS event_times
 (
     event_id BINARY(36),
     time_id  BINARY(36),

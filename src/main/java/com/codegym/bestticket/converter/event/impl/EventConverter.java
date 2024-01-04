@@ -1,6 +1,6 @@
 package com.codegym.bestticket.converter.event.impl;
 
-import com.codegym.bestticket.dto.EventDTO;
+import com.codegym.bestticket.dto.event.EventDTO;
 import com.codegym.bestticket.entity.event.Event;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;

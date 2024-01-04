@@ -13,11 +13,11 @@ COLUMN email,
 COLUMN wallet;
 
 ALTER TABLE users
-    ADD COLUMN username varchar(50) NOT NULL UNIQUE ,
-    ADD COLUMN password     varchar(50)NOT NULL,
-    ADD COLUMN role_id      binary(36),
-    ADD COLUMN customer_id  binary(36),
-    ADD COLUMN organizer_id binary(36)
+    ADD COLUMN username VARCHAR(50) NOT NULL UNIQUE ,
+    ADD COLUMN password     VARCHAR(50)NOT NULL,
+    ADD COLUMN role_id      BINARY(36),
+    ADD COLUMN customer_id  BINARY(36),
+    ADD COLUMN organizer_id BINARY(36)
 ;
 
 ALTER TABLE users

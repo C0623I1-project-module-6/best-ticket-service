@@ -37,12 +37,12 @@ public class EventTypeController {
             EventTypeResponse eventTypeResponse= EventTypeResponse.builder()
                     .eventType(eventTypeService.findById(eventTypeId))
                     .build();
-            return new  ResponseEntity<>(eventTypeResponse,HttpStatus.OK);
-        }catch (EntityNotFoundException e){
-            EventTypeResponse eventTypeResponse= EventTypeResponse.builder()
+            return new ResponseEntity<>(eventTypeResponse, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            EventTypeResponse eventTypeResponse = EventTypeResponse.builder()
                     .message("Not found EventType")
                     .build();
-            return new  ResponseEntity<>(eventTypeResponse,HttpStatus.OK);
+            return new ResponseEntity<>(eventTypeResponse, HttpStatus.OK);
         }
     }
 
@@ -51,8 +51,8 @@ public class EventTypeController {
         try{
             eventTypeService.removeById(eventTypeId);
             return new ResponseEntity<>("Event deleted successfully", HttpStatus.OK);
-        }catch (EntityNotFoundException e){
-            return new ResponseEntity<>("Not found EventType",HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>("Not found EventType", HttpStatus.OK);
         }
     }
 }

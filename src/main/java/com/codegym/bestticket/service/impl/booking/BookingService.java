@@ -2,8 +2,8 @@ package com.codegym.bestticket.service.impl.booking;
 
 import com.codegym.bestticket.constant.EBookingStatus;
 import com.codegym.bestticket.entity.booking.Booking;
-import com.codegym.bestticket.entity.user.customer.Customer;
-import com.codegym.bestticket.entity.user.organizer.Organizer;
+import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
 import com.codegym.bestticket.payload.response.booking.BookingResponse;
 import com.codegym.bestticket.repository.booking.IBookingRepository;

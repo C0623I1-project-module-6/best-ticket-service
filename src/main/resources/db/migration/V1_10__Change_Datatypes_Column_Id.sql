@@ -8,15 +8,15 @@ foreign_key_checks = 1;
 
 SET
 foreign_key_checks = 0;
-ALTER TABLE contract_details
+ALTER TABLE booking_details
     MODIFY COLUMN id BINARY(16),
-    MODIFY COLUMN contract_id BINARY(16);
+    MODIFY COLUMN booking_id BINARY(16);
 SET
 foreign_key_checks = 1;
 
 SET
 foreign_key_checks = 0;
-ALTER TABLE contracts
+ALTER TABLE bookings
     MODIFY COLUMN id BINARY(16),
     MODIFY COLUMN customer_id BINARY(16),
     MODIFY COLUMN organizer_id BINARY(16);

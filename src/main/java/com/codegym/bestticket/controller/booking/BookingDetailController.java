@@ -1,10 +1,10 @@
 package com.codegym.bestticket.controller.booking;
 
+import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingDetailRequest;
 import com.codegym.bestticket.payload.response.booking.BookingDetailResponse;
 import com.codegym.bestticket.payload.response.booking.BookingResponse;
-import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.service.IBookingDetailService;
 import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;

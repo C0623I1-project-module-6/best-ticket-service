@@ -1,6 +1,6 @@
 package com.codegym.bestticket.payload.response.event;
 
-import com.codegym.bestticket.dto.EventTypeDTO;
+import com.codegym.bestticket.dto.event.EventTypeDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

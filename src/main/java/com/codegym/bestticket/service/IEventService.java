@@ -1,6 +1,6 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.dto.EventDTO;
+import com.codegym.bestticket.dto.event.EventDTO;
 
 import java.util.List;
 import java.util.UUID;

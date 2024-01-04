@@ -1,8 +1,5 @@
 package com.codegym.bestticket.entity.user;
 
-import com.codegym.bestticket.entity.bank_account.BankAccount;
-import com.codegym.bestticket.entity.user.customer.Customer;
-import com.codegym.bestticket.entity.user.organizer.Organizer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,7 +34,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false)
     private String password;

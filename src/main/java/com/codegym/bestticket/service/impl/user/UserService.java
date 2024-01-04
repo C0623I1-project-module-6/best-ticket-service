@@ -1,17 +1,18 @@
 package com.codegym.bestticket.service.impl.user;
 
-import com.codegym.bestticket.converter.user.LoginConverter;
-import com.codegym.bestticket.converter.user.RegisterConverter;
-import com.codegym.bestticket.payload.request.user.LoginRequest;
-import com.codegym.bestticket.payload.request.user.RegisterRequest;
-import com.codegym.bestticket.payload.response.user.LoginResponse;
-import com.codegym.bestticket.payload.response.user.RegisterResponse;
+import com.codegym.bestticket.converter.user.ILoginConverter;
+import com.codegym.bestticket.converter.user.IRegisterConverter;
+import com.codegym.bestticket.converter.user.impl.LoginConverter;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.exception.EmailAlreadyExistsException;
 import com.codegym.bestticket.exception.EmailNotFoundException;
 import com.codegym.bestticket.exception.InvalidPasswordException;
 import com.codegym.bestticket.exception.PhoneNumberAlreadyExistsException;
 import com.codegym.bestticket.exception.UsernameAlreadyExistsException;
+import com.codegym.bestticket.payload.request.user.LoginRequest;
+import com.codegym.bestticket.payload.request.user.RegisterRequest;
+import com.codegym.bestticket.payload.response.user.LoginResponse;
+import com.codegym.bestticket.payload.response.user.RegisterResponse;
 import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,8 +27,8 @@ import java.util.UUID;
 @Transactional
 public class UserService implements IUserService {
     private final IUserRepository userRepository;
-    private final RegisterConverter registerConverter;
-    private final LoginConverter loginConverter;
+    private final IRegisterConverter registerConverter;
+    private final ILoginConverter loginConverter;
 
     @Override
     public RegisterResponse register(RegisterRequest registerRequest) {
@@ -43,9 +44,8 @@ public class UserService implements IUserService {
                 registerRequest.getPhoneNumber())) {
             throw new PhoneNumberAlreadyExistsException("Phone number already exists.");
         }
-        User user = User.builder()
-                .isDeleted(false)
-                .build();
+        User user = registerConverter.dtoToEntity(registerRequest);
+        user.setIsDeleted(false);
         userRepository.save(user);
         return registerConverter.entityToDto(user);
     }

@@ -1,7 +1,7 @@
 package com.codegym.bestticket.controller.user;
 
-import com.codegym.bestticket.payload.request.user.organizer.OrganizerTypeRequest;
 import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.request.user.OrganizerTypeRequest;
 import com.codegym.bestticket.service.IOrganizerTypeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;

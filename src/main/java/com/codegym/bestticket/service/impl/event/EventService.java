@@ -1,7 +1,7 @@
 package com.codegym.bestticket.service.impl.event;
 
-import com.codegym.bestticket.converter.event.impl.EventConverter;
-import com.codegym.bestticket.dto.EventDTO;
+import com.codegym.bestticket.converter.event.IEventConverter;
+import com.codegym.bestticket.dto.event.EventDTO;
 import com.codegym.bestticket.entity.event.Event;
 import com.codegym.bestticket.repository.event.IEventRepository;
 import com.codegym.bestticket.service.IEventService;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class EventService implements IEventService {
     private final IEventRepository eventRepository;
-    private final EventConverter eventConverter;
+    private final IEventConverter eventConverter;
 
 
 

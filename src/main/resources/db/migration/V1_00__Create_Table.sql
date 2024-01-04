@@ -1,42 +1,42 @@
-create table users
+CREATE TABLE IF NOT EXISTS users
 (
-    id            binary(36) primary key,
-    full_name     varchar(50)  not null,
-    gender        varchar(15),
-    id_card       varchar(50)  not null unique,
-    date_of_birth varchar(15),
-    phone_number  varchar(15)  not null unique,
-    email         varchar(255) not null unique,
-    wallet        varchar(255)
+    id            BINARY(36) PRIMARY KEY,
+    full_name     VARCHAR(50)  NOT NULL,
+    gender        VARCHAR(15),
+    id_card       VARCHAR(50)  NOT NULL UNIQUE,
+    date_of_birth VARCHAR(15),
+    phone_number  VARCHAR(15)  NOT NULL UNIQUE,
+    email         VARCHAR(255) NOT NULL UNIQUE,
+    wallet        VARCHAR(255)
 );
 
-create table roles
+CREATE TABLE IF NOT EXISTS roles
 (
-    id   binary(36) primary key,
-    name varchar(50)
+    id   BINARY(36) PRIMARY KEY,
+    `name` VARCHAR(50)
 );
 
-create table user_roles
+CREATE TABLE IF NOT EXISTS user_roles
 (
-    user_id binary(36),
-    role_id binary(36),
-    primary key (user_id, role_id),
-    foreign key (user_id) references users (id),
-    foreign key (role_id) references roles (id)
+    user_id BINARY(36),
+    role_id BINARY(36),
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (role_id) REFERENCES roles (id)
 );
 
-create table bank_accounts
+CREATE TABLE IF NOT EXISTS bank_accounts
 (
-    id             binary(36) primary key,
-    account_name   varchar(50),
-    account_number varchar(20),
-    bank_name      varchar(100),
-    branch         varchar(100),
-    user_id        binary(36),
+    id             BINARY(36) PRIMARY KEY,
+    account_name   VARCHAR(50),
+    account_number VARCHAR(20),
+    bank_name      VARCHAR(100),
+    branch         VARCHAR(100),
+    user_id        BINARY(36),
     foreign key (user_id) references users (id)
 );
 
-CREATE TABLE contracts
+CREATE TABLE IF NOT EXISTS bookings
 (
     id         BINARY(36) PRIMARY KEY,
     `date`     DATETIME       NOT NULL,
@@ -46,58 +46,58 @@ CREATE TABLE contracts
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE contract_details
+CREATE TABLE IF NOT EXISTS booking_details
 (
-    id           binary(36) PRIMARY KEY,
-    contract_id  binary(36),
+    id           BINARY(36) PRIMARY KEY,
+    booking_id  BINARY(36),
     quantity     INT            NOT NULL,
     ticket_price DECIMAL(10, 2) NOT NULL,
-     FOREIGN KEY (contract_id)
-        REFERENCES contracts (id)
+     FOREIGN KEY (booking_id)
+        REFERENCES bookings (id)
 );
 
 
-CREATE TABLE ticket_types
+CREATE TABLE IF NOT EXISTS ticket_types
 (
-    id     binary(36) PRIMARY KEY,
+    id     BINARY(36) PRIMARY KEY,
     `name` VARCHAR(20),
     price  FLOAT
 );
 
-CREATE TABLE tickets
+CREATE TABLE IF NOT EXISTS tickets
 (
-    id                 binary(36) PRIMARY KEY,
+    id                 BINARY(36) PRIMARY KEY,
     ticket_code        VARCHAR(55) UNIQUE NOT NULL,
     seat               VARCHAR(10),
     `time`             DATETIME,
     location           VARCHAR(30),
     promotion          VARCHAR(5),
     barcode            VARCHAR(20),
-    ticket_type_id     binary(36),
-    contract_detail_id BINARY(16),
+    ticket_type_id     BINARY(36),
+    booking_detail_id BINARY(16),
     FOREIGN KEY (ticket_type_id)
         REFERENCES ticket_types (id),
-    FOREIGN KEY (contract_detail_id)
-        REFERENCES contract_details (id)
+    FOREIGN KEY (booking_detail_id)
+        REFERENCES booking_details (id)
 );
 
 
-create table customer
+CREATE TABLE IF NOT EXISTS customer
 (
-    id            binary(36) primary key,
-    full_name     varchar(50)  not null,
-    gender        varchar(15),
-    id_card       varchar(50)  not null unique,
-    date_of_birth varchar(15),
-    phone_number  varchar(15)  not null unique,
-    email         varchar(255) not null unique
+    id            BINARY(36) PRIMARY KEY,
+    full_name     VARCHAR(50)  NOT NULL,
+    gender        VARCHAR(15),
+    id_card       VARCHAR(50)  NOT NULL UNIQUE,
+    date_of_birth VARCHAR(15),
+    phone_number  VARCHAR(15)  NOT NULL UNIQUE,
+    email         VARCHAR(255) NOT NULL UNIQUE
 );
 
-create table organizer
+CREATE TABLE IF NOT EXISTS organizer
 (
-    id           binary(36) primary key,
-    full_name    varchar(50)  not null,
-    id_card      varchar(50)  not null unique,
-    phone_number varchar(15)  not null unique,
-    email        varchar(255) not null unique
+    id           BINARY(36) PRIMARY KEY,
+    full_name    VARCHAR(50)  NOT NULL,
+    id_card      VARCHAR(50)  NOT NULL UNIQUE,
+    phone_number VARCHAR(15)  NOT NULL UNIQUE,
+    email        VARCHAR(255) NOT NULL UNIQUE
 );
