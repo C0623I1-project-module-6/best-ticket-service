@@ -12,7 +12,7 @@ import java.util.UUID;
 
 
 public interface IBookingRepository extends JpaRepository<Booking, UUID> {
-    Page<Booking> findByIsDeletedFalse(Pageable pageable);
+    Page<Booking> findAllByIsDeletedFalse(Pageable pageable);
     Iterable<Booking> searchAllByCustomer(Customer customer);
     Iterable<Booking> searchAllByOrganizer(Organizer organizer);
 }

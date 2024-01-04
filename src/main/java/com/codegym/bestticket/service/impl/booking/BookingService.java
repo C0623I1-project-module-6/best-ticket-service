@@ -2,8 +2,6 @@ package com.codegym.bestticket.service.impl.booking;
 
 import com.codegym.bestticket.constant.EBookingStatus;
 import com.codegym.bestticket.entity.booking.Booking;
-import com.codegym.bestticket.entity.user.Customer;
-import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.exception.BookingSaveException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
@@ -21,13 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Log
@@ -47,7 +41,7 @@ public class BookingService implements IBookingService {
     @Override
     public ResponsePayload findAllByIsDeletedFalse(Pageable pageable) {
         try {
-            Page<Booking> bookings = iBookingRepository.findAll(pageable);
+            Page<Booking> bookings = iBookingRepository.findAllByIsDeletedFalse(pageable);
             Page<BookingResponse> bookingResponses = bookings.map(booking -> {
                 BookingResponse bookingResponse = new BookingResponse();
                 BeanUtils.copyProperties(booking, bookingResponse);
