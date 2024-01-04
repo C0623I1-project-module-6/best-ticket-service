@@ -67,29 +67,7 @@ public class BookingDetailController {
 
     @PostMapping("/add")
     public ResponseEntity<ResponsePayload> addBookingDetail(@PathVariable UUID bookingId, @RequestBody BookingDetailRequest bookingDetailRequest) {
-        try {
-            Optional<BookingResponse> bookingOptional = bookingService.findById(bookingId);
-            if (bookingOptional.isPresent()) {
-                Booking booking = new Booking();
-                BeanUtils.copyProperties(bookingOptional.get(), booking);
-                bookingDetailRequest.setBooking(booking);
-                bookingDetailService.save(bookingDetailRequest);
-                return ResponseEntity.ok(ResponsePayload.builder()
-                        .message("Added successfully.")
-                        .status(HttpStatus.OK)
-                        .data(bookingDetailRequest)
-                        .build());
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            ResponsePayload errorResponse = ResponsePayload.builder()
-                    .message("An error occurred while adding the booking.")
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
-            log.log(Level.WARNING, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
+       return null;
     }
 
     @PutMapping("/update/{id}")

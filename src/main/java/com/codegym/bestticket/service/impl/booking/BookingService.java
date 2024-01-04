@@ -2,10 +2,10 @@ package com.codegym.bestticket.service.impl.booking;
 
 import com.codegym.bestticket.constant.EBookingStatus;
 import com.codegym.bestticket.entity.booking.Booking;
-import com.codegym.bestticket.exception.BookingSaveException;
-import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.Organizer;
+import com.codegym.bestticket.exception.BookingSaveException;
+import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
 import com.codegym.bestticket.payload.response.booking.BookingResponse;
 import com.codegym.bestticket.repository.booking.IBookingRepository;
@@ -36,43 +36,58 @@ import java.util.stream.StreamSupport;
 public class BookingService implements IBookingService {
     private final IBookingRepository iBookingRepository;
 
-//    @Override
-//    public Iterable<BookingResponse> findAll() {
-//        Iterable<Booking> bookings = iBookingRepository.findAll();
-//        return StreamSupport.stream(bookings.spliterator(), false)
-//                .filter(booking -> !booking.getIsDeleted())
-//                .map(booking -> {
-//                    BookingResponse bookingResponse = new BookingResponse();
-//                    BeanUtils.copyProperties(booking, bookingResponse);
-//                    return bookingResponse;
-//                })
-//                .collect(Collectors.toList());
-//    }
+    public ResponsePayload createBookingResponsePayload(String message, HttpStatus status, Object data) {
+        return ResponsePayload.builder()
+                .message(message)
+                .status(status)
+                .data(data)
+                .build();
+    }
 
     @Override
-    public Optional<BookingResponse> findById(UUID id) {
+    public ResponsePayload findAllByIsDeletedFalse(Pageable pageable) {
+        try {
+            Page<Booking> bookings = iBookingRepository.findAll(pageable);
+            Page<BookingResponse> bookingResponses = bookings.map(booking -> {
+                BookingResponse bookingResponse = new BookingResponse();
+                BeanUtils.copyProperties(booking, bookingResponse);
+                return bookingResponse;
+            });
+            return createBookingResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
+        } catch (Exception e) {
+            log.log(Level.WARNING, e.getMessage(), e);
+            return createBookingResponsePayload("Fetch data failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
+        }
+    }
+
+    @Override
+    public ResponsePayload findById(UUID id) {
         Optional<Booking> bookingOptional = iBookingRepository.findById(id);
         if (bookingOptional.isPresent() && !bookingOptional.get().getIsDeleted()) {
             Booking booking = bookingOptional.get();
             BookingResponse bookingResponse = new BookingResponse();
             BeanUtils.copyProperties(booking, bookingResponse);
-            return Optional.of(bookingResponse);
+            return createBookingResponsePayload("Booking found!", HttpStatus.OK, booking);
         } else {
-            return Optional.empty();
+            return createBookingResponsePayload("Booking not found!", HttpStatus.NOT_FOUND, null);
         }
     }
 
     @Override
-    public void save(BookingRequest bookingRequest, UUID id) {
+    public ResponsePayload save(BookingRequest bookingRequest, UUID id) {
         try {
-            Optional<Booking> bookingOptional = iBookingRepository.findById(id);
+            bookingRequest.setId(id);
             if (bookingRequest.getId() == null) {
                 createNewBooking(bookingRequest);
-            } else if (bookingOptional.isPresent()) {
-                updateExistingBooking(bookingRequest, bookingOptional.get());
-            } else {
-                createNewBookingFromRequest(bookingRequest);
             }
+            if (id != null) {
+                Optional<Booking> bookingOptional = iBookingRepository.findById(id);
+                if (bookingOptional.isPresent()) {
+                    updateExistingBooking(bookingRequest, bookingOptional.get());
+                    return createBookingResponsePayload("Save booking successfully!", HttpStatus.OK, bookingOptional);
+                }
+            }
+            return createBookingResponsePayload("Save booking failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);
             throw new BookingSaveException("Failed to save booking", e);
@@ -95,80 +110,19 @@ public class BookingService implements IBookingService {
         iBookingRepository.save(existingBooking);
     }
 
-    private void createNewBookingFromRequest(BookingRequest bookingRequest) {
-        bookingRequest.setUpdatedAt(Timestamp.from(Instant.now()));
-        Booking booking = new Booking();
-        BeanUtils.copyProperties(bookingRequest, booking);
-        iBookingRepository.save(booking);
-    }
-
     @Override
-    public void remove(UUID id) {
-        Optional<Booking> booking = iBookingRepository.findById(id);
-        booking.ifPresent(value -> value.setStatus(String.valueOf(EBookingStatus.INACTIVE)));
-        booking.ifPresent(value -> value.setIsDeleted(true));
-        booking.ifPresent(iBookingRepository::save);
-    }
-
-    @Override
-    public void delete(UUID id) {
-        iBookingRepository.deleteById(id);
-    }
-
-    @Override
-    public Iterable<BookingResponse> searchAllByCustomer(Customer customer) {
-        Iterable<Booking> bookings = iBookingRepository.searchAllByCustomer(customer);
-        return StreamSupport.stream(bookings.spliterator(), false)
-                .filter(booking -> !booking.getIsDeleted())
-                .map(booking -> {
-                    BookingResponse bookingResponse = new BookingResponse();
-                    BeanUtils.copyProperties(booking, bookingResponse);
-                    return bookingResponse;
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Iterable<BookingResponse> searchAllByOrganizer(Organizer organizer) {
-        Iterable<Booking> bookings = iBookingRepository.searchAllByOrganizer(organizer);
-        return StreamSupport.stream(bookings.spliterator(), false)
-                .filter(booking -> !booking.getIsDeleted())
-                .map(booking -> {
-                    BookingResponse bookingResponse = new BookingResponse();
-                    BeanUtils.copyProperties(booking, bookingResponse);
-                    return bookingResponse;
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Iterable<BookingResponse> searchByInput(String input) {
-        Iterable<Booking> bookings = iBookingRepository.findAll();
-        List<BookingResponse> bookingResponses = new ArrayList<>();
-        for (Booking booking : bookings) {
-            if (input.contains(booking.getCustomer().getFullName())
-                    || input.contains(booking.getOrganizer().getName())) {
-                BookingResponse bookingResponse = new BookingResponse();
-                BeanUtils.copyProperties(booking, bookingResponse);
-                bookingResponses.add(bookingResponse);
-            }
+    public ResponsePayload remove(UUID id) {
+        try {
+            Optional<Booking> booking = iBookingRepository.findById(id);
+            booking.ifPresent(value -> {
+                value.setStatus(String.valueOf(EBookingStatus.INACTIVE));
+                value.setIsDeleted(true);
+            });
+            booking.ifPresent(iBookingRepository::save);
+            return createBookingResponsePayload("Booking remove successfully!", HttpStatus.OK, null);
+        } catch (Exception e) {
+            log.log(Level.WARNING, e.getMessage(), e);
+            return createBookingResponsePayload("Booking remove failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
-        return bookingResponses;
     }
-
-
-    //Developing functions
-    public ResponsePayload createResponsePayload(String message, HttpStatus status, Object data) {
-        return ResponsePayload.builder()
-                .message(message)
-                .status(status)
-                .data(data)
-                .build();
-    }
-    @Override
-    public ResponsePayload findAll(Pageable pageable) {
-        Page<Booking> bookingPage = iBookingRepository.findAll(pageable);
-        return createResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingPage);
-    }
-
 }
