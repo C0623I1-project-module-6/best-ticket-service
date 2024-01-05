@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,9 +40,15 @@ public class BookingDetailController {
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
+    @PostMapping("/add")
+    public ResponseEntity<ResponsePayload> addBookingDetail(@PathVariable UUID ignoredBookingId, @RequestBody BookingDetailRequest bookingDetailRequest) {
+        ResponsePayload responsePayload = bookingDetailService.save(ignoredBookingId, null, bookingDetailRequest);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<ResponsePayload> updateBookingDetail(@PathVariable UUID ignoredBookingId, @PathVariable UUID id, @RequestBody BookingDetailRequest bookingDetailRequest) {
-        ResponsePayload responsePayload = bookingDetailService.save(id, bookingDetailRequest);
+        ResponsePayload responsePayload = bookingDetailService.save(ignoredBookingId, id, bookingDetailRequest);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 

@@ -6,7 +6,9 @@ import com.codegym.bestticket.exception.BookingSaveException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
 import com.codegym.bestticket.payload.response.booking.BookingResponse;
+import com.codegym.bestticket.repository.booking.IBookingDetailRepository;
 import com.codegym.bestticket.repository.booking.IBookingRepository;
+import com.codegym.bestticket.repository.ticket.ITicketRepository;
 import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
@@ -23,13 +25,17 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Log
 @Service
 @Transactional
 public class BookingService implements IBookingService {
+    private final IBookingDetailRepository iBookingDetailRepository;
     private final IBookingRepository iBookingRepository;
+    private final ITicketRepository iTicketRepository;
 
     public ResponsePayload createBookingResponsePayload(String message, HttpStatus status, Object data) {
         return ResponsePayload.builder()
@@ -42,15 +48,16 @@ public class BookingService implements IBookingService {
     @Override
     public ResponsePayload findAllByIsDeletedFalse(Pageable pageable) {
         try {
-            int size = 10;
-            int page = iBookingRepository.findAllByIsDeletedFalse(Pageable.unpaged()).getSize() / size;
-            pageable = PageRequest.of(page, size);
-            Page<Booking> bookings = iBookingRepository.findAllByIsDeletedFalse(pageable);
-            Page<BookingResponse> bookingResponses = bookings.map(booking -> {
-                BookingResponse bookingResponse = new BookingResponse();
-                BeanUtils.copyProperties(booking, bookingResponse);
-                return bookingResponse;
-            });
+            BookingDetailService bookingDetailService = new BookingDetailService(iBookingDetailRepository, iBookingRepository, iTicketRepository);
+            Iterable<Booking> bookings = iBookingRepository.findAllByIsDeletedFalse(pageable);
+            Iterable<BookingResponse> bookingResponses = StreamSupport.stream(bookings.spliterator(), false)
+                    .map(booking -> {
+                        BookingResponse bookingResponse = new BookingResponse();
+                        bookingDetailService.checkBookingTotalAmount(booking.getId());
+                        BeanUtils.copyProperties(booking, bookingResponse);
+                        return bookingResponse;
+                    })
+                    .collect(Collectors.toList());
             return createBookingResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);

@@ -5,7 +5,6 @@ import com.codegym.bestticket.payload.request.booking.BookingRequest;
 import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +29,7 @@ public class BookingController {
     private final IBookingService bookingService;
 
     @GetMapping
-    public ResponseEntity<ResponsePayload> getBookingListByIsDeletedFalse(Pageable pageable) {
+    public ResponseEntity<ResponsePayload> getBookingListByIsDeletedFalse(@PageableDefault Pageable pageable) {
         ResponsePayload responsePayload = bookingService.findAllByIsDeletedFalse(pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
