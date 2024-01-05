@@ -20,6 +20,8 @@ import com.codegym.bestticket.payload.response.user.LoginResponse;
 import com.codegym.bestticket.payload.response.user.RegisterResponse;
 import com.codegym.bestticket.repository.user.ICustomerRepository;
 import com.codegym.bestticket.repository.user.IOrganizerRepository;
+import com.codegym.bestticket.repository.user.IOrganizerTypeRepository;
+import com.codegym.bestticket.repository.user.IRoleRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -38,10 +40,13 @@ import java.util.UUID;
 public class UserService implements IUserService {
     private final IUserRepository userRepository;
     private final ICustomerRepository customerRepository;
+    private final IOrganizerRepository organizerRepository;
+    private final IOrganizerTypeRepository organizerTypeRepository;
+    private final IRoleRepository roleRepository;
     private final IRegisterConverter registerConverter;
     private final ILoginConverter loginConverter;
     private final IUserConverter userConverter;
-    private final IOrganizerRepository organizerRepository;
+
 
     @Override
     public ResponsePayload register(RegisterRequest registerRequest) {
@@ -169,6 +174,25 @@ public class UserService implements IUserService {
                     .build();
         }
 
+    }
+
+    @Override
+    public ResponsePayload filter(Pageable pageable, String keyword) {
+        try {
+            Page<UserDto> users =
+                    userRepository.findAllByUsernameContainingOrEmailContainingAndIsDeletedFalse(pageable, keyword)
+                            .map(userConverter::entityToDto);
+            return ResponsePayload.builder()
+                    .message("SUCCESS")
+                    .status(HttpStatus.OK)
+                    .data(users)
+                    .build();
+        } catch (EntityNotFoundException e){
+            return ResponsePayload.builder()
+                    .message("FAILED")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
     }
 }
 
