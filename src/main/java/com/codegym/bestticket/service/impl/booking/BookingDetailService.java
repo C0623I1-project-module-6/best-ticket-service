@@ -1,6 +1,5 @@
 package com.codegym.bestticket.service.impl.booking;
 
-import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.entity.booking.BookingDetail;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingDetailRequest;
@@ -13,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -40,6 +40,9 @@ public class BookingDetailService implements IBookingDetailService {
     @Override
     public ResponsePayload findAllByBookingIdAndIsDeletedFalse(UUID bookingId, Pageable pageable) {
         try {
+            int size = 10;
+            int page = 50;
+            pageable = PageRequest.of(page, size);
             Page<BookingDetail> bookingDetailPage = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId, pageable);
             Page<BookingDetailResponse> bookingDetailResponsePage = bookingDetailPage.map(bookingDetail -> {
                 BookingDetailResponse bookingDetailResponse = new BookingDetailResponse();
@@ -68,16 +71,16 @@ public class BookingDetailService implements IBookingDetailService {
     public ResponsePayload save(UUID id, BookingDetailRequest bookingDetailRequest) {
         try {
             Optional<BookingDetail> bookingDetail = iBookingDetailRepository.findById(id);
-            //Add calculate functions here
-            if () {
-
-            } else if () {
-
-            } else if () {
-
-            } else {
-
-            }
+//            //Add calculate functions here
+//            if () {
+//
+//            } else if () {
+//
+//            } else if () {
+//
+//            } else {
+//
+//            }
             return createBookingDetailResponsePayload("Booking detail save/update successfully!", HttpStatus.OK, null);
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);

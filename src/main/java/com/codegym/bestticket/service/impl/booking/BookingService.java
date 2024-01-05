@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,9 @@ public class BookingService implements IBookingService {
     @Override
     public ResponsePayload findAllByIsDeletedFalse(Pageable pageable) {
         try {
+            int size = 10;
+            int page = iBookingRepository.findAllByIsDeletedFalse(Pageable.unpaged()).getSize() / size;
+            pageable = PageRequest.of(page, size);
             Page<Booking> bookings = iBookingRepository.findAllByIsDeletedFalse(pageable);
             Page<BookingResponse> bookingResponses = bookings.map(booking -> {
                 BookingResponse bookingResponse = new BookingResponse();
