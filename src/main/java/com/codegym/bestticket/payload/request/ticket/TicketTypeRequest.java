@@ -7,7 +7,12 @@ import java.util.UUID;
 @Data
 public class TicketTypeRequest {
     private UUID id;
+
     private String name;
-    private Double price;
+
     private Boolean isDeleted;
+
+    private Integer quantity;
+
+    private Double price;
 }
