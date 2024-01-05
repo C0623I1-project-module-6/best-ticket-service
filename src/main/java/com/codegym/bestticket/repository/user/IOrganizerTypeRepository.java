@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface IOrganizerTypeRepository extends JpaRepository<OrganizerType, UUID> {
-    Page<OrganizerType> findAllByNameContainingAndIsDeletedFalse(Pageable pageable, String keyword);
+    Page<OrganizerType> findAllByNameContainingAndIsDeletedFalse(Pageable pageable, String status);
 }
