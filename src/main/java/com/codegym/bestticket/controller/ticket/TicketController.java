@@ -32,93 +32,42 @@ public class TicketController {
     private final ITicketService ticketService;
 
     @GetMapping
-    public ResponseEntity<ResponsePayload> getAllTicket(@PageableDefault(size = 5, page = 0) Pageable pageable) {
-        Iterable<TicketRequest> ticketRequestDTOS = ticketService.showTicket(pageable);
-
-        ResponsePayload responsePayload;
-        if (ticketRequestDTOS == null) {
-            responsePayload = ResponsePayload.builder()
-                    .message(String.valueOf(ETicketMessage.FAIL))
-                    .status(HttpStatus.NOT_FOUND)
-                    .build();
-            return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    public ResponseEntity<ResponsePayload> getAllTicket(@PageableDefault(size = 1, page = 0) Pageable pageable) {
+        ResponsePayload responsePayload = ticketService.showTicket(pageable);
+        if (responsePayload == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        responsePayload = ResponsePayload.builder()
-                .status(HttpStatus.OK)
-                .message(String.valueOf(ETicketMessage.SUCCESS))
-                .data(ticketRequestDTOS)
-                .build();
-
-        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponsePayload> getTicketById(@PathVariable UUID id) {
-        TicketResponse ticketResponse = ticketService.getTicketById(id);
-        ResponsePayload responsePayload;
-        if (ticketResponse == null) {
-            responsePayload = ResponsePayload.builder()
-                    .status(HttpStatus.NOT_FOUND)
-                    .message(String.valueOf(ETicketMessage.FAIL))
-                    .build();
-            return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+        ResponsePayload responsePayload = ticketService.getTicketById(id);
+        if (responsePayload == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        responsePayload = ResponsePayload.builder()
-                .message(String.valueOf(ETicketMessage.SUCCESS))
-                .status(HttpStatus.OK)
-                .data(ticketResponse)
-                .build();
-        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 
 
     @PostMapping
     public ResponseEntity<ResponsePayload> createTicket(@RequestBody TicketResponse ticketResponse) {
-
-        if (ticketResponse == null) {
-            ResponsePayload responsePayload = ResponsePayload.builder()
-                    .status(HttpStatus.NOT_FOUND)
-                    .message(String.valueOf(ETicketMessage.FAIL))
-                    .build();
-            return new ResponseEntity<>(responsePayload.getStatus());
+        ResponsePayload responsePayload = ticketService.createTicket(ticketResponse);
+        if (responsePayload == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-
-        TicketRequest ticketRequest = new TicketRequest();
-        BeanUtils.copyProperties(ticketResponse, ticketRequest);
-
-        ResponsePayload responsePayload;
-        ticketRequest = ticketService.createTicket(ticketRequest);
-
-        responsePayload = ResponsePayload.builder()
-                .status(HttpStatus.CREATED)
-                .message(String.valueOf(ETicketMessage.SUCCESS))
-                .data(ticketRequest)
-                .build();
-        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponsePayload> updateTicket(@PathVariable UUID id, @RequestBody TicketResponse ticketResponse) {
-        ResponsePayload responsePayload;
         if (ticketResponse != null) {
             ticketResponse.setId(id);
-
-            ticketService.updateTicket(ticketResponse);
-
-            responsePayload = ResponsePayload.builder()
-                    .status(HttpStatus.OK)
-                    .message(String.valueOf(ETicketMessage.SUCCESS))
-                    .data(ticketResponse)
-                    .build();
+            ResponsePayload responsePayload = ticketService.updateTicket(ticketResponse);
             return new ResponseEntity<>(responsePayload, HttpStatus.OK);
         }
-
-        responsePayload = ResponsePayload.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .message(String.valueOf(ETicketMessage.SUCCESS))
-                .build();
-        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
     }
 
@@ -146,8 +95,8 @@ public class TicketController {
 
     @GetMapping("/search")
     public ResponseEntity<ResponsePayload> searchTicketByStatus(@RequestParam String status) {
-        Iterable<Ticket> tickets = ticketService.searchTicketByStatus(status);
-        return new ResponseEntity<>(ResponsePayload.builder().data(tickets).build(), HttpStatus.OK);
+        ResponsePayload responsePayload  = ticketService.searchTicketByStatus(status);
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 
     @GetMapping("/search/time/before")
@@ -155,6 +104,7 @@ public class TicketController {
         Iterable<ResponsePayload> responsePayload = ticketService.searchTicketByTimeBefore();
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
+
     @GetMapping("/search/time/after")
     public ResponseEntity<Iterable<ResponsePayload>> searchTicketByTimeAfter() {
         Iterable<ResponsePayload> responsePayload = ticketService.searchTicketByTimeAfter();
