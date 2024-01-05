@@ -16,6 +16,6 @@ public interface IUserService {
 
     ResponsePayload findAll(Pageable pageable);
 
-    ResponsePayload filter(Pageable pageable, String keyword);
+    ResponsePayload filter(Pageable pageable, String username,String email);
 }
 
