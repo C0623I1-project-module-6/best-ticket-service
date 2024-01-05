@@ -131,42 +131,44 @@ public class TicketService implements ITicketService {
 
         Iterable<Ticket> tickets = ticketRepository.findAll();
 
-        return StreamSupport.stream(tickets.spliterator(), true)
-                .filter(ticket -> !ticket.getIsDeleted())
-                .map(ticket -> {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                    LocalDateTime dateTime = LocalDateTime.parse(ticket.getTime(), formatter);
-
-                    TicketRequest ticketRequest = new TicketRequest();
-                    if (dateTime.isBefore(currentDate)) {
-                        BeanUtils.copyProperties(ticket, ticketRequest);
-                        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequest);
-                    } else {
-                        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
-                    }
-                })
-                .filter(payload -> payload.getData() != null)
-                .toList();
+//        return StreamSupport.stream(tickets.spliterator(), true)
+//                .filter(ticket -> !ticket.getIsDeleted())
+//                .map(ticket -> {
+//                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//                    LocalDateTime dateTime = LocalDateTime.parse(ticket.getTime(), formatter);
+//
+//                    TicketRequest ticketRequest = new TicketRequest();
+//                    if (dateTime.isBefore(currentDate)) {
+//                        BeanUtils.copyProperties(ticket, ticketRequest);
+//                        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequest);
+//                    } else {
+//                        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
+//                    }
+//                })
+//                .filter(payload -> payload.getData() != null)
+//                .toList();
+        return null;
     }
 
     @Override
     public Iterable<ResponsePayload> searchTicketByTimeAfter() {
         LocalDateTime currentDate = LocalDateTime.now();
         Iterable<Ticket> tickets = ticketRepository.findAll();
-        return StreamSupport.stream(tickets.spliterator(), true)
-                .filter(ticket -> !ticket.getIsDeleted())
-                .map(ticket -> {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                    LocalDateTime dateTime = LocalDateTime.parse(ticket.getTime(), formatter);
-                    TicketRequest ticketRequest = new TicketRequest();
-                    if (dateTime.isAfter(currentDate)) {
-                        BeanUtils.copyProperties(ticket, ticketRequest);
-                        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequest);
-                    } else {
-                        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
-                    }
-                })
-                .filter(payload -> payload.getData() != null)
-                .toList();
+//        return StreamSupport.stream(tickets.spliterator(), true)
+//                .filter(ticket -> !ticket.getIsDeleted())
+//                .map(ticket -> {
+//                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//                    LocalDateTime dateTime = LocalDateTime.parse(ticket.getTime(), formatter);
+//                    TicketRequest ticketRequest = new TicketRequest();
+//                    if (dateTime.isAfter(currentDate)) {
+//                        BeanUtils.copyProperties(ticket, ticketRequest);
+//                        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequest);
+//                    } else {
+//                        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
+//                    }
+//                })
+//                .filter(payload -> payload.getData() != null)
+//                .toList();
+        return null;
     }
 }

@@ -1,13 +1,14 @@
 package com.codegym.bestticket.entity.ticket;
 
 import com.codegym.bestticket.entity.booking.BookingDetail;
-import com.codegym.bestticket.entity.event.Event;
+import com.codegym.bestticket.entity.event.EventTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -33,13 +34,11 @@ public class Ticket {
 
     private String ticketCode;
     private String seat;
-    private String time;
-    private String location;
     private String promotion;
     private String barcode;
-    private Long quantity;
     private Boolean isDeleted;
     private String status;
+
 
     @JsonIgnore
     @ManyToOne
@@ -52,9 +51,11 @@ public class Ticket {
     private TicketType ticketType;
 
     @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false)
+    @JoinColumns({
+            @JoinColumn(name = "event_id", referencedColumnName = "event_id"),
+            @JoinColumn(name = "time_id", referencedColumnName = "id")
+    })
     @JsonIgnore
-    private Event event;
+    private EventTime eventTime;
 
-    private Double price;
 }
