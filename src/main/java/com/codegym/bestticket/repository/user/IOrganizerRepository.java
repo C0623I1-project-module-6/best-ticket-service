@@ -12,6 +12,8 @@ import java.util.UUID;
 public interface IOrganizerRepository extends JpaRepository<Organizer, UUID> {
     Page<Organizer> findAllByIsDeletedFalse(Pageable pageable);
 
+    Page<Organizer> findAllByNameContainingOrEmailContainingAndIsDeletedFalse(Pageable pageable, String keyword);
+
     Optional<Organizer> findByIdAndIsDeletedFalse(UUID id);
 
     Optional<Organizer> findByUserIdAndIsDeletedFalse(UUID id);
