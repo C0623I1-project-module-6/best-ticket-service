@@ -23,21 +23,19 @@ public class EventTypeController {
     public EventTypeController(IEventTypeService eventTypeService) {
         this.eventTypeService = eventTypeService;
     }
-
-    @GetMapping("/")
-    public ResponseEntity<EventTypeResponse> getAll() {
+    @GetMapping
+    public ResponseEntity<EventTypeResponse> getAll(){
         EventTypeResponse eventTypeResponse = EventTypeResponse.builder()
                 .eventTypeList(eventTypeService.findAll())
                 .message("List EventTypeDTO")
                 .build();
         return new ResponseEntity<>(eventTypeResponse, HttpStatus.OK);
     }
-
-    @GetMapping("/{event_type_id}")
-    public ResponseEntity<EventTypeResponse> getById(@PathVariable("event_type_id") UUID event_type_id) {
+    @GetMapping("/{eventTypeId}")
+    public  ResponseEntity<EventTypeResponse> getById(@PathVariable("eventTypeId")UUID eventTypeId){
         try {
-            EventTypeResponse eventTypeResponse = EventTypeResponse.builder()
-                    .eventType(eventTypeService.findById(event_type_id))
+            EventTypeResponse eventTypeResponse= EventTypeResponse.builder()
+                    .eventType(eventTypeService.findById(eventTypeId))
                     .build();
             return new ResponseEntity<>(eventTypeResponse, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
@@ -48,10 +46,10 @@ public class EventTypeController {
         }
     }
 
-    @DeleteMapping("/{event_type_id}")
-    public ResponseEntity<String> deleteEventType(@PathVariable("event_type_id") UUID event_type_id) {
-        try {
-            eventTypeService.removeById(event_type_id);
+    @DeleteMapping("/{eventTypeId}")
+    public ResponseEntity<String> deleteEventType(@PathVariable("eventTypeId")UUID eventTypeId){
+        try{
+            eventTypeService.removeById(eventTypeId);
             return new ResponseEntity<>("Event deleted successfully", HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>("Not found EventType", HttpStatus.OK);

@@ -9,10 +9,13 @@ import java.util.UUID;
 
 public interface IUserService {
     ResponsePayload register(RegisterRequest registerRequest);
+
     ResponsePayload login(LoginRequest loginRequest);
+
     ResponsePayload delete(UUID id);
 
     ResponsePayload findAll(Pageable pageable);
 
+    ResponsePayload filter(Pageable pageable, String keyword);
 }
 
