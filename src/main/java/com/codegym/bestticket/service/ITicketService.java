@@ -7,8 +7,12 @@ import java.util.UUID;
 
 public interface ITicketService {
     Iterable<TicketRequest> getAllTicket();
+
     TicketResponse getTicketById(UUID id);
+
     TicketRequest createTicket(TicketRequest ticketRequest);
+
     void updateTicket(TicketResponse ticketResponse);
+
     void deleteTicketById(UUID id);
 }

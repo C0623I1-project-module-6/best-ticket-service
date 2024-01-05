@@ -1,9 +1,8 @@
 package com.codegym.bestticket.controller;
 
-import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.dto.user.RoleDto;
+import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.service.IRoleService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,72 +23,28 @@ import java.util.UUID;
 public class RoleController {
     private final IRoleService roleService;
 
-    @PostMapping("/add")
-    public ResponseEntity<ResponsePayload> addRole(@RequestBody RoleDto roleDto) {
-        try {
-            if (roleDto == null) {
-                return new ResponseEntity<>(
-                        ResponsePayload.builder()
-                                .message("Request not found!")
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build(),
-                        HttpStatus.BAD_REQUEST);
-            }
-            RoleDto resultRoleDto = roleService.create(roleDto);
-            return new ResponseEntity<>(
-                    ResponsePayload.builder()
-                            .message("Add role successfully!!!")
-                            .status(HttpStatus.CREATED)
-                            .data(resultRoleDto)
-                            .build(),
-                    HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(
-                    ResponsePayload.builder()
-                            .message("Add role failed!")
-                            .status(HttpStatus.BAD_REQUEST)
-                            .build(),
-                    HttpStatus.BAD_REQUEST);
+    @PostMapping("/")
+    public ResponseEntity<ResponsePayload> add(@RequestBody RoleDto roleDto) {
+        if (roleDto == null) {
+            new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }
+        return new ResponseEntity<>(roleService.create(roleDto), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/disable/{id}")
-    public ResponseEntity<ResponsePayload> disableRole(@PathVariable UUID id) {
-        try {
-            roleService.remove(id);
-            return new ResponseEntity<>(
-                    ResponsePayload.builder()
-                            .message("Role disabled!!!")
-                            .status(HttpStatus.OK)
-                            .build(),
-                    HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(
-                    ResponsePayload.builder()
-                            .message("Role not found or is deleted!")
-                            .status(HttpStatus.NOT_FOUND)
-                            .build(),
-                    HttpStatus.NOT_FOUND);
+    @PostMapping("/{id}")
+    public ResponseEntity<ResponsePayload> edit(@PathVariable UUID id,
+                                                @RequestBody RoleDto roleDto) {
+        if (roleDto == null && id == null) {
+            new ResponseEntity<>("Request not found or id not found!", HttpStatus.BAD_REQUEST);
         }
+        return new ResponseEntity<>(roleService.update(id, roleDto), HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ResponsePayload> deleteRole(@PathVariable UUID id) {
-        try {
-            roleService.delete(id);
-            return new ResponseEntity<>(
-                    ResponsePayload.builder()
-                            .message("Role deleted!!!")
-                            .status(HttpStatus.OK)
-                            .build(),
-                    HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(
-                    ResponsePayload.builder()
-                            .message("Role not found or is deleted!")
-                            .status(HttpStatus.NOT_FOUND)
-                            .build(),
-                    HttpStatus.NOT_FOUND);
+        if (id == null) {
+            new ResponseEntity<>("Id not found!", HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(roleService.delete(id), HttpStatus.OK);
     }
 }

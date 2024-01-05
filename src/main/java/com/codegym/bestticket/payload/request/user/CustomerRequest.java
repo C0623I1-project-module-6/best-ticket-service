@@ -12,5 +12,5 @@ public class CustomerRequest {
     private String gender;
     private String idCard;
     private Date dateOfBirth;
-    private UUID user;
+    private String avatar;
 }

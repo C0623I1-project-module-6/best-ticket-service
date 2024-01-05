@@ -1,18 +1,20 @@
 package com.codegym.bestticket.service;
 
+import com.codegym.bestticket.dto.user.CustomerDto;
+import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.user.CustomerRequest;
-import com.codegym.bestticket.payload.response.user.CustomerResponse;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.UUID;
 
 
 public interface ICustomerService {
-    CustomerResponse create(CustomerRequest customerRequest);
-    CustomerResponse update (UUID id, CustomerRequest customerRequest);
-    void remove(UUID id);
-    void delete(UUID id);
-    List<CustomerResponse> findAll();
-    CustomerResponse findById(UUID id);
+    ResponsePayload addInfo(UUID id, CustomerRequest customerRequest);
+
+    ResponsePayload update(UUID id, CustomerDto customerDto);
+
+    ResponsePayload findAll(Pageable pageable);
+
+    ResponsePayload findById(UUID id);
 
 }

@@ -36,6 +36,7 @@ public class Customer {
     @Column(length = 50, unique = true)
     private String idCard;
     private Date dateOfBirth;
+    private String phoneNumber;
     private Boolean isDeleted;
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)

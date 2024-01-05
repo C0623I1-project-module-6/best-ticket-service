@@ -9,8 +9,12 @@ import java.util.UUID;
 public interface ITicketTypeService {
 
     Iterable<TicketTypeRequest> getAllTicketType();
+
     TicketTypeResponse getTicketTypeById(UUID id);
+
     TicketTypeRequest createTicketType(TicketTypeRequest ticketTypeRequest);
+
     void deleteTicketType(UUID id);
+
     void updateTicketType(TicketTypeResponse ticketTypeResponse);
 }
