@@ -4,14 +4,14 @@ SELECT UUID_TO_BIN(UUID()),
        '601-332-3596',
        'bdavidovici0@gnu.org',
        '3519-2935-6282',
-       '6314-4781-5998',
+       '6314-4781-5u.id8',
        (select id from organizer_types ORDER BY RAND() LIMIT 1),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -24,9 +24,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -39,9 +39,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -54,9 +54,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -69,9 +69,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -84,9 +84,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -99,9 +99,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -114,9 +114,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -129,9 +129,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -144,9 +144,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -159,9 +159,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -174,9 +174,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -189,9 +189,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -204,9 +204,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -219,9 +219,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -234,9 +234,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -249,9 +249,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -264,9 +264,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -279,9 +279,9 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 insert into organizers (id, `name`, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
 SELECT UUID_TO_BIN(UUID()),
@@ -294,8 +294,84 @@ SELECT UUID_TO_BIN(UUID()),
        u.id,
        false
 FROM users u
-WHERE NOT EXISTS(SELECT 1
-                 FROM organizers o
-                 WHERE o.user_id = u.id)
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
+LIMIT 1;
+
+insert into organizers (id, name, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
+SELECT UUID_TO_BIN(UUID()),
+       'Elbertine Charopen',
+       '7271379169',
+       'ahowse0@geocities.com',
+       '03-078-0751',
+       '28-521-4678',
+       (select id from organizer_types ORDER BY RAND() LIMIT 1),
+       u.id,
+       false
+FROM users u
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
+LIMIT 1;
+insert into organizers (id, name, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
+SELECT UUID_TO_BIN(UUID()),
+       'Monah Tunstall',
+       '8146349412',
+       'kharburtson1@miitbeian.gov.cn',
+       '38-733-8303',
+       '50-477-0545',
+       (select id from organizer_types ORDER BY RAND() LIMIT 1),
+       u.id,
+       false
+FROM users u
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
+LIMIT 1;
+insert into organizers (id, name, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
+SELECT UUID_TO_BIN(UUID()),
+       'Caesar Waddam',
+       '4242114087',
+       'bcarriage2@amazon.com',
+       '05-765-6027',
+       '55-612-7281',
+       (select id from organizer_types ORDER BY RAND() LIMIT 1),
+       u.id,
+       false
+FROM users u
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
+LIMIT 1;
+insert into organizers (id, name, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
+SELECT UUID_TO_BIN(UUID()),
+       'Carolus Redgate',
+       '6176628687',
+       'gmacarthur3@netlog.com',
+       '04-725-6501',
+       '66-727-8553',
+       (select id from organizer_types ORDER BY RAND() LIMIT 1),
+       u.id,
+       false
+FROM users u
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
+LIMIT 1;
+insert into organizers (id, name, phone_number, email, id_card, tax_code, organizer_type_id, user_id, is_deleted)
+SELECT UUID_TO_BIN(UUID()),
+       'Jaine Godson',
+       '4132776522',
+       'lschreurs4@discuz.net',
+       '15-925-4297',
+       '43-121-5912',
+       (select id from organizer_types ORDER BY RAND() LIMIT 1),
+       u.id,
+       false
+FROM users u
+WHERE NOT EXISTS (SELECT 1
+                  FROM organizers o
+                  WHERE o.user_id = u.id)
 LIMIT 1;
 

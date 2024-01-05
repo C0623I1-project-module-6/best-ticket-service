@@ -10,6 +10,8 @@ import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.exception.EmailAlreadyExistsException;
 import com.codegym.bestticket.exception.InvalidPasswordException;
 import com.codegym.bestticket.exception.InvalidUserException;
+import com.codegym.bestticket.exception.PhoneNumberAlreadyExistsException;
+import com.codegym.bestticket.exception.UserNotFoundException;
 import com.codegym.bestticket.exception.UsernameAlreadyExistsException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
@@ -18,6 +20,8 @@ import com.codegym.bestticket.payload.response.user.LoginResponse;
 import com.codegym.bestticket.payload.response.user.RegisterResponse;
 import com.codegym.bestticket.repository.user.ICustomerRepository;
 import com.codegym.bestticket.repository.user.IOrganizerRepository;
+import com.codegym.bestticket.repository.user.IOrganizerTypeRepository;
+import com.codegym.bestticket.repository.user.IRoleRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -36,26 +40,44 @@ import java.util.UUID;
 public class UserService implements IUserService {
     private final IUserRepository userRepository;
     private final ICustomerRepository customerRepository;
+    private final IOrganizerRepository organizerRepository;
+    private final IOrganizerTypeRepository organizerTypeRepository;
+    private final IRoleRepository roleRepository;
     private final IRegisterConverter registerConverter;
     private final ILoginConverter loginConverter;
     private final IUserConverter userConverter;
-    private final IOrganizerRepository organizerRepository;
+
 
     @Override
     public ResponsePayload register(RegisterRequest registerRequest) {
         try {
             if (userRepository.existsByUsername(
                     registerRequest.getUsername())) {
-                throw new UsernameAlreadyExistsException("Username already exists.");
+                throw new UsernameAlreadyExistsException("Username already exists!");
             }
             if (userRepository.existsByEmail(
                     registerRequest.getEmail())) {
-                throw new EmailAlreadyExistsException("Email already exists.");
+                throw new EmailAlreadyExistsException("Email already exists!");
+            }
+            if (customerRepository.existsByPhoneNumber(
+                    registerRequest.getPhoneNumber())) {
+                throw new PhoneNumberAlreadyExistsException("Phone number already exists!");
             }
             User user = registerConverter.dtoToEntity(registerRequest);
             user.setIsDeleted(false);
             userRepository.save(user);
             RegisterResponse registerResponse = registerConverter.entityToDto(user);
+            if (user.getId() == null) {
+                throw new UserNotFoundException("User by id not found!");
+            }
+            UUID userId = user.getId();
+            user = userRepository.findById(userId).orElse(null);
+            Customer customer = Customer.builder()
+                    .phoneNumber(registerRequest.getPhoneNumber())
+                    .user(user)
+                    .isDeleted(false)
+                    .build();
+            customerRepository.save(customer);
             return ResponsePayload.builder()
                     .message("Register successfully!!!")
                     .status(HttpStatus.CREATED)
@@ -77,7 +99,10 @@ public class UserService implements IUserService {
                 user = userRepository.findByEmail(loginRequest.getEmail());
             }
             if (user == null) {
-                user = customerRepository.findByPhoneNumber(loginRequest.getPhoneNumber()).getUser();
+                Customer customer = customerRepository.findByPhoneNumber(loginRequest.getPhoneNumber());
+                if (customer != null) {
+                    user = customer.getUser();
+                }
             }
             if (user == null) {
                 throw new InvalidUserException("Username/Email/Phone number is not blank.");
@@ -143,13 +168,31 @@ public class UserService implements IUserService {
                     .data(userDtos)
                     .build();
         } catch (RuntimeException e) {
-            e.printStackTrace();
             return ResponsePayload.builder()
                     .message("User list not found")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
 
+    }
+
+    @Override
+    public ResponsePayload filter(Pageable pageable, String keyword) {
+        try {
+            Page<UserDto> users =
+                    userRepository.findAllByUsernameContainingOrEmailContainingAndIsDeletedFalse(pageable, keyword)
+                            .map(userConverter::entityToDto);
+            return ResponsePayload.builder()
+                    .message("SUCCESS")
+                    .status(HttpStatus.OK)
+                    .data(users)
+                    .build();
+        } catch (EntityNotFoundException e){
+            return ResponsePayload.builder()
+                    .message("FAILED")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
     }
 }
 

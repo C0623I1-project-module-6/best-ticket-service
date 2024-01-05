@@ -4,7 +4,10 @@ import com.codegym.bestticket.converter.user.ICustomerConverter;
 import com.codegym.bestticket.dto.user.CustomerDto;
 import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.User;
+import com.codegym.bestticket.exception.CustomerNotFoundException;
+import com.codegym.bestticket.exception.UserNotFoundException;
 import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.request.user.CustomerRequest;
 import com.codegym.bestticket.payload.response.user.CustomerResponse;
 import com.codegym.bestticket.repository.user.ICustomerRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
@@ -12,10 +15,11 @@ import com.codegym.bestticket.service.ICustomerService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,15 +31,24 @@ public class CustomerService implements ICustomerService {
     private final ICustomerRepository customerRepository;
     private final IUserRepository userRepository;
 
+
     @Override
-    public ResponsePayload create(CustomerDto customerDto) {
+    public ResponsePayload addInfo(UUID id, CustomerRequest customerRequest) {
         try {
-            UUID userid = customerDto.getUser();
-            User user = userRepository.findById(userid)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
-            Customer customer = customerConverter.dtoToEntity(customerDto);
-            customer.setUser(user);
-            customer.setIsDeleted(false);
+            Customer customer = customerRepository.findById(id)
+                    .orElseThrow(() -> new CustomerNotFoundException("Customer not found by" + id));
+            User user = userRepository.findById(customer.getUser().getId())
+                    .orElseThrow(() -> new UserNotFoundException("User not found by" + id));
+            User.builder()
+                    .avatar(customerRequest.getAvatar())
+                    .build();
+            userRepository.save(user);
+            Customer.builder()
+                    .fullName(customerRequest.getFullName())
+                    .gender(customerRequest.getGender())
+                    .idCard(customerRequest.getIdCard())
+                    .dateOfBirth(customerRequest.getDateOfBirth())
+                    .build();
             customerRepository.save(customer);
             CustomerResponse customerResponse = customerConverter.entityToDto(customer);
             return ResponsePayload.builder()
@@ -80,10 +93,10 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override
-    public ResponsePayload findAll() {
+    public ResponsePayload findAll(Pageable pageable) {
         try {
-            List<CustomerResponse> customerResponses = customerConverter.entitiesToDtos(
-                    customerRepository.findAllByIsDeletedFalse());
+            Page<CustomerResponse> customerResponses = customerRepository.findAllByIsDeletedFalse(pageable)
+                    .map(customerConverter::entityToDto);
             return ResponsePayload.builder()
                     .message("Customer list!!!")
                     .status(HttpStatus.OK)

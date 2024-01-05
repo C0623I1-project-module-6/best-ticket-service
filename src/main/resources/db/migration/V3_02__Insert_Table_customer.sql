@@ -132,3 +132,200 @@ WHERE NOT EXISTS(SELECT 1
                  FROM customers c
                  WHERE c.user_id = u.id) LIMIT 1;
 
+
+
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Christan McPherson',
+       'Female',
+       '7236945382',
+       '2005-03-17',
+       '5571263369',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Jefferson Guillard',
+       'Male',
+       '9719591056',
+       '2001-04-06',
+       '9707441356',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Obie Degnen',
+       'Male',
+       '6690764370',
+       '1983-08-23',
+       '1377345734',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Leupold Erlam',
+       'Male',
+       '6369901156',
+       '1989-03-19',
+       '3108196847',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Edlin Guerra',
+       'Male',
+       '7283374477',
+       '1974-09-08',
+       '9837288779',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Garvey Karpeev',
+       'Male',
+       '2609522991',
+       '2005-12-19',
+       '4513365218',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Olly Moffett',
+       'Male',
+       '2896296840',
+       '1997-07-18',
+       '2812245204',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Reggy Dumphries',
+       'Male',
+       '3919293959',
+       '1976-01-16',
+       '7429419208',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Pollyanna Dacks',
+       'Female',
+       '0673036766',
+       '1988-01-24',
+       '8616470948',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Irene Deniscke',
+       'Female',
+       '2040529071',
+       '2005-02-20',
+       '9191675154',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Dieter Brodeur',
+       'Male',
+       '9332790280',
+       '1987-01-27',
+       '7268161980',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Desmond Fullbrook',
+       'Genderqueer',
+       '5953531192',
+       '1977-09-11',
+       '8584192107',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Lyda Furzer',
+       'Female',
+       '9240613412',
+       '1972-05-08',
+       '2773251881',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Harriot Brewse',
+       'Female',
+       '3407428618',
+       '1986-11-15',
+       '2667643119',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;
+insert into customers (id, full_name, gender, id_card, date_of_birth, phone_number, is_deleted, user_id)
+SELECT UUID_TO_BIN(UUID()),
+       'Broderick McLeish',
+       'Male',
+       '3585224466',
+       '1983-02-05',
+       '6374372956',
+       false,
+       u.id
+FROM users u
+WHERE NOT EXISTS(SELECT 1
+                 FROM customers c
+                 WHERE c.user_id = u.id) LIMIT 1;

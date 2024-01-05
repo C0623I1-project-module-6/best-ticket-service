@@ -2,8 +2,10 @@ package com.codegym.bestticket.controller.user;
 
 import com.codegym.bestticket.dto.user.CustomerDto;
 import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.request.user.CustomerRequest;
 import com.codegym.bestticket.service.ICustomerService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,8 +27,8 @@ public class CustomerController {
     private final ICustomerService customerService;
 
     @GetMapping()
-    public ResponseEntity<ResponsePayload> shows() {
-        return new ResponseEntity<>(customerService.findAll(), HttpStatus.OK);
+    public ResponseEntity<ResponsePayload> shows(Pageable pageable) {
+        return new ResponseEntity<>(customerService.findAll(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -37,19 +39,20 @@ public class CustomerController {
         return new ResponseEntity<>(customerService.findById(id), HttpStatus.OK);
     }
 
-    @PostMapping("/")
-    public ResponseEntity<ResponsePayload> add(@RequestBody CustomerDto customerDto) {
-        if (customerDto == null) {
+    @PostMapping("/{id}")
+    public ResponseEntity<ResponsePayload> addInfo(@PathVariable UUID id,
+                                                   @RequestBody CustomerRequest customerRequest) {
+        if (customerRequest == null) {
             new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(customerService.create(customerDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(customerService.addInfo(id, customerRequest), HttpStatus.CREATED);
 
 
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponsePayload> edit(@PathVariable UUID id,
-                                                @RequestBody CustomerDto customerDto) {
+    public ResponseEntity<ResponsePayload> update(@PathVariable UUID id,
+                                                  @RequestBody CustomerDto customerDto) {
 
         if (customerDto == null) {
             new ResponseEntity<>("Request not found or id not found!", HttpStatus.BAD_REQUEST);
