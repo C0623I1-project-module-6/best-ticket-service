@@ -22,10 +22,10 @@ import java.util.UUID;
 public class UserController {
     private final IUserService userService;
 
-    @GetMapping()
-    public ResponseEntity<ResponsePayload> shows(Pageable pageable) {
-        return new ResponseEntity<>(userService.findAll(pageable), HttpStatus.OK);
-    }
+//    @GetMapping()
+//    public ResponseEntity<ResponsePayload> shows(Pageable pageable) {
+//        return new ResponseEntity<>(userService.findAll(pageable), HttpStatus.OK);
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponsePayload> remove(@PathVariable UUID id) {

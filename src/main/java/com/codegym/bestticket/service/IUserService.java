@@ -14,8 +14,8 @@ public interface IUserService {
 
     ResponsePayload delete(UUID id);
 
-    ResponsePayload findAll(Pageable pageable);
+//    ResponsePayload findAll(Pageable pageable);
 
-    ResponsePayload filter(Pageable pageable, String keyword);
+//    ResponsePayload filter(Pageable pageable, String keyword);
 }
 
