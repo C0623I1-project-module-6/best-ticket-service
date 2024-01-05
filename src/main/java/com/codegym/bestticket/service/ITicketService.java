@@ -11,13 +11,13 @@ import java.util.UUID;
 public interface ITicketService {
 <<<<<<< HEAD
 
-    ResponsePayload showTicket(Pageable pageable);
-    ResponsePayload getTicketById(UUID id);
-    ResponsePayload createTicket(TicketResponse ticketResponse);
-    ResponsePayload updateTicket(TicketResponse ticketResponse);
-    ResponsePayload deleteTicketById(UUID id);
+    Iterable<TicketRequest> showTicket(Pageable pageable);
+    TicketResponse getTicketById(UUID id);
+    TicketRequest createTicket(TicketRequest ticketRequest);
+    void updateTicket(TicketResponse ticketResponse);
+    void deleteTicketById(UUID id);
 
-    ResponsePayload searchTicketByStatus(String status);
+    Iterable<Ticket> searchTicketByStatus(String status);
     Iterable<ResponsePayload> searchTicketByTimeBefore();
     Iterable<ResponsePayload> searchTicketByTimeAfter();
 
