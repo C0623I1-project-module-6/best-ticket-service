@@ -105,6 +105,7 @@ public class BookingDetailService implements IBookingDetailService {
                 BookingDetail existingBookingDetail = bookingDetail.get();
                 BeanUtils.copyProperties(bookingDetailRequest, existingBookingDetail);
                 existingBookingDetail.setTickets(bookingDetailRequest.getTickets());
+                iTicketRepository.saveAll(existingBookingDetail.getTickets());
                 iBookingDetailRepository.save(existingBookingDetail);
                 booking.ifPresent(value -> checkBookingTotalAmount(bookingId));
                 return createBookingDetailResponsePayload("Booking detail saved/updated successfully!", HttpStatus.OK, existingBookingDetail);
