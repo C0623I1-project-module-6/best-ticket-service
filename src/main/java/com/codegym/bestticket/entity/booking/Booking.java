@@ -41,11 +41,9 @@ public class Booking {
     private Timestamp createdAt;
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp updatedAt;
-    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
-    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "organizer_id")
     private Organizer organizer;

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class IEventConverter implements com.codegym.bestticket.converter.event.IEventConverter {
+public class EventConverter implements com.codegym.bestticket.converter.event.IEventConverter {
     @Override
     public EventDTO entityToDTO(Event element) {
         EventDTO result = new EventDTO();
@@ -23,8 +23,6 @@ public class IEventConverter implements com.codegym.bestticket.converter.event.I
                 .map(this::entityToDTO)
                 .collect(Collectors.toList());
     }
-
-
     @Override
     public Event dtoToEntity(EventDTO element) {
         Event result = new Event();

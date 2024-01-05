@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class IEventTypeConverter implements com.codegym.bestticket.converter.event.IEventTypeConverter {
+public class EventTypeConverter implements com.codegym.bestticket.converter.event.IEventTypeConverter {
 
 
     @Override

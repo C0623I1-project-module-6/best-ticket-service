@@ -177,17 +177,18 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponsePayload filter(Pageable pageable, String status) {
+
+    public ResponsePayload filter(Pageable pageable, String username, String email) {
         try {
             Page<UserDto> users =
-                    userRepository.findAllByUsernameContainingOrEmailContainingAndIsDeletedFalse(pageable, status)
+                    userRepository.findAllByUsernameContainingOrEmailContainingAndIsDeletedFalse(pageable, username, email)
                             .map(userConverter::entityToDto);
             return ResponsePayload.builder()
                     .message("SUCCESS")
                     .status(HttpStatus.OK)
                     .data(users)
                     .build();
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return ResponsePayload.builder()
                     .message("FAILED")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)

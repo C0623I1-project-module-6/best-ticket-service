@@ -4,7 +4,6 @@ import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -38,9 +37,5 @@ public class UserController {
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 
-    @GetMapping()
-    public ResponseEntity<ResponsePayload> filterUser(Pageable pageable,
-                                                      @RequestParam String status) {
-        return new ResponseEntity<>(userService.filter(pageable, status), HttpStatus.OK);
-    }
+
 }

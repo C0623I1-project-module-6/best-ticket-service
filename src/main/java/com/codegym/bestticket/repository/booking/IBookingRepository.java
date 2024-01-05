@@ -1,6 +1,7 @@
 package com.codegym.bestticket.repository.booking;
 
 import com.codegym.bestticket.entity.booking.Booking;
+import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.Organizer;
 

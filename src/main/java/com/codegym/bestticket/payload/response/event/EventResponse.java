@@ -1,10 +1,10 @@
 package com.codegym.bestticket.payload.response.event;
 
-import com.codegym.bestticket.dto.event.EventDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventResponse {
-    private List<EventDTO> eventDTOS;
-    private EventDTO eventDTO;
+    private Object data;
+    private HttpStatus httpStatus= HttpStatus.OK;
     private String message;
 }
