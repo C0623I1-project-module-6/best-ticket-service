@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
 
@@ -24,11 +25,20 @@ public class TicketService implements ITicketService {
 
     private final ITicketRepository ticketRepository;
 
-    @Override
-    public Iterable<TicketRequest> showTicket(Pageable pageable) {
-        Iterable<Ticket> tickets = ticketRepository.findAll();
+    public ResponsePayload createResponsePayload(String message, HttpStatus status, Object data) {
+        return ResponsePayload
+                .builder()
+                .status(status)
+                .message(message)
+                .data(data)
+                .build();
+    }
 
-        return StreamSupport.stream(tickets.spliterator(), true)
+    @Override
+    public ResponsePayload showTicket(Pageable pageable) {
+        Iterable<Ticket> tickets = ticketRepository.findAll(pageable);
+
+        List<TicketRequest> ticketRequests = StreamSupport.stream(tickets.spliterator(), true)
                 .filter(ticket -> !ticket.getIsDeleted())
                 .map(ticket -> {
                     TicketRequest ticketRequest = new TicketRequest();
@@ -36,56 +46,67 @@ public class TicketService implements ITicketService {
                     return ticketRequest;
                 })
                 .toList();
+
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.CREATED, ticketRequests);
     }
 
     @Override
-    public TicketResponse getTicketById(UUID id) {
+    public ResponsePayload getTicketById(UUID id) {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
         assert ticket != null;
         if (Boolean.FALSE.equals(ticket.getIsDeleted())) {
-            TicketResponse ticketResponse1 = new TicketResponse();
+            TicketResponse ticketResponse = new TicketResponse();
 
-            BeanUtils.copyProperties(ticket, ticketResponse1);
-            return ticketResponse1;
+            BeanUtils.copyProperties(ticket, ticketResponse);
+            return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketResponse);
         }
-        return null;
+        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
     }
 
     @Override
-    public TicketRequest createTicket(TicketRequest ticketRequest) {
+    public ResponsePayload createTicket(TicketResponse ticketResponse) {
         Ticket ticket = Ticket.builder().build();
+        if (ticketResponse != null) {
+            BeanUtils.copyProperties(ticketResponse, ticket);
+            ticket = ticketRepository.save(ticket);
 
-        BeanUtils.copyProperties(ticketRequest, ticket);
-        ticket = ticketRepository.save(ticket);
-
-        TicketRequest ticketRequest1 = new TicketRequest();
-        BeanUtils.copyProperties(ticket, ticketRequest1);
-
-        return ticketRequest1;
+            TicketRequest ticketRequest = new TicketRequest();
+            BeanUtils.copyProperties(ticket, ticketRequest);
+            return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.CREATED, ticketRequest);
+        }
+        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.NO_CONTENT, null);
     }
 
     @Override
-    public void updateTicket(TicketResponse ticketResponse) {
+    public ResponsePayload updateTicket(TicketResponse ticketResponse) {
         Ticket ticket = ticketRepository.findById(ticketResponse.getId()).orElse(null);
-        assert ticket != null;
-        BeanUtils.copyProperties(ticketResponse, ticket);
+        if (ticket != null) {
+            BeanUtils.copyProperties(ticketResponse, ticket);
 
-        ticketRepository.save(ticket);
+            Ticket ticket1 = ticketRepository.save(ticket);
+            return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticket1);
+        }
+        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
     }
 
     @Override
-    public void deleteTicketById(UUID id) {
+    public ResponsePayload deleteTicketById(UUID id) {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
-        assert ticket != null;
-        ticket.setIsDeleted(false);
-        ticketRepository.save(ticket);
+        if (ticket != null) {
+            ticket.setIsDeleted(false);
+            Ticket ticketSave = ticketRepository.save(ticket);
+            TicketRequest ticketRequest = new TicketRequest();
+            BeanUtils.copyProperties(ticketSave, ticketRequest);
+            return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequest);
+        }
+        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
 
     }
 
     @Override
-    public Iterable<Ticket> searchTicketByStatus(String status) {
-
-        return ticketRepository.searchTicketByStatus(status);
+    public ResponsePayload searchTicketByStatus(String status) {
+        ResponsePayload responsePayload = ticketRepository.searchTicketByStatus(status);
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK,responsePayload);
     }
 
 
@@ -104,16 +125,9 @@ public class TicketService implements ITicketService {
                     TicketRequest ticketRequest = new TicketRequest();
                     if (dateTime.isBefore(currentDate)) {
                         BeanUtils.copyProperties(ticket, ticketRequest);
-                        return ResponsePayload.builder()
-                                .message(String.valueOf(ETicketMessage.SUCCESS))
-                                .status(HttpStatus.OK)
-                                .data(ticketRequest)
-                                .build();
+                        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequest);
                     } else {
-                        return ResponsePayload.builder()
-                                .message(String.valueOf(ETicketMessage.FAIL))
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build();
+                        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
                     }
                 })
                 .filter(payload -> payload.getData() != null)
@@ -132,16 +146,9 @@ public class TicketService implements ITicketService {
                     TicketRequest ticketRequest = new TicketRequest();
                     if (dateTime.isAfter(currentDate)) {
                         BeanUtils.copyProperties(ticket, ticketRequest);
-                        return ResponsePayload.builder()
-                                .message(String.valueOf(ETicketMessage.SUCCESS))
-                                .status(HttpStatus.OK)
-                                .data(ticketRequest)
-                                .build();
+                        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequest);
                     } else {
-                        return ResponsePayload.builder()
-                                .message(String.valueOf(ETicketMessage.FAIL))
-                                .status(HttpStatus.BAD_REQUEST)
-                                .build();
+                        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
                     }
                 })
                 .filter(payload -> payload.getData() != null)
