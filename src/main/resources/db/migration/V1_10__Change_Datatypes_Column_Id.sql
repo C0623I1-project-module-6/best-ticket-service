@@ -42,8 +42,13 @@ foreign_key_checks = 1;
 SET
 foreign_key_checks = 0;
 ALTER TABLE events
-    MODIFY COLUMN id BINARY(16);
+    MODIFY COLUMN id BINARY(16),
+    MODIFY COLUMN event_type_id BINARY(16);
+SET
+foreign_key_checks = 1;
 
+SET
+foreign_key_checks = 0;
 ALTER TABLE individuals
     MODIFY COLUMN id BINARY(16),
     MODIFY COLUMN user_individual_id BINARY(16);

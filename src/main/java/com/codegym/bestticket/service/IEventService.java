@@ -1,21 +1,24 @@
 package com.codegym.bestticket.service;
 
 import com.codegym.bestticket.dto.event.EventDTO;
+import com.codegym.bestticket.payload.response.event.EventResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface IEventService {
-    List<EventDTO> findAll();
-    EventDTO findEventById(UUID eventId);
+    EventResponse findAll(int page, int pageSize);
+    EventResponse findEventById(UUID eventId);
 
-    void removeEvent(UUID event_id);
+    EventResponse removeEvent(UUID event_id);
 
-    EventDTO createEvent(EventDTO eventDTO);
+    EventResponse createEvent(EventDTO eventDTO);
 
-    EventDTO updateEvent(UUID event_id,EventDTO eventDTO);
+    EventResponse updateEvent(UUID event_id,EventDTO eventDTO);
 
     List<EventDTO> findByNameContaining(String text);
 
-    List<EventDTO> findByEventTypeNames(List<String> eventTypeNames);
+    EventResponse findByEventTypeNamesAndIsDeletedFalse(List<String> eventTypeNames, int page, int pageSize);
 }

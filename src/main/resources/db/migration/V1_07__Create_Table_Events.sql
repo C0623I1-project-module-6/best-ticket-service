@@ -8,8 +8,9 @@ CREATE TABLE IF NOT EXISTS events
 (
     id            BINARY(36) PRIMARY KEY,
     name          VARCHAR(50)  NOT NULL,
-    address       VARCHAR(255) NOT NULL
-
+    address       VARCHAR(255) NOT NULL,
+    event_type_id BINARY(36),
+     FOREIGN KEY (event_type_id) REFERENCES event_types (id)
 );
 
 CREATE TABLE IF NOT EXISTS times
