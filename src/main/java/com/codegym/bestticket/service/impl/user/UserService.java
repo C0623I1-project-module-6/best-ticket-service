@@ -148,52 +148,52 @@ public class UserService implements IUserService {
         }
     }
 
-//    @Override
-//    public ResponsePayload findAll(Pageable pageable) {
-//        try {
-//            Page<User> users = userRepository.findAllByIsDeletedFalse(pageable);
-//            Page<UserDto> userDtos = users.map(user -> {
-//                UserDto userDto = userConverter.entityToDto(user);
-//                Customer customer = customerRepository.findByUserIdAndIsDeletedFalse(userDto.getId())
-//                        .orElse(null);
-//                userDto.setCustomer(customer);
-//                Organizer organizer = organizerRepository.findByUserIdAndIsDeletedFalse(userDto.getId())
-//                        .orElse(null);
-//                userDto.setOrganizer(organizer);
-//                return userDto;
-//            });
-//            return ResponsePayload.builder()
-//                    .message("User list!!!")
-//                    .status(HttpStatus.OK)
-//                    .data(userDtos)
-//                    .build();
-//        } catch (RuntimeException e) {
-//            return ResponsePayload.builder()
-//                    .message("User list not found")
-//                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .build();
-//        }
-//
-//    }
+    @Override
+    public ResponsePayload findAll(Pageable pageable) {
+        try {
+            Page<User> users = userRepository.findAllByIsDeletedFalse(pageable);
+            Page<UserDto> userDtos = users.map(user -> {
+                UserDto userDto = userConverter.entityToDto(user);
+                Customer customer = customerRepository.findByUserIdAndIsDeletedFalse(userDto.getId())
+                        .orElse(null);
+                userDto.setCustomer(customer);
+                Organizer organizer = organizerRepository.findByUserIdAndIsDeletedFalse(userDto.getId())
+                        .orElse(null);
+                userDto.setOrganizer(organizer);
+                return userDto;
+            });
+            return ResponsePayload.builder()
+                    .message("User list!!!")
+                    .status(HttpStatus.OK)
+                    .data(userDtos)
+                    .build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .message("User list not found")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
 
-//    @Override
-//    public ResponsePayload filter(Pageable pageable, String keyword) {
-//        try {
-//            Page<UserDto> users =
-//                    userRepository.findAllByUsernameContainingOrEmailContainingAndIsDeletedFalse(pageable, keyword)
-//                            .map(userConverter::entityToDto);
-//            return ResponsePayload.builder()
-//                    .message("SUCCESS")
-//                    .status(HttpStatus.OK)
-//                    .data(users)
-//                    .build();
-//        } catch (EntityNotFoundException e){
-//            return ResponsePayload.builder()
-//                    .message("FAILED")
-//                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .build();
-//        }
-//    }
+    }
+
+    @Override
+    public ResponsePayload filter(Pageable pageable, String keyword) {
+        try {
+            Page<UserDto> users =
+                    userRepository.findAllByUsernameContainingOrEmailContainingAndIsDeletedFalse(pageable, keyword)
+                            .map(userConverter::entityToDto);
+            return ResponsePayload.builder()
+                    .message("SUCCESS")
+                    .status(HttpStatus.OK)
+                    .data(users)
+                    .build();
+        } catch (EntityNotFoundException e){
+            return ResponsePayload.builder()
+                    .message("FAILED")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+    }
 }
 
 
