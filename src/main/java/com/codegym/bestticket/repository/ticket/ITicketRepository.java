@@ -4,9 +4,9 @@ import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.payload.ResponsePayload;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public interface ITicketRepository extends JpaRepository<Ticket, UUID> {
-
+    Iterable<Ticket> findAllByStatus(String keyword);
 }

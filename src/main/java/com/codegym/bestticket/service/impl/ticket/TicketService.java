@@ -106,7 +106,7 @@ public class TicketService implements ITicketService {
 
     @Override
     public Iterable<ResponsePayload> searchTicketByStatus(String status) {
-        Iterable<Ticket> tickets = ticketRepository.findAll();
+        Iterable<Ticket> tickets = ticketRepository.findAllByStatus(status);
 
         return StreamSupport.stream(tickets.spliterator(), true)
                 .filter(ticket -> !ticket.getIsDeleted())
