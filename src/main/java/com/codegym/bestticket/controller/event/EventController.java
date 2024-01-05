@@ -51,10 +51,15 @@ public class EventController {
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 
-    @GetMapping("/findByEventTypeNames")
+    @GetMapping("/eventTypeNames")
     public ResponseEntity<EventResponse> findByEventTypeNames(@RequestParam List<String> eventTypeNames,int page,int pageSize) {
       EventResponse eventResponse = IEventService.findByEventTypeNamesAndIsDeletedFalse(eventTypeNames,page,pageSize);
       return new ResponseEntity<>(eventResponse,eventResponse.getHttpStatus());
     }
 
+    @GetMapping("/TextAndEventTypeNames")
+    public ResponseEntity<EventResponse> findBySearchTermAndEventTypeNames(@RequestParam String searchTerm, List<String> eventTypeNames,int page,int pageSize) {
+        EventResponse eventResponse = IEventService.findBySearchTermAndEventTypeNames(searchTerm, eventTypeNames, page, pageSize);
+        return new ResponseEntity<>(eventResponse,eventResponse.getHttpStatus());
+    }
 }

@@ -15,9 +15,11 @@ public interface IEventRepository extends JpaRepository<Event, UUID> {
 
     Event findByIdAndIsDeletedFalse(UUID event_id);
 
-    List<Event> findByNameContainingAndIsDeletedFalse(String text);
+    Page<Event> findByNameContainingAndIsDeletedFalse(String text,Pageable pageable);
 
     @Query("SELECT e FROM Event e JOIN e.eventTypes et WHERE et.name IN :eventTypeNames AND e.isDeleted = false")
     Page<Event> findByEventTypeNamesAndIsDeletedFalse(@Param("eventTypeNames") List<String> eventTypeNames, Pageable pageable);
 
+    @Query("SELECT e FROM Event e JOIN e.eventTypes et WHERE e.name LIKE %:text% AND et.name IN :eventTypeNames AND e.isDeleted = false")
+    Page<Event> findByTextAndEventTypeNames(@Param("text") String text, @Param("eventTypeNames") List<String> eventTypeNames, Pageable pageable);
 }

@@ -18,7 +18,9 @@ public interface IEventService {
 
     EventResponse updateEvent(UUID event_id,EventDTO eventDTO);
 
-    List<EventDTO> findByNameContaining(String text);
+    EventResponse findByNameContaining(String text,int page, int pageSize);
 
     EventResponse findByEventTypeNamesAndIsDeletedFalse(List<String> eventTypeNames, int page, int pageSize);
+
+    EventResponse findBySearchTermAndEventTypeNames(String searchTerm,List<String> eventTypeNames,int page,int pageSize);
 }

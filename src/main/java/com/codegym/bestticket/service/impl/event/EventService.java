@@ -108,8 +108,11 @@ public class EventService implements IEventService {
     }
 
     @Override
-    public List<EventDTO> findByNameContaining(String text) {
-        return eventConverter.entitiesToDTOs(eventRepository.findByNameContainingAndIsDeletedFalse(text));
+    public EventResponse findByNameContaining(String text,int page,int pageSize) {
+        Pageable pageable = PageRequest.of(page,pageSize);
+        Page<Event> eventPage = eventRepository.findByNameContainingAndIsDeletedFalse(text,pageable);
+        List<EventDTO> events = eventConverter.entitiesToDTOs(eventPage.getContent());
+        return EventResponse.builder().data(new PageImpl<>(events,pageable,eventPage.getTotalElements())).httpStatus(HttpStatus.OK).message("Page Event By Search Term").build();
     }
 
     @Override
@@ -118,6 +121,14 @@ public class EventService implements IEventService {
         Page<Event> eventPage = eventRepository.findByEventTypeNamesAndIsDeletedFalse(eventTypeNames,pageable);
         List<EventDTO> eventDTOList = eventConverter.entitiesToDTOs(eventPage.getContent());
         return EventResponse.builder().data(new PageImpl<>(eventDTOList, pageable, eventPage.getTotalElements())).message("Page Event By List EventType").httpStatus(HttpStatus.OK).build();
+    }
+
+    @Override
+    public EventResponse findBySearchTermAndEventTypeNames(String searchTerm, List<String> eventTypeNames, int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Event> eventPage = eventRepository.findByTextAndEventTypeNames(searchTerm,eventTypeNames,pageable);
+        List<EventDTO> eventDTOList = eventConverter.entitiesToDTOs(eventPage.getContent());
+        return EventResponse.builder().data(new PageImpl<>(eventDTOList, pageable, eventPage.getTotalElements())).message("Page Event By Search Term List EventType").httpStatus(HttpStatus.OK).build();
     }
 
 }
