@@ -52,13 +52,21 @@ public class EventController {
     }
 
     @GetMapping("/eventTypeNames")
-    public ResponseEntity<EventResponse> findByEventTypeNames(@RequestParam List<String> eventTypeNames,int page,int pageSize) {
+    public ResponseEntity<EventResponse> findByEventTypeNames(
+            @RequestParam(name = "eventTypeNames") List<String> eventTypeNames,
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "pageSize") int pageSize
+    ) {
       EventResponse eventResponse = IEventService.findByEventTypeNamesAndIsDeletedFalse(eventTypeNames,page,pageSize);
       return new ResponseEntity<>(eventResponse,eventResponse.getHttpStatus());
     }
 
     @GetMapping("/TextAndEventTypeNames")
-    public ResponseEntity<EventResponse> findBySearchTermAndEventTypeNames(@RequestParam String searchTerm, List<String> eventTypeNames,int page,int pageSize) {
+    public ResponseEntity<EventResponse> findBySearchTermAndEventTypeNames(
+            @RequestParam(name = "searchTerm") String searchTerm,
+            @RequestParam(name = "eventTypeNames") List<String> eventTypeNames,
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "pageSize") int pageSize) {
         EventResponse eventResponse = IEventService.findBySearchTermAndEventTypeNames(searchTerm, eventTypeNames, page, pageSize);
         return new ResponseEntity<>(eventResponse,eventResponse.getHttpStatus());
     }
