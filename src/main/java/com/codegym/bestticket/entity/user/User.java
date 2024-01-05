@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -38,16 +39,15 @@ public class User {
     private String username;
     @Column(nullable = false)
     private String password;
-    @Column(length = 15, nullable = false, unique = true)
-    private String phoneNumber;
     @Column(nullable = false, unique = true)
     private String email;
+    private LocalDateTime created;
+    private String token;
+    private String avatar;
     private Boolean isDeleted;
     @OneToOne(mappedBy = "user")
-    @JsonIgnore
     private Customer customer;
     @OneToOne(mappedBy = "user")
-    @JsonIgnore
     private Organizer organizer;
     @OneToMany(mappedBy = "user")
     @JsonIgnore
