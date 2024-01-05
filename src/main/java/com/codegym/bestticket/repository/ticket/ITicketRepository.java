@@ -8,6 +8,5 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public interface ITicketRepository extends JpaRepository<Ticket, UUID> {
-    ResponsePayload searchTicketByStatus(String status);
 
 }

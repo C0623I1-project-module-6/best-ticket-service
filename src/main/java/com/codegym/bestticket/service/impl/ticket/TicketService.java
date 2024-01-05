@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -104,9 +105,23 @@ public class TicketService implements ITicketService {
     }
 
     @Override
-    public ResponsePayload searchTicketByStatus(String status) {
-        ResponsePayload responsePayload = ticketRepository.searchTicketByStatus(status);
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK,responsePayload);
+    public Iterable<ResponsePayload> searchTicketByStatus(String status) {
+        Iterable<Ticket> tickets = ticketRepository.findAll();
+
+        return StreamSupport.stream(tickets.spliterator(), true)
+                .filter(ticket -> !ticket.getIsDeleted())
+                .map(ticket -> {
+
+                    if (ticket.getStatus().equals(status)) {
+                        TicketRequest ticketRequest = new TicketRequest();
+                        BeanUtils.copyProperties(ticket, ticketRequest);
+                        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequest);
+                    } else {
+                        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
+                    }
+                })
+                .toList();
+
     }
 
 

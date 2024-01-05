@@ -44,7 +44,6 @@ public class Ticket {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "booking_detail_id")
-    @JsonIgnore
     private BookingDetail bookingDetail;
 
     @ManyToOne

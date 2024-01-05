@@ -91,9 +91,9 @@ public class TicketController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ResponsePayload> searchTicketByStatus(@RequestParam String status) {
-        ResponsePayload responsePayload  = ticketService.searchTicketByStatus(status);
-        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
+    public ResponseEntity<Iterable<ResponsePayload>> searchTicketByStatus(@RequestParam String status) {
+        Iterable<ResponsePayload> responsePayload  = ticketService.searchTicketByStatus(status);
+        return new ResponseEntity<>(responsePayload,HttpStatus.OK);
     }
 
     @GetMapping("/search/time/before")
