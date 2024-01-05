@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface IOrganizerRepository extends JpaRepository<Organizer, UUID> {
     Page<Organizer> findAllByIsDeletedFalse(Pageable pageable);
 
-    Page<Organizer> findAllByNameContainingOrEmailContainingAndIsDeletedFalse(Pageable pageable, String keyword);
+    Page<Organizer> findAllByNameContainingOrEmailContainingAndIsDeletedFalse(Pageable pageable, String status);
 
     Optional<Organizer> findByIdAndIsDeletedFalse(UUID id);
 

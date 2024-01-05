@@ -177,10 +177,10 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponsePayload filter(Pageable pageable, String keyword) {
+    public ResponsePayload filter(Pageable pageable, String status) {
         try {
             Page<UserDto> users =
-                    userRepository.findAllByUsernameContainingOrEmailContainingAndIsDeletedFalse(pageable, keyword)
+                    userRepository.findAllByUsernameContainingOrEmailContainingAndIsDeletedFalse(pageable, status)
                             .map(userConverter::entityToDto);
             return ResponsePayload.builder()
                     .message("SUCCESS")
