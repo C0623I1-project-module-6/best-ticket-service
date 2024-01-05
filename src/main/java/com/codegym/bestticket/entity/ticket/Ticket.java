@@ -41,6 +41,7 @@ public class Ticket {
     private Boolean isDeleted;
     private String status;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "booking_detail_id")
     @JsonIgnore

@@ -13,6 +13,7 @@ public class CustomerResponse {
     private String gender;
     private String idCard;
     private Date dateOfBirth;
+    private String phoneNumber;
     private User user;
     private Boolean isDeleted;
 }

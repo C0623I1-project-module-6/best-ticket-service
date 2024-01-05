@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS users
     date_of_birth VARCHAR(15),
     phone_number  VARCHAR(15)  NOT NULL UNIQUE,
     email         VARCHAR(255) NOT NULL UNIQUE,
+    avatar        VARCHAR(255),
     wallet        VARCHAR(255)
 );
 
@@ -89,7 +90,7 @@ CREATE TABLE IF NOT EXISTS customer
     gender        VARCHAR(15),
     id_card       VARCHAR(50)  NOT NULL UNIQUE,
     date_of_birth VARCHAR(15),
-    phone_number  VARCHAR(15)  NOT NULL UNIQUE,
+    phone_number  VARCHAR(20)  NOT NULL UNIQUE,
     email         VARCHAR(255) NOT NULL UNIQUE
 );
 
