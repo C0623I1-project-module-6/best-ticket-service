@@ -41,3 +41,5 @@ out/
 .vscode/
 
 src/main/java/com/codegym/bestticket/controller/TestController.java
+/src/main/java/com/codegym/bestticket/service/test/
+/src/main/java/com/codegym/bestticket/controller/booking/TestController.java
