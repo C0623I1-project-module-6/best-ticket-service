@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -55,6 +56,12 @@ public class BookingController {
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<ResponsePayload> remove(@PathVariable UUID id) {
         ResponsePayload responsePayload = bookingService.remove(id);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
+
+    @GetMapping("/search/keywords?={keywords}")
+    public ResponseEntity<ResponsePayload> searchProducts(@PathVariable String keywords, @PageableDefault Pageable pageable){
+        ResponsePayload responsePayload = bookingService.getAllByCustomer_FullNameOrOrganizer_NameOrDate(keywords, pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 }

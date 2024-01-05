@@ -11,4 +11,5 @@ public interface IBookingService {
     ResponsePayload findById(UUID id);
     ResponsePayload save(BookingRequest bookingRequest, UUID id);
     ResponsePayload remove(UUID id);
+    ResponsePayload getAllByCustomer_FullNameOrOrganizer_NameOrDate(String keywords, Pageable pageable);
 }

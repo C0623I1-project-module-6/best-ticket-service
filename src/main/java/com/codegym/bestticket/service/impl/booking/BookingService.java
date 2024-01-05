@@ -6,13 +6,12 @@ import com.codegym.bestticket.exception.BookingSaveException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
 import com.codegym.bestticket.payload.response.booking.BookingResponse;
-import com.codegym.bestticket.repository.booking.IBookingDetailRepository;
 import com.codegym.bestticket.repository.booking.IBookingRepository;
-import com.codegym.bestticket.repository.ticket.ITicketRepository;
 import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,9 +28,7 @@ import java.util.stream.StreamSupport;
 @Log
 @Service
 public class BookingService implements IBookingService {
-    private final IBookingDetailRepository iBookingDetailRepository;
     private final IBookingRepository iBookingRepository;
-    private final ITicketRepository iTicketRepository;
 
     public ResponsePayload createBookingResponsePayload(String message, HttpStatus status, Object data) {
         return ResponsePayload.builder()
@@ -44,12 +41,10 @@ public class BookingService implements IBookingService {
     @Override
     public ResponsePayload findAllByIsDeletedFalse(Pageable pageable) {
         try {
-            BookingDetailService bookingDetailService = new BookingDetailService(iBookingDetailRepository, iBookingRepository, iTicketRepository);
             Iterable<Booking> bookings = iBookingRepository.findAllByIsDeletedFalse(pageable);
             Iterable<BookingResponse> bookingResponses = StreamSupport.stream(bookings.spliterator(), false)
                     .map(booking -> {
                         BookingResponse bookingResponse = new BookingResponse();
-                        bookingDetailService.checkBookingTotalAmount(booking.getId());
                         BeanUtils.copyProperties(booking, bookingResponse);
                         return bookingResponse;
                     })
@@ -125,5 +120,11 @@ public class BookingService implements IBookingService {
             log.log(Level.WARNING, e.getMessage(), e);
             return createBookingResponsePayload("Booking remove failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
+    }
+
+    @Override
+    public ResponsePayload getAllByCustomer_FullNameOrOrganizer_NameOrDate(String keywords, Pageable pageable) {
+        Iterable<Booking> searchedBookings = iBookingRepository.getAllByCustomer_FullNameOrOrganizer_NameOrDate(keywords, pageable);
+        return createBookingResponsePayload("Bookings found!", HttpStatus.OK, searchedBookings);
     }
 }

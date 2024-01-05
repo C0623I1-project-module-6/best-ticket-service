@@ -2,6 +2,7 @@ package com.codegym.bestticket.entity.ticket;
 
 import com.codegym.bestticket.entity.booking.BookingDetail;
 import com.codegym.bestticket.entity.event.Event;
+import com.codegym.bestticket.entity.event.Time;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,14 +31,9 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
     private String ticketCode;
     private String seat;
-    private String time;
-    private String location;
     private String promotion;
-    private String barcode;
-    private Long quantity;
     private Boolean isDeleted;
     private String status;
 
@@ -45,15 +41,14 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(name = "booking_detail_id")
     private BookingDetail bookingDetail;
-
     @ManyToOne
     @JoinColumn(name = "ticket_type_id", nullable = false)
     @JsonIgnore
     private TicketType ticketType;
     @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false)
+    @JoinColumn(name = "event_time_id", nullable = false)
     @JsonIgnore
-    private Event event;
+    private Time time;
 
     private Double price;
 }
