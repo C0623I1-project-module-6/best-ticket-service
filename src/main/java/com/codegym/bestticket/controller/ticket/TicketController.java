@@ -1,6 +1,5 @@
 package com.codegym.bestticket.controller.ticket;
 
-import com.codegym.bestticket.constant.ETicketMessage;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.response.ticket.TicketResponse;
 import com.codegym.bestticket.service.ITicketService;
@@ -71,29 +70,15 @@ public class TicketController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponsePayload> deleteTicket(@PathVariable UUID id) {
-        ResponsePayload responsePayload;
-        if (id == null) {
-            responsePayload = ResponsePayload.builder()
-                    .status(HttpStatus.NOT_FOUND)
-                    .message(String.valueOf(ETicketMessage.FAIL))
-                    .build();
-            responsePayload.setMessage(String.valueOf(ETicketMessage.FAIL));
-        }
+        ResponsePayload responsePayload = ticketService.deleteTicketById(id);
 
-
-        ticketService.deleteTicketById(id);
-
-        responsePayload = ResponsePayload.builder()
-                .status(HttpStatus.OK)
-                .message(String.valueOf(ETicketMessage.SUCCESS))
-                .build();
-        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Iterable<ResponsePayload>> searchTicketByStatus(@RequestParam String status) {
-        Iterable<ResponsePayload> responsePayload  = ticketService.searchTicketByStatus(status);
-        return new ResponseEntity<>(responsePayload,HttpStatus.OK);
+    public ResponseEntity<Iterable<ResponsePayload>> searchTicketByStatus(@RequestParam String status, @RequestParam String time) {
+        Iterable<ResponsePayload> responsePayload = ticketService.searchTicketByStatus(status, time);
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 
     @GetMapping("/search/time/before")
