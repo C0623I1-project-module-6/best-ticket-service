@@ -1,22 +1,19 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.payload.request.user.OrganizerRequest;
-import com.codegym.bestticket.payload.response.user.OrganizerResponse;
+import com.codegym.bestticket.dto.user.OrganizerDto;
+import com.codegym.bestticket.payload.ResponsePayload;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.UUID;
 
 ;
 
 public interface IOrganizerService {
-    OrganizerResponse create(OrganizerRequest organizerRequest);
+    ResponsePayload create(OrganizerDto organizerDto);
 
-    OrganizerResponse update(UUID id, OrganizerRequest organizerRequest);
+    ResponsePayload update(UUID id, OrganizerDto organizerDto);
 
-    void remove(UUID id);
-    void delete(UUID id);
+    ResponsePayload findAll(Pageable pageable);
 
-    List<OrganizerResponse> findAll();
-
-    OrganizerResponse findById(UUID id);
+    ResponsePayload findById(UUID id);
 }
