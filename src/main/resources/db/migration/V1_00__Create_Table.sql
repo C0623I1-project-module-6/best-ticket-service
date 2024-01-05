@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS users
 (
     id            BINARY(36) PRIMARY KEY,
-    full_name     VARCHAR(50)  NOT NULL,
+    full_name     VARCHAR(50) NOT NULL,
     gender        VARCHAR(15),
-    id_card       VARCHAR(50)  NOT NULL UNIQUE,
+    id_card       VARCHAR(50) NOT NULL UNIQUE,
     date_of_birth VARCHAR(15),
     phone_number  VARCHAR(15)  NOT NULL UNIQUE,
     email         VARCHAR(255) NOT NULL UNIQUE,
@@ -86,9 +86,9 @@ CREATE TABLE IF NOT EXISTS tickets
 CREATE TABLE IF NOT EXISTS customer
 (
     id            BINARY(36) PRIMARY KEY,
-    full_name     VARCHAR(50)  NOT NULL,
+    full_name     VARCHAR(50),
     gender        VARCHAR(15),
-    id_card       VARCHAR(50)  NOT NULL UNIQUE,
+    id_card       VARCHAR(50)UNIQUE,
     date_of_birth VARCHAR(15),
     phone_number  VARCHAR(20)  NOT NULL UNIQUE,
     email         VARCHAR(255) NOT NULL UNIQUE

@@ -17,5 +17,5 @@ public interface IBookingRepository extends JpaRepository<Booking, UUID> {
     Iterable<Booking> searchAllByOrganizer(Organizer organizer);
 
     Page<Booking> getBookingsByCustomer_Id(Pageable pageable, UUID uuid);
-    Page<Booking> findAllByIsDeletedFalse(Pageable pageable);
+
 }
