@@ -1,6 +1,9 @@
 package com.codegym.bestticket.service.impl;
 
 import com.codegym.bestticket.entity.booking.Booking;
+import com.codegym.bestticket.entity.event.Event;
+import com.codegym.bestticket.entity.ticket.Ticket;
+import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.repository.booking.IBookingRepository;
 import com.codegym.bestticket.repository.event.IEventRepository;
 import com.codegym.bestticket.repository.event.IEventTypeRepository;
@@ -37,5 +40,20 @@ public class AdminService implements IAdminService {
     @Override
     public Page<Booking> showBookings(Pageable pageable) {
         return bookingRepository.findAllByIsDeletedFalse(pageable);
+    }
+
+    @Override
+    public Page<Ticket> showTickets(Pageable pageable) {
+        return ticketRepository.findAllByIsDeletedFalse(pageable);
+    }
+
+    @Override
+    public Page<User> showUsers(Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public Page<Event> showEvents(Pageable pageable) {
+        return null;
     }
 }

@@ -1,6 +1,7 @@
 package com.codegym.bestticket.controller;
 
 import com.codegym.bestticket.entity.booking.Booking;
+import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.service.IAdminService;
 import lombok.AllArgsConstructor;
@@ -22,13 +23,25 @@ public class AdminController {
     private final IAdminService adminService;
 
     @GetMapping("/bookings")
-    public ResponseEntity<ResponsePayload> showBookings(@PageableDefault Pageable pageable) {
+    public ResponseEntity<ResponsePayload> showBookings(@PageableDefault(size = 5) Pageable pageable) {
         Page<Booking> bookings = adminService.showBookings(pageable);
         return new ResponseEntity<>(
                 ResponsePayload
                         .builder()
                         .status(HttpStatus.OK)
                         .data(bookings)
+                        .build(),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/tickets")
+    public ResponseEntity<ResponsePayload> showTicket(@PageableDefault(size = 5) Pageable pageable) {
+        Page<Ticket> tickets = adminService.showTickets(pageable);
+        return new ResponseEntity<>(
+                ResponsePayload
+                        .builder()
+                        .status(HttpStatus.OK)
+                        .data(tickets)
                         .build(),
                 HttpStatus.OK);
 

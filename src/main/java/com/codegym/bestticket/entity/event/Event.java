@@ -25,8 +25,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "events")
-
+@Table(name = "EVENTS")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -37,10 +36,15 @@ public class Event {
     private String image;
     private String duration;
     private Boolean isDeleted;
-    @ManyToOne
-    @JoinColumn(name = "event_type_id")
-    @JsonIgnore
-    private EventType eventType;
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "event_event_type",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_type_id"))
+    private Set<EventType> eventTypes;
+
     @ManyToMany
     @JoinTable(
             name = "event_times",
@@ -48,6 +52,4 @@ public class Event {
             inverseJoinColumns = @JoinColumn(name = "time_id"))
     @JsonIgnore
     private Set<Time> times;
-
-
 }

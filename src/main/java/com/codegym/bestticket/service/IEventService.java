@@ -1,18 +1,25 @@
 package com.codegym.bestticket.service;
 
 import com.codegym.bestticket.dto.event.EventDTO;
-
+import com.codegym.bestticket.payload.response.event.EventResponse;
 import java.util.List;
 import java.util.UUID;
 
 public interface IEventService {
-    List<EventDTO> findAll();
+    EventResponse findAll(int page, int pageSize);
+    EventResponse findEventById(UUID eventId);
 
-    EventDTO findEventById(UUID event_id);
 
-    void removeEvent(UUID event_id);
+    EventResponse removeEvent(UUID event_id);
 
-    EventDTO createEvent(EventDTO eventDTO);
+    EventResponse createEvent(EventDTO eventDTO);
 
-    EventDTO updateEvent(UUID event_id, EventDTO eventDTO);
+    EventResponse updateEvent(UUID event_id,EventDTO eventDTO);
+
+    EventResponse findByNameContaining(String text,int page, int pageSize);
+
+    EventResponse findByEventTypeNamesAndIsDeletedFalse(List<String> eventTypeNames, int page, int pageSize);
+
+    EventResponse findBySearchTermAndEventTypeNames(String searchTerm,List<String> eventTypeNames,int page,int pageSize);
+
 }

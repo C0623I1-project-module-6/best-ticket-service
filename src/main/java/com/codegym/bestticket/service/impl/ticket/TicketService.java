@@ -36,7 +36,7 @@ public class TicketService implements ITicketService {
 
     @Override
     public ResponsePayload showTicket(Pageable pageable) {
-        Iterable<Ticket> tickets = ticketRepository.findAll(pageable);
+        Iterable<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
 
         List<TicketRequest> ticketRequests = StreamSupport.stream(tickets.spliterator(), true)
                 .filter(ticket -> !ticket.getIsDeleted())
