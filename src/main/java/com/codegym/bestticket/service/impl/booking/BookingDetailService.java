@@ -93,45 +93,26 @@ public class BookingDetailService implements IBookingDetailService {
     public ResponsePayload save(UUID bookingId, UUID id, BookingDetailRequest bookingDetailRequest) {
         try {
             Optional<Booking> booking = iBookingRepository.findById(bookingId);
-            Optional<BookingDetail> bookingDetail = iBookingDetailRepository.findById(id);
+            Optional<BookingDetail> bookingDetail = iBookingDetailRepository.findByBookingIdAndId(bookingId, id);
             if (bookingDetail.isEmpty()) {
                 BookingDetail newBookingDetail = new BookingDetail();
                 newBookingDetail.setIsDeleted(false);
                 BeanUtils.copyProperties(bookingDetailRequest, newBookingDetail);
                 iBookingDetailRepository.save(newBookingDetail);
-                booking.ifPresent(value -> calculateAmount(value, newBookingDetail));
+                booking.ifPresent(value -> checkBookingTotalAmount(bookingId));
                 return createBookingDetailResponsePayload("Booking detail saved/updated successfully!", HttpStatus.OK, newBookingDetail);
             } else {
                 BookingDetail existingBookingDetail = bookingDetail.get();
                 BeanUtils.copyProperties(bookingDetailRequest, existingBookingDetail);
+                existingBookingDetail.setTickets(bookingDetailRequest.getTickets());
                 iBookingDetailRepository.save(existingBookingDetail);
-                booking.ifPresent(value -> calculateAmount(value, existingBookingDetail));
+                booking.ifPresent(value -> checkBookingTotalAmount(bookingId));
                 return createBookingDetailResponsePayload("Booking detail saved/updated successfully!", HttpStatus.OK, existingBookingDetail);
             }
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);
             return createBookingDetailResponsePayload("Booking detail save/update failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
-    }
-
-    private void calculateAmount(Booking booking, BookingDetail bookingDetail) {
-        calculateBookingDetailAmount(bookingDetail);
-        updateBookingTotalAmount(booking, bookingDetail);
-    }
-
-    private double calculateBookingDetailAmount(BookingDetail bookingDetail) {
-        return bookingDetail.getTickets().stream()
-                .mapToDouble(ticket -> ticket.getPrice() * ticket.getQuantity())
-                .sum();
-    }
-
-    private void updateBookingTotalAmount(Booking booking, BookingDetail bookingDetail) {
-        Iterable<BookingDetail> bookingDetails = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingDetail.getBooking().getId(), Pageable.unpaged());
-        double bookingTotalAmount = StreamSupport.stream(bookingDetails.spliterator(), false)
-                .mapToDouble(this::calculateBookingDetailAmount)
-                .sum();
-        booking.setTotalAmount(bookingTotalAmount);
-        iBookingRepository.save(booking);
     }
 
     @Override

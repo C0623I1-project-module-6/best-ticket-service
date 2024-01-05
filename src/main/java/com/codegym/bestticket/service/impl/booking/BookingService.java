@@ -13,12 +13,9 @@ import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -31,7 +28,6 @@ import java.util.stream.StreamSupport;
 @AllArgsConstructor
 @Log
 @Service
-@Transactional
 public class BookingService implements IBookingService {
     private final IBookingDetailRepository iBookingDetailRepository;
     private final IBookingRepository iBookingRepository;
