@@ -1,9 +1,11 @@
+ALTER TABLE events
+DROP COLUMN address;
 
 ALTER TABLE events
 DROP FOREIGN KEY events_ibfk_1;
 
 DROP INDEX event_type_id ON events;
-CREATE TABLE IF NOT EXISTS event_event_type
+CREATE TABLE IF NOT EXISTS event_event_types
 (
     id              binary(16)       NOT NULL PRIMARY KEY,
     event_id        binary(16)       NOT NULL,
@@ -24,3 +26,9 @@ CREATE INDEX index_event_event_type_event
 
 CREATE INDEX index_event_event_type_event_type
     ON event_event_type (event_type_id);
+
+CREATE TABLE IF NOT EXISTS locations(
+    id BINARY(16),
+    city VARCHAR(100),
+    address VARCHAR(50)
+);

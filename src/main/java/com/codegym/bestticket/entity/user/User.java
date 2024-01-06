@@ -46,7 +46,7 @@ public class User {
     @CreationTimestamp
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDateTime created;
-    private String token;
+    private String rememberToken;
     private String avatar;
     private Boolean isDeleted;
     @OneToOne(mappedBy = "user")
