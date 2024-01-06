@@ -122,7 +122,7 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public ResponsePayload searchBookingsByIsDeletedFalseAndCustomerContainingIgnoreCaseOrOrganizerContaining(String category, String keyword, Pageable pageable) {
+    public ResponsePayload search(String category, String keyword, Pageable pageable) {
         try {
             Iterable<Booking> searchedBookings;
             if (category.equals("customers")) {
