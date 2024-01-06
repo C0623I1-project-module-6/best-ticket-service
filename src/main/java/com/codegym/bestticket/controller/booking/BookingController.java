@@ -64,7 +64,7 @@ public class BookingController {
             @RequestParam("category") String category,
             @RequestParam("keyword") String keyword,
             @PageableDefault Pageable pageable) {
-        ResponsePayload responsePayload = bookingService.searchBookingsByIsDeletedFalseAndCustomerContainingIgnoreCaseOrOrganizerContaining(category, keyword, pageable);
+        ResponsePayload responsePayload = bookingService.search(category, keyword, pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 }
