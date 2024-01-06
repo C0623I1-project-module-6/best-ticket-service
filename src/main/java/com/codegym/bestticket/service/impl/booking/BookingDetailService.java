@@ -95,14 +95,14 @@ public class BookingDetailService implements IBookingDetailService {
             if (bookingDetail.isPresent() && bookingDetail.get().getIsDeleted()) {
                 return createBookingDetailResponsePayload("Booking detail not found!", HttpStatus.NOT_FOUND, null);
             }
-            bookingDetail.ifPresent(value -> {
-                value.setIsDeleted(true);
-                double totalAmount = value.getBooking().getTotalAmount() - value.getTickets().stream()
-                        .mapToDouble(ticket -> ticket.getQuantity() * ticket.getPrice())
-                        .sum();
-                value.getBooking().setTotalAmount(totalAmount);
-                iBookingDetailRepository.save(value);
-            });
+//            bookingDetail.ifPresent(value -> {
+//                value.setIsDeleted(true);
+//                double totalAmount = value.getBooking().getTotalAmount() - value.getTickets().stream()
+////                        .mapToDouble(ticket -> ticket.getQuantity() * ticket.getPrice())
+//                        .sum();
+//                value.getBooking().setTotalAmount(totalAmount);
+//                iBookingDetailRepository.save(value);
+//            });
             return createBookingDetailResponsePayload("Booking detail remove successfully", HttpStatus.OK, null);
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);

@@ -1,9 +1,12 @@
-package com.codegym.bestticket.entity.ticket;
+package com.codegym.bestticket.entity.event;
 
+import com.codegym.bestticket.entity.ticket.Ticket;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -21,21 +24,21 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "ticket_types")
-public class TicketType {
+@Table(name = "event_times")
+public class EventTime {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
 
-    private Boolean isDeleted;
+    @ManyToOne
+    @JoinColumn(name = "time_id")
+    private Time time;
 
-    private Integer quantity;
-
-    private Double price;
-
-    @OneToMany(mappedBy = "ticketType")
+    @OneToMany(mappedBy = "eventTime")
     private Set<Ticket> tickets;
-
 }
