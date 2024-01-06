@@ -34,5 +34,6 @@ public class BookingDetail {
     private Booking booking;
     @OneToMany(mappedBy = "bookingDetail")
     private List<Ticket> tickets;
+    private Double amount;
     private Boolean isDeleted;
 }
