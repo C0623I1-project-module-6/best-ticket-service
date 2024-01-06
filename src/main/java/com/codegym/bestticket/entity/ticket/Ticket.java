@@ -37,7 +37,6 @@ public class Ticket {
     private String ticketCode;
     private String seat;
     private String promotion;
-    private String barcode;
     private Boolean isDeleted;
     private String status;
 

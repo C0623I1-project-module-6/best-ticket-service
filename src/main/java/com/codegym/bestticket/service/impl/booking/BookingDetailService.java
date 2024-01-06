@@ -1,10 +1,12 @@
 package com.codegym.bestticket.service.impl.booking;
 
+import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.entity.booking.BookingDetail;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingDetailRequest;
 import com.codegym.bestticket.payload.response.booking.BookingDetailResponse;
 import com.codegym.bestticket.repository.booking.IBookingDetailRepository;
+import com.codegym.bestticket.repository.booking.IBookingRepository;
 import com.codegym.bestticket.repository.ticket.ITicketRepository;
 import com.codegym.bestticket.service.IBookingDetailService;
 import lombok.AllArgsConstructor;
@@ -25,6 +27,7 @@ import java.util.stream.StreamSupport;
 @Service
 public class BookingDetailService implements IBookingDetailService {
     private final IBookingDetailRepository iBookingDetailRepository;
+    private final IBookingRepository iBookingRepository;
     private final ITicketRepository iTicketRepository;
 
     public ResponsePayload createBookingDetailResponsePayload(String message, HttpStatus status, Object data) {
@@ -38,6 +41,7 @@ public class BookingDetailService implements IBookingDetailService {
     @Override
     public ResponsePayload findAllByBookingIdAndIsDeletedFalse(UUID bookingId, Pageable pageable) {
         try {
+            updateBookingTotalAmount(bookingId);
             Iterable<BookingDetail> bookingDetailList = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId, pageable);
             Iterable<BookingDetailResponse> bookingDetailResponseList = StreamSupport.stream(bookingDetailList.spliterator(), false)
                     .map(bookingDetail -> {
@@ -73,18 +77,20 @@ public class BookingDetailService implements IBookingDetailService {
                 newBookingDetail.setIsDeleted(false);
                 BeanUtils.copyProperties(bookingDetailRequest, newBookingDetail);
                 iBookingDetailRepository.save(newBookingDetail);
-                return createBookingDetailResponsePayload("Booking detail saved/updated successfully!", HttpStatus.OK, newBookingDetail);
+                updateBookingTotalAmount(bookingId);
+                return createBookingDetailResponsePayload("Booking detail added successfully!", HttpStatus.OK, newBookingDetail);
             } else {
                 BookingDetail existingBookingDetail = bookingDetail.get();
                 BeanUtils.copyProperties(bookingDetailRequest, existingBookingDetail);
                 existingBookingDetail.setTickets(bookingDetailRequest.getTickets());
                 iTicketRepository.saveAll(existingBookingDetail.getTickets());
                 iBookingDetailRepository.save(existingBookingDetail);
-                return createBookingDetailResponsePayload("Booking detail saved/updated successfully!", HttpStatus.OK, existingBookingDetail);
+                updateBookingTotalAmount(bookingId);
+                return createBookingDetailResponsePayload("Booking detail updated successfully!", HttpStatus.OK, existingBookingDetail);
             }
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);
-            return createBookingDetailResponsePayload("Booking detail save/update failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
+            return createBookingDetailResponsePayload("Save/update Booking detail failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
     }
 
@@ -92,13 +98,32 @@ public class BookingDetailService implements IBookingDetailService {
     public ResponsePayload remove(UUID id) {
         try {
             Optional<BookingDetail> bookingDetail = iBookingDetailRepository.findById(id);
-            if (bookingDetail.isPresent() && bookingDetail.get().getIsDeleted()) {
-                return createBookingDetailResponsePayload("Booking detail not found!", HttpStatus.NOT_FOUND, null);
+            UUID bookingId;
+            if (bookingDetail.isPresent() && !bookingDetail.get().getIsDeleted()) {
+                bookingDetail.get().setIsDeleted(true);
+                iBookingDetailRepository.save(bookingDetail.get());
+                bookingId = bookingDetail.get().getBooking().getId();
+                updateBookingTotalAmount(bookingId);
+                return createBookingDetailResponsePayload("Remove Booking detail successfully!", HttpStatus.OK, null);
             }
-            return createBookingDetailResponsePayload("Booking detail remove successfully", HttpStatus.OK, null);
+            return createBookingDetailResponsePayload("Booking not found!", HttpStatus.NOT_FOUND, null);
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);
-            return createBookingDetailResponsePayload("Booking detail remove failed", HttpStatus.INTERNAL_SERVER_ERROR, null);
+            return createBookingDetailResponsePayload("Remove booking detail remove failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
+    }
+
+    //Developing function
+    private void updateBookingTotalAmount(UUID bookingId) {
+        Optional<Booking> optionalBooking = iBookingRepository.findById(bookingId);
+        Iterable<BookingDetail> bookingDetailList = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId);
+        optionalBooking.ifPresent(booking -> {
+            double totalAmount = StreamSupport.stream(bookingDetailList.spliterator(), false)
+                    .filter(bookingDetail -> !bookingDetail.getIsDeleted())
+                    .mapToDouble(BookingDetail::getAmount)
+                    .sum();
+            booking.setTotalAmount(totalAmount);
+            iBookingRepository.save(booking);
+        });
     }
 }
