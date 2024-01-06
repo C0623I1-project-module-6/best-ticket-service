@@ -21,14 +21,16 @@ CREATE TABLE IF NOT EXISTS event_event_types
     REFERENCES event_types (id)
     );
 
-CREATE INDEX index_event_event_type_event
-    ON event_event_type (event_id);
+CREATE INDEX index_event_event_types_event
+    ON event_event_types (event_id);
 
-CREATE INDEX index_event_event_type_event_type
-    ON event_event_type (event_type_id);
+CREATE INDEX index_event_event_types_event_types
+    ON event_event_types (event_type_id);
 
 CREATE TABLE IF NOT EXISTS locations(
     id BINARY(16),
     city VARCHAR(100),
-    address VARCHAR(50)
+    address VARCHAR(50),
+    event_id BINARY(16),
+    FOREIGN KEY (event_id) REFERENCES events(id)
 );
