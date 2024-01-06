@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Book;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Optional;
@@ -123,8 +124,10 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public ResponsePayload getAllByCustomer_FullNameOrOrganizer_NameOrDate(String keywords, Pageable pageable) {
-        Iterable<Booking> searchedBookings = iBookingRepository.getAllByCustomer_FullNameOrOrganizer_NameOrDate(keywords, pageable);
+    public ResponsePayload searchBookingsByCustomer_FullNameOrOrganizer_NameAndIsDeletedFalse(String customerName, String organizerName, Pageable pageable) {
+        Iterable<Booking> searchedBookings = iBookingRepository.searchBookingsByCustomer_FullNameOrOrganizer_NameAndIsDeletedFalse(customerName, organizerName, pageable);
         return createBookingResponsePayload("Bookings found!", HttpStatus.OK, searchedBookings);
     }
+
+
 }

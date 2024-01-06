@@ -1,7 +1,9 @@
 package com.codegym.bestticket.service;
 
+import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
@@ -11,5 +13,6 @@ public interface IBookingService {
     ResponsePayload findById(UUID id);
     ResponsePayload save(BookingRequest bookingRequest, UUID id);
     ResponsePayload remove(UUID id);
-    ResponsePayload getAllByCustomer_FullNameOrOrganizer_NameOrDate(String keywords, Pageable pageable);
+
+    ResponsePayload searchBookingsByCustomer_FullNameOrOrganizer_NameAndIsDeletedFalse(String customerName, String organizerName, Pageable pageable);
 }

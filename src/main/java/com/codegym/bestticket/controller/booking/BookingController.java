@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -59,9 +58,9 @@ public class BookingController {
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
-    @GetMapping("/search/keywords?={keywords}")
-    public ResponseEntity<ResponsePayload> searchProducts(@PathVariable String keywords, @PageableDefault Pageable pageable){
-        ResponsePayload responsePayload = bookingService.getAllByCustomer_FullNameOrOrganizer_NameOrDate(keywords, pageable);
+    @GetMapping("/search/{keywords}")
+    public ResponseEntity<ResponsePayload> searchByCustomerFullNameOrOrganizerName(@PathVariable String keywords, @PageableDefault Pageable pageable) {
+        ResponsePayload responsePayload = bookingService.searchBookingsByCustomer_FullNameOrOrganizer_NameAndIsDeletedFalse(keywords, keywords, pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 }
