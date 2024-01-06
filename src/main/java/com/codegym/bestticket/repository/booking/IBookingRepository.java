@@ -5,15 +5,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.UUID;
 
 public interface IBookingRepository extends JpaRepository<Booking, UUID> {
     Page<Booking> findAllByIsDeletedFalse(Pageable pageable);
 
-    @Query("Select b from Booking b where b.customer.fullName like %:customerFullName%")
-    Page<Booking> searchBookingsByIsDeletedFalseAndCustomerContainingIgnoreCase(String customerFullName, Pageable pageable);
+    Page<Booking> searchBookingsByIsDeletedFalseAndCustomerFullNameContaining(@Param("keyword") String keyword, Pageable pageable);
 
-    @Query("Select b from Booking b where b.organizer.name like %:organizerName")
-    Page<Booking> searchBookingsByIsDeletedFalseAndOrganizerContainingIgnoreCase(String organizerName, Pageable pageable);
+    Page<Booking> searchBookingsByIsDeletedFalseAndOrganizerNameContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
 }

@@ -62,9 +62,9 @@ public class BookingController {
     @GetMapping("/search")
     public ResponseEntity<ResponsePayload> searchBooking(
             @RequestParam("category") String category,
-            @RequestParam("keywords") String keywords,
+            @RequestParam("keyword") String keyword,
             @PageableDefault Pageable pageable) {
-        ResponsePayload responsePayload = bookingService.searchBookingsByIsDeletedFalseAndCustomerContainingIgnoreCaseOrOrganizerContainingIgnoredCase(category, keywords, pageable);
+        ResponsePayload responsePayload = bookingService.searchBookingsByIsDeletedFalseAndCustomerContainingIgnoreCaseOrOrganizerContaining(category, keyword, pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 }

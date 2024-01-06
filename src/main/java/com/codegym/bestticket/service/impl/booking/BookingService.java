@@ -122,14 +122,14 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public ResponsePayload searchBookingsByIsDeletedFalseAndCustomerContainingIgnoreCaseOrOrganizerContainingIgnoredCase(String category, String keywords, Pageable pageable) {
+    public ResponsePayload searchBookingsByIsDeletedFalseAndCustomerContainingIgnoreCaseOrOrganizerContaining(String category, String keyword, Pageable pageable) {
         try {
             Iterable<Booking> searchedBookings;
             if (category.equals("customers")) {
-                searchedBookings = iBookingRepository.searchBookingsByIsDeletedFalseAndCustomerContainingIgnoreCase(keywords, pageable);
-            } else {
-                searchedBookings = iBookingRepository.searchBookingsByIsDeletedFalseAndOrganizerContainingIgnoreCase(keywords, pageable);
-            }
+                searchedBookings = iBookingRepository.searchBookingsByIsDeletedFalseAndCustomerFullNameContaining(keyword, pageable);
+            } else if (category.equals("organizers")) {
+                searchedBookings = iBookingRepository.searchBookingsByIsDeletedFalseAndOrganizerNameContainingIgnoreCase(keyword, pageable);
+            } else return createBookingResponsePayload("Invalid category!", HttpStatus.INTERNAL_SERVER_ERROR, null);
             if (!searchedBookings.iterator().hasNext()) {
                 return createBookingResponsePayload("No bookings found!", HttpStatus.NOT_FOUND, null);
             }
