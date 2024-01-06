@@ -13,6 +13,5 @@ public interface IBookingService {
     ResponsePayload findById(UUID id);
     ResponsePayload save(BookingRequest bookingRequest, UUID id);
     ResponsePayload remove(UUID id);
-
-    ResponsePayload searchBookingsByCustomer_FullNameOrOrganizer_NameAndIsDeletedFalse(String customerName, String organizerName, Pageable pageable);
+    ResponsePayload searchBookingsByIsDeletedFalseAndCustomerContainingIgnoreCaseOrOrganizerContainingIgnoredCase(String keywords, String category, Pageable pageable);
 }

@@ -11,12 +11,10 @@ import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Book;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Optional;
@@ -124,10 +122,21 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public ResponsePayload searchBookingsByCustomer_FullNameOrOrganizer_NameAndIsDeletedFalse(String customerName, String organizerName, Pageable pageable) {
-        Iterable<Booking> searchedBookings = iBookingRepository.searchBookingsByCustomer_FullNameOrOrganizer_NameAndIsDeletedFalse(customerName, organizerName, pageable);
-        return createBookingResponsePayload("Bookings found!", HttpStatus.OK, searchedBookings);
+    public ResponsePayload searchBookingsByIsDeletedFalseAndCustomerContainingIgnoreCaseOrOrganizerContainingIgnoredCase(String category, String keywords, Pageable pageable) {
+        try {
+            Iterable<Booking> searchedBookings;
+            if (category.equals("customers")) {
+                searchedBookings = iBookingRepository.searchBookingsByIsDeletedFalseAndCustomerContainingIgnoreCase(keywords, pageable);
+            } else {
+                searchedBookings = iBookingRepository.searchBookingsByIsDeletedFalseAndOrganizerContainingIgnoreCase(keywords, pageable);
+            }
+            if (!searchedBookings.iterator().hasNext()) {
+                return createBookingResponsePayload("No bookings found!", HttpStatus.NOT_FOUND, null);
+            }
+            return createBookingResponsePayload("Bookings found!", HttpStatus.OK, searchedBookings);
+        } catch (Exception e) {
+            log.log(Level.WARNING, e.getMessage(), e);
+            return createBookingResponsePayload("Searching failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
+        }
     }
-
-
 }
