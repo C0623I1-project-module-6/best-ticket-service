@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -47,6 +48,7 @@ public class BookingService implements IBookingService {
                         BeanUtils.copyProperties(booking, bookingResponse);
                         return bookingResponse;
                     })
+                    .sorted(Comparator.comparing(BookingResponse::getDate).reversed())
                     .collect(Collectors.toList());
             return createBookingResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
         } catch (Exception e) {
@@ -133,7 +135,10 @@ public class BookingService implements IBookingService {
             if (!searchedBookings.iterator().hasNext()) {
                 return createBookingResponsePayload("No bookings found!", HttpStatus.NOT_FOUND, null);
             }
-            return createBookingResponsePayload("Bookings found!", HttpStatus.OK, searchedBookings);
+            Iterable<Booking> sortedBookings = StreamSupport.stream(searchedBookings.spliterator(), false)
+                    .sorted(Comparator.comparing(Booking::getDate).reversed())
+                    .collect(Collectors.toList());
+            return createBookingResponsePayload("Bookings found!", HttpStatus.OK, sortedBookings);
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);
             return createBookingResponsePayload("Searching failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
