@@ -8,11 +8,13 @@ import com.codegym.bestticket.payload.response.user.RegisterResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 
 public class RegisterConverter implements IRegisterConverter {
 
-    public RegisterResponse entityToDto(User user) {
+    public RegisterResponse entityToDto(User user, List<String> userRoles) {
         RegisterResponse registerResponse = new RegisterResponse();
         BeanUtils.copyProperties(user, registerResponse);
         return registerResponse;

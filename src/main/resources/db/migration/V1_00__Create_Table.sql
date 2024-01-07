@@ -19,9 +19,9 @@ CREATE TABLE IF NOT EXISTS roles
 
 CREATE TABLE IF NOT EXISTS user_roles
 (
+    id BINARY(16) PRIMARY KEY,
     user_id BINARY(36),
     role_id BINARY(36),
-    PRIMARY KEY (user_id, role_id),
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (role_id) REFERENCES roles (id)
 );
@@ -88,10 +88,10 @@ CREATE TABLE IF NOT EXISTS customer
     id            BINARY(36) PRIMARY KEY,
     full_name     VARCHAR(50),
     gender        VARCHAR(15),
-    id_card       VARCHAR(50)UNIQUE,
+    id_card       VARCHAR(50) UNIQUE,
     date_of_birth VARCHAR(15),
-    phone_number  VARCHAR(20)  NOT NULL UNIQUE,
-    email         VARCHAR(255) NOT NULL UNIQUE
+    phone_number  VARCHAR(20)  UNIQUE,
+    email         VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS organizer
