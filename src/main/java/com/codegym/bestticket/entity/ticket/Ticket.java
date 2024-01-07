@@ -52,7 +52,10 @@ public class Ticket {
     private TicketType ticketType;
 
     @ManyToOne
-    @JoinColumns(@JoinColumn(name = "event_time_id", referencedColumnName = "event_id"))
+    @JoinColumns({
+            @JoinColumn(name = "event_id", referencedColumnName = "event_id"),
+            @JoinColumn(name = "time_id", referencedColumnName = "time_id")
+    })
     @JsonIgnore
     private EventTime eventTime;
 
