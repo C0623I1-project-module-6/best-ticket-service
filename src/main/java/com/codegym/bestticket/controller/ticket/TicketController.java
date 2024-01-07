@@ -76,8 +76,8 @@ public class TicketController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Iterable<ResponsePayload>> searchTicketByStatus(@RequestParam String status, @RequestParam String time) {
-        Iterable<ResponsePayload> responsePayload = ticketService.searchTicketByStatus(status, time);
+    public ResponseEntity<ResponsePayload> searchTicketByStatus(@PageableDefault(page = 0, size = 500) Pageable pageable, @RequestParam String status, @RequestParam String time) {
+        ResponsePayload responsePayload = ticketService.searchAllTicket(pageable, status, time);
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 

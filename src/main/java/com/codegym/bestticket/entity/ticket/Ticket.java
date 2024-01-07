@@ -35,7 +35,6 @@ public class Ticket {
     private String ticketCode;
     private String seat;
     private String promotion;
-    private String barcode;
     private Boolean isDeleted;
     private String status;
 
@@ -50,12 +49,16 @@ public class Ticket {
     @JsonIgnore
     private TicketType ticketType;
 
+
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "event_id", referencedColumnName = "event_id"),
-            @JoinColumn(name = "time_id", referencedColumnName = "id")
+            @JoinColumn(name = "time_id", referencedColumnName = "time_id")
     })
+//    @JoinColumn(name = "event_time_id", referencedColumnName = "id")
     @JsonIgnore
     private EventTime eventTime;
+
+
 
 }

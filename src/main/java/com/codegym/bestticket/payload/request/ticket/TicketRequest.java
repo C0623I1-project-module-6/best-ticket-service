@@ -18,8 +18,6 @@ public class TicketRequest {
 
     private String promotion;
 
-    private String barcode;
-
     private Boolean isDeleted;
 
     private String status;
@@ -28,6 +26,6 @@ public class TicketRequest {
 
     private BookingDetail bookingDetail;
 
-    private EventTime eventTime;
+    private UUID eventTimeId;
 
 }

@@ -28,15 +28,13 @@ import java.util.UUID;
 public class EventTime {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
     @ManyToOne
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", referencedColumnName = "id")
     private Event event;
 
+    @Id
     @ManyToOne
-    @JoinColumn(name = "time_id")
+    @JoinColumn(name = "time_id", referencedColumnName = "id")
     private Time time;
 
     @OneToMany(mappedBy = "eventTime")

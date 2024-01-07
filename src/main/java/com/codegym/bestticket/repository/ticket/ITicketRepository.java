@@ -9,5 +9,7 @@ import java.util.UUID;
 
 public interface ITicketRepository extends JpaRepository<Ticket, UUID> {
 
+    
     Page<Ticket> findAllByIsDeletedFalse(Pageable pageable);
+
 }

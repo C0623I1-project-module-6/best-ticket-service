@@ -24,7 +24,6 @@ import java.util.stream.StreamSupport;
 public class TicketService implements ITicketService {
 
     private final ITicketRepository ticketRepository;
-
     public ResponsePayload createResponsePayload(String message, HttpStatus status, Object data) {
         return ResponsePayload
                 .builder()
@@ -36,10 +35,9 @@ public class TicketService implements ITicketService {
 
     @Override
     public ResponsePayload showTicket(Pageable pageable) {
-        Iterable<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
+        Iterable<Ticket> tickets = ticketRepository.findAll(pageable);
 
         List<TicketRequest> ticketRequests = StreamSupport.stream(tickets.spliterator(), true)
-                .filter(ticket -> !ticket.getIsDeleted())
                 .map(ticket -> {
                     TicketRequest ticketRequest = new TicketRequest();
                     BeanUtils.copyProperties(ticket, ticketRequest);
@@ -104,25 +102,53 @@ public class TicketService implements ITicketService {
     }
 
     @Override
-    public Iterable<ResponsePayload> searchTicketByStatus(String status,String time) {
-        Iterable<Ticket> tickets = ticketRepository.findAll();
-
-        return StreamSupport.stream(tickets.spliterator(), true)
-                .filter(ticket -> !ticket.getIsDeleted())
+    public ResponsePayload searchAllTicket(Pageable pageable, String status, String time) {
+        Iterable<Ticket> tickets = ticketRepository.findAll(pageable);
+//        Iterable<EventTime> eventTimes = eventTimeRepository.findAll();
+        List<TicketRequest> ticketRequests = StreamSupport.stream(tickets.spliterator(), true)
+                .filter(ticket -> ticket.getStatus().equals(status))
+                .filter(ticket -> {
+                    LocalDateTime currentDate = LocalDateTime.now();
+                    LocalDateTime localDateTime = ticket.getEventTime().getTime().getTime();
+                    System.out.println(localDateTime);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    LocalDateTime dateTime = LocalDateTime.parse(ticket.getEventTime().getTime().getTime().toString(), formatter);
+                    return dateTime.isAfter(currentDate) || dateTime.isBefore(currentDate);
+                })
                 .map(ticket -> {
+                    LocalDateTime localDateTime = ticket.getEventTime().getTime().getTime();
+                    System.out.println(localDateTime);
+                    TicketRequest ticketRequest = new TicketRequest();
+                    BeanUtils.copyProperties(ticket, ticketRequest);
 
-                    if (ticket.getStatus().equals(status)) {
 
-                        TicketRequest ticketRequest = new TicketRequest();
-                        BeanUtils.copyProperties(ticket, ticketRequest);
-                        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequest);
-                    } else {
-                        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
-                    }
+                    return ticketRequest;
                 })
                 .toList();
 
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequests);
     }
+
+//    @Override
+//    public Iterable<ResponsePayload> searchTicketByStatus(String status,String time) {
+//        Iterable<Ticket> tickets = ticketRepository.findAll();
+//
+//        return StreamSupport.stream(tickets.spliterator(), true)
+//                .filter(ticket -> !ticket.getIsDeleted())
+//                .map(ticket -> {
+//
+//                    if (ticket.getStatus().equals(status)) {
+//
+//                        TicketRequest ticketRequest = new TicketRequest();
+//                        BeanUtils.copyProperties(ticket, ticketRequest);
+//                        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequest);
+//                    } else {
+//                        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
+//                    }
+//                })
+//                .toList();
+//
+//    }
 
 
     @Override
