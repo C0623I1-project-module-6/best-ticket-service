@@ -93,7 +93,7 @@ public class EventService implements IEventService {
                 .orElseThrow(() -> new EntityNotFoundException("Event is not found"));
 
         Optional.ofNullable(eventDTO.getName()).ifPresent(event::setName);
-        Optional.ofNullable(eventDTO.getAddress()).ifPresent(event::setAddress);
+//        Optional.ofNullable(eventDTO.getAddress()).ifPresent(event::setAddress);
         Optional.ofNullable(eventDTO.getDescription()).ifPresent(event::setDescription);
         Optional.ofNullable(eventDTO.getImage()).ifPresent(event::setImage);
         Optional.ofNullable(eventDTO.getDuration()).ifPresent(event::setDuration);

@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface IBookingDetailRepository extends JpaRepository<BookingDetail, UUID> {
+    Iterable<BookingDetail> findAllByBookingIdAndIsDeletedFalse(UUID bookingId);
     Page<BookingDetail> findAllByBookingIdAndIsDeletedFalse (UUID bookingId, Pageable pageable);
     Optional<BookingDetail> findByBookingIdAndId(UUID bookingId, UUID id);
 }

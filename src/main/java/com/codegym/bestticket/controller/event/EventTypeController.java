@@ -23,18 +23,20 @@ public class EventTypeController {
     public EventTypeController(IEventTypeService eventTypeService) {
         this.eventTypeService = eventTypeService;
     }
+
     @GetMapping
-    public ResponseEntity<EventTypeResponse> getAll(){
+    public ResponseEntity<EventTypeResponse> getAll() {
         EventTypeResponse eventTypeResponse = EventTypeResponse.builder()
                 .eventTypeList(eventTypeService.findAll())
                 .message("List EventTypeDTO")
                 .build();
         return new ResponseEntity<>(eventTypeResponse, HttpStatus.OK);
     }
+
     @GetMapping("/{eventTypeId}")
-    public  ResponseEntity<EventTypeResponse> getById(@PathVariable("eventTypeId")UUID eventTypeId){
+    public ResponseEntity<EventTypeResponse> getById(@PathVariable("eventTypeId") UUID eventTypeId) {
         try {
-            EventTypeResponse eventTypeResponse= EventTypeResponse.builder()
+            EventTypeResponse eventTypeResponse = EventTypeResponse.builder()
                     .eventType(eventTypeService.findById(eventTypeId))
                     .build();
             return new ResponseEntity<>(eventTypeResponse, HttpStatus.OK);
@@ -47,8 +49,8 @@ public class EventTypeController {
     }
 
     @DeleteMapping("/{eventTypeId}")
-    public ResponseEntity<String> deleteEventType(@PathVariable("eventTypeId")UUID eventTypeId){
-        try{
+    public ResponseEntity<String> deleteEventType(@PathVariable("eventTypeId") UUID eventTypeId) {
+        try {
             eventTypeService.removeById(eventTypeId);
             return new ResponseEntity<>("Event deleted successfully", HttpStatus.OK);
         } catch (EntityNotFoundException e) {
