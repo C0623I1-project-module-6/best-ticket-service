@@ -5,6 +5,7 @@ import com.codegym.bestticket.entity.event.EventTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -51,6 +52,7 @@ public class Ticket {
     @JsonIgnore
     private TicketType ticketType;
 
+
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "event_id", referencedColumnName = "event_id"),
@@ -58,5 +60,7 @@ public class Ticket {
     })
     @JsonIgnore
     private EventTime eventTime;
+
+
 
 }

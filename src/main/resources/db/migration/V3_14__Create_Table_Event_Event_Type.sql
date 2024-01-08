@@ -1,3 +1,4 @@
+
 ALTER TABLE events
 DROP COLUMN address;
 
@@ -34,3 +35,4 @@ CREATE TABLE IF NOT EXISTS locations(
     event_id BINARY(16),
     FOREIGN KEY (event_id) REFERENCES events(id)
 );
+
