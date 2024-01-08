@@ -96,17 +96,17 @@ public DaoAuthenticationProvider authenticationProvider(){
                 .requestMatchers("/api/**", "/api/auth/**", "/api/tests/**")
                 .permitAll();
 
-        http.authorizeHttpRequests()
-                .requestMatchers("/api/admins/**", "/api/customers/**", "/api/organizers/**")
-                .hasRole("ADMIN");
-
-        http.authorizeHttpRequests()
-                .requestMatchers("/api/customers/**")
-                .hasRole("CUSTOMER");
-
-        http.authorizeHttpRequests()
-                .requestMatchers("/api/organizers/**")
-                .hasRole("ORGANIZER");
+//        http.authorizeHttpRequests()
+//                .requestMatchers("/api/admins/**", "/api/customers/**", "/api/organizers/**")
+//                .hasRole("ADMIN");
+//
+//        http.authorizeHttpRequests()
+//                .requestMatchers("/api/customers/**")
+//                .hasRole("CUSTOMER");
+//
+//        http.authorizeHttpRequests()
+//                .requestMatchers("/api/organizers/**")
+//                .hasRole("ORGANIZER");
 
         http.authorizeHttpRequests().and().exceptionHandling()
                 .accessDeniedPage("/access-denied");
