@@ -63,9 +63,9 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOriginPattern("**");
-        configuration.addAllowedHeader("**");
-        configuration.addAllowedMethod("**");
+        configuration.addAllowedOriginPattern("*");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -93,8 +93,10 @@ public DaoAuthenticationProvider authenticationProvider(){
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeHttpRequests()
-                .requestMatchers("/api/**", "/api/auth/**", "/api/tests/**","/api/tickets")
+
+                .requestMatchers("/api/auth/login", "/api/auth/register","/api/tickets/**","/api/bookings/**")
                 .permitAll();
+//
 
 //        http.authorizeHttpRequests()
 //                .requestMatchers("/api/admins/**", "/api/customers/**", "/api/organizers/**")
