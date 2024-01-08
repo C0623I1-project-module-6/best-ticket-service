@@ -7,16 +7,18 @@ import com.codegym.bestticket.payload.request.ticket.TicketRequest;
 import com.codegym.bestticket.payload.response.ticket.TicketResponse;
 import com.codegym.bestticket.repository.ticket.ITicketRepository;
 import com.codegym.bestticket.service.ITicketService;
+import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -24,6 +26,7 @@ import java.util.stream.StreamSupport;
 public class TicketService implements ITicketService {
 
     private final ITicketRepository ticketRepository;
+
     public ResponsePayload createResponsePayload(String message, HttpStatus status, Object data) {
         return ResponsePayload
                 .builder()
@@ -102,26 +105,24 @@ public class TicketService implements ITicketService {
     }
 
     @Override
-    public ResponsePayload searchAllTicket(Pageable pageable, String status, String time) {
-        Iterable<Ticket> tickets = ticketRepository.findAll(pageable);
-//        Iterable<EventTime> eventTimes = eventTimeRepository.findAll();
+    public ResponsePayload showAllTicketUpcoming(Pageable pageable, String status) {
+        Iterable<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
+
+        LocalDateTime currentDate = LocalDateTime.now();
         List<TicketRequest> ticketRequests = StreamSupport.stream(tickets.spliterator(), true)
-                .filter(ticket -> ticket.getStatus().equals(status))
-                .filter(ticket -> {
-                    LocalDateTime currentDate = LocalDateTime.now();
-                    LocalDateTime localDateTime = ticket.getEventTime().getTime().getTime();
-                    System.out.println(localDateTime);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                    LocalDateTime dateTime = LocalDateTime.parse(ticket.getEventTime().getTime().getTime().toString(), formatter);
-                    return dateTime.isAfter(currentDate) || dateTime.isBefore(currentDate);
+                .flatMap(ticket -> {
+                    if (StringUtils.isEmpty(status)) {
+                        // Nếu status là rỗng, không áp dụng filter đầu tiên
+                        return Stream.of(ticket);
+                    } else {
+                        // Nếu status không rỗng, áp dụng filter đầu tiên
+                        return Stream.of(ticket).filter(t -> t.getStatus().equals(status));
+                    }
                 })
+                .filter(ticket -> ticket.getEventTime().getTime().getTime().isBefore(currentDate))
                 .map(ticket -> {
-                    LocalDateTime localDateTime = ticket.getEventTime().getTime().getTime();
-                    System.out.println(localDateTime);
                     TicketRequest ticketRequest = new TicketRequest();
                     BeanUtils.copyProperties(ticket, ticketRequest);
-
-
                     return ticketRequest;
                 })
                 .toList();
@@ -129,72 +130,28 @@ public class TicketService implements ITicketService {
         return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequests);
     }
 
-//    @Override
-//    public Iterable<ResponsePayload> searchTicketByStatus(String status,String time) {
-//        Iterable<Ticket> tickets = ticketRepository.findAll();
-//
-//        return StreamSupport.stream(tickets.spliterator(), true)
-//                .filter(ticket -> !ticket.getIsDeleted())
-//                .map(ticket -> {
-//
-//                    if (ticket.getStatus().equals(status)) {
-//
-//                        TicketRequest ticketRequest = new TicketRequest();
-//                        BeanUtils.copyProperties(ticket, ticketRequest);
-//                        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequest);
-//                    } else {
-//                        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
-//                    }
-//                })
-//                .toList();
-//
-//    }
-
-
     @Override
-    public Iterable<ResponsePayload> searchTicketByTimeBefore() {
+    public ResponsePayload showAllTicketFinished(Pageable pageable, String status) {
+        Iterable<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
         LocalDateTime currentDate = LocalDateTime.now();
 
-        Iterable<Ticket> tickets = ticketRepository.findAll();
+        List<TicketRequest> ticketRequests = StreamSupport.stream(tickets.spliterator(), true)
 
-//        return StreamSupport.stream(tickets.spliterator(), true)
-//                .filter(ticket -> !ticket.getIsDeleted())
-//                .map(ticket -> {
-//                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//                    LocalDateTime dateTime = LocalDateTime.parse(ticket.getTime(), formatter);
-//
-//                    TicketRequest ticketRequest = new TicketRequest();
-//                    if (dateTime.isBefore(currentDate)) {
-//                        BeanUtils.copyProperties(ticket, ticketRequest);
-//                        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequest);
-//                    } else {
-//                        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
-//                    }
-//                })
-//                .filter(payload -> payload.getData() != null)
-//                .toList();
-        return null;
-    }
+                .flatMap(ticket -> {
+                    if (StringUtils.isEmpty(status)) {
+                        return Stream.of(ticket);
+                    } else {
+                        return Stream.of(ticket).filter(t -> t.getStatus().equals(status));
+                    }
+                })
+                .filter(ticket -> ticket.getEventTime().getTime().getTime().isAfter(currentDate))
+                .map(ticket -> {
+                    TicketRequest ticketRequest = new TicketRequest();
+                    BeanUtils.copyProperties(ticket, ticketRequest);
+                    return ticketRequest;
+                })
+                .toList();
 
-    @Override
-    public Iterable<ResponsePayload> searchTicketByTimeAfter() {
-        LocalDateTime currentDate = LocalDateTime.now();
-        Iterable<Ticket> tickets = ticketRepository.findAll();
-//        return StreamSupport.stream(tickets.spliterator(), true)
-//                .filter(ticket -> !ticket.getIsDeleted())
-//                .map(ticket -> {
-//                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//                    LocalDateTime dateTime = LocalDateTime.parse(ticket.getTime(), formatter);
-//                    TicketRequest ticketRequest = new TicketRequest();
-//                    if (dateTime.isAfter(currentDate)) {
-//                        BeanUtils.copyProperties(ticket, ticketRequest);
-//                        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequest);
-//                    } else {
-//                        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
-//                    }
-//                })
-//                .filter(payload -> payload.getData() != null)
-//                .toList();
-        return null;
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequests);
     }
 }

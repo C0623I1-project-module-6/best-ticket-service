@@ -3,7 +3,9 @@ package com.codegym.bestticket.entity.ticket;
 import com.codegym.bestticket.entity.booking.BookingDetail;
 import com.codegym.bestticket.entity.event.EventTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,6 +28,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "tickets")
+@Embeddable
 public class Ticket {
 
     @Id
@@ -55,7 +58,6 @@ public class Ticket {
             @JoinColumn(name = "event_id", referencedColumnName = "event_id"),
             @JoinColumn(name = "time_id", referencedColumnName = "time_id")
     })
-//    @JoinColumn(name = "event_time_id", referencedColumnName = "id")
     @JsonIgnore
     private EventTime eventTime;
 

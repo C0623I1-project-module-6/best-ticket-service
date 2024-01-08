@@ -28,7 +28,7 @@ public class TicketController {
     private final ITicketService ticketService;
 
     @GetMapping
-    public ResponseEntity<ResponsePayload> getAllTicket(@PageableDefault(size = 1, page = 0) Pageable pageable) {
+    public ResponseEntity<ResponsePayload> getAllTicket(@PageableDefault(size = 10, page = 0) Pageable pageable) {
         ResponsePayload responsePayload = ticketService.showTicket(pageable);
         if (responsePayload == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -75,21 +75,16 @@ public class TicketController {
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<ResponsePayload> searchTicketByStatus(@PageableDefault(page = 0, size = 500) Pageable pageable, @RequestParam String status, @RequestParam String time) {
-        ResponsePayload responsePayload = ticketService.searchAllTicket(pageable, status, time);
+    @GetMapping("/show-ticket/upcoming")
+    public ResponseEntity<ResponsePayload> showTicketUpcoming(@PageableDefault(page = 0, size = 200) Pageable pageable, @RequestParam String status) {
+        ResponsePayload responsePayload = ticketService.showAllTicketUpcoming(pageable, status);
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
+    }
+    @GetMapping("/show-ticket/finished")
+    public ResponseEntity<ResponsePayload> showTicketFinished(@PageableDefault(page = 0, size = 200) Pageable pageable, @RequestParam String status) {
+        ResponsePayload responsePayload = ticketService.showAllTicketFinished(pageable, status);
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 
-    @GetMapping("/search/time/before")
-    public ResponseEntity<Iterable<ResponsePayload>> searchTicketByTimeBefore() {
-        Iterable<ResponsePayload> responsePayload = ticketService.searchTicketByTimeBefore();
-        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
-    }
 
-    @GetMapping("/search/time/after")
-    public ResponseEntity<Iterable<ResponsePayload>> searchTicketByTimeAfter() {
-        Iterable<ResponsePayload> responsePayload = ticketService.searchTicketByTimeAfter();
-        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
-    }
 }

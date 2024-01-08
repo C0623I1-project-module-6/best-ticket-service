@@ -26,6 +26,6 @@ public class TicketRequest {
 
     private BookingDetail bookingDetail;
 
-    private UUID eventTimeId;
+    private EventTime eventTime;
 
 }

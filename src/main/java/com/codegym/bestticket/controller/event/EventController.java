@@ -4,7 +4,16 @@ import com.codegym.bestticket.dto.event.EventDTO;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.service.IEventService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +37,7 @@ public class EventController {
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<EventResponse> getEventById(@PathVariable("eventId") UUID eventId){
+    public ResponseEntity<EventResponse> getEventById(@PathVariable("eventId") UUID eventId) {
         EventResponse eventResponse = IEventService.findEventById(eventId);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
@@ -38,10 +47,11 @@ public class EventController {
         EventResponse eventResponse = IEventService.removeEvent(eventId);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
+
     @PutMapping("/{eventId}")
     public ResponseEntity<EventResponse> editEvent(@PathVariable("eventId") UUID eventId,
-                                                   @RequestBody EventDTO eventDTO){
-        EventResponse eventResponse = IEventService.updateEvent(eventId,eventDTO);
+                                                   @RequestBody EventDTO eventDTO) {
+        EventResponse eventResponse = IEventService.updateEvent(eventId, eventDTO);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 
@@ -57,8 +67,8 @@ public class EventController {
             @RequestParam(name = "page") int page,
             @RequestParam(name = "pageSize") int pageSize
     ) {
-      EventResponse eventResponse = IEventService.findByEventTypeNamesAndIsDeletedFalse(eventTypeNames,page,pageSize);
-      return new ResponseEntity<>(eventResponse,eventResponse.getHttpStatus());
+        EventResponse eventResponse = IEventService.findByEventTypeNamesAndIsDeletedFalse(eventTypeNames, page, pageSize);
+        return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 
     @GetMapping("/TextAndEventTypeNames")
@@ -68,6 +78,6 @@ public class EventController {
             @RequestParam(name = "page") int page,
             @RequestParam(name = "pageSize") int pageSize) {
         EventResponse eventResponse = IEventService.findBySearchTermAndEventTypeNames(searchTerm, eventTypeNames, page, pageSize);
-        return new ResponseEntity<>(eventResponse,eventResponse.getHttpStatus());
+        return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 }

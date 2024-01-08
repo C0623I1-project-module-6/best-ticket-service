@@ -31,7 +31,6 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String name;
-    private String address;
     private String description;
     private String image;
     private String duration;
@@ -40,7 +39,7 @@ public class Event {
 
     @ManyToMany
     @JoinTable(
-            name = "event_event_type",
+            name = "event_event_types",
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "event_type_id"))
     private Set<EventType> eventTypes;
