@@ -93,20 +93,20 @@ public DaoAuthenticationProvider authenticationProvider(){
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeHttpRequests()
-                .requestMatchers("/api/**", "/api/auth/**", "/api/tests/**")
+                .requestMatchers("/api/**", "/api/auth/**", "/api/tests/**","/api/tickets")
                 .permitAll();
 
-        http.authorizeHttpRequests()
-                .requestMatchers("/api/admins/**", "/api/customers/**", "/api/organizers/**")
-                .hasRole("ADMIN");
-
-        http.authorizeHttpRequests()
-                .requestMatchers("/api/customers/**")
-                .hasRole("CUSTOMER");
-
-        http.authorizeHttpRequests()
-                .requestMatchers("/api/organizers/**")
-                .hasRole("ORGANIZER");
+//        http.authorizeHttpRequests()
+//                .requestMatchers("/api/admins/**", "/api/customers/**", "/api/organizers/**")
+//                .hasRole("ADMIN");
+//
+//        http.authorizeHttpRequests()
+//                .requestMatchers("/api/customers/**")
+//                .hasRole("CUSTOMER");
+//
+//        http.authorizeHttpRequests()
+//                .requestMatchers("/api/organizers/**")
+//                .hasRole("ORGANIZER");
 
         http.authorizeHttpRequests().and().exceptionHandling()
                 .accessDeniedPage("/access-denied");
