@@ -94,7 +94,7 @@ public DaoAuthenticationProvider authenticationProvider(){
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeHttpRequests()
-                .requestMatchers("/api/users/**", "/api/auth/**", "/api/tests/**")
+                .requestMatchers("/api/**", "/api/auth/**", "/api/tests/**")
                 .permitAll();
 
         http.authorizeHttpRequests()
