@@ -47,7 +47,7 @@ BEGIN
 END //
 DELIMITER ;
 
-DELETE FROM tickets;
+TRUNCATE tickets;
 
 INSERT INTO tickets (
     id, ticket_code, seat, promotion, is_deleted, ticket_type_id,
