@@ -1,8 +1,11 @@
 package com.codegym.bestticket.service.impl.user;
 
+import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.User;
+import com.codegym.bestticket.repository.user.ICustomerRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
 import jakarta.transaction.Transactional;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,14 +21,17 @@ import java.util.List;
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
     @Autowired
     private IUserRepository userRepository;
+    @Autowired
+    private ICustomerRepository customerRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+    public UserDetails loadUserByUsername(String input) throws UsernameNotFoundException {
+        User user = findUser(input);
         if (user == null) {
-            throw new UsernameNotFoundException("User " + username + "was not found in database!");
+            throw new UsernameNotFoundException("User " + input + "was not found in database!");
         }
-        List<String> roles = userRepository.findRolesByUsername(username);
+        Customer customer = null;
+        List<String> roles = findRoles(user, customer);
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         for (String role : roles) {
@@ -39,5 +45,30 @@ public class UserDetailsService implements org.springframework.security.core.use
                 grantedAuthorities);
 
         return userDetails;
+    }
+
+    private User findUser(String input) {
+        if (input.contains("@")) {
+            return userRepository.findByEmail(input);
+        } else if (isNumeric(input)) {
+            Customer customer = customerRepository.findByPhoneNumber(input);
+            return customer.getUser();
+        } else {
+            return userRepository.findByUsername(input);
+        }
+    }
+
+    private List<String> findRoles(User user, Customer customer) {
+        if (user != null) {
+            return userRepository.findRolesByUsername(user.getUsername());
+        } else if (customer != null) {
+            return userRepository.findRolesByPhoneNumber(customer.getPhoneNumber());
+        } else {
+            return userRepository.findRolesByEmail(user.getEmail());
+        }
+    }
+
+    public boolean isNumeric(String string) {
+        return StringUtils.isNumeric(string);
     }
 }

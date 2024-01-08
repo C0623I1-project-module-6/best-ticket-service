@@ -1,4 +1,4 @@
-package com.codegym.bestticket.entity.ticket.user;
+package com.codegym.bestticket.controller.user;
 
 import com.codegym.bestticket.dto.user.CustomerDto;
 import com.codegym.bestticket.payload.ResponsePayload;

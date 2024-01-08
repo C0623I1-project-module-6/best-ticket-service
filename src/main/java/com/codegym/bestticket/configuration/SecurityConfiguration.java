@@ -33,7 +33,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
         JwtAuthEntryPoint.class,
         IUserRepository.class
 })
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
     @Autowired
     private UserDetailsService userDetailsService;
@@ -98,7 +97,7 @@ public DaoAuthenticationProvider authenticationProvider(){
                 .permitAll();
 
         http.authorizeHttpRequests()
-                .requestMatchers("/api/roles/**", "/api/customers/**", "/api/organizers/**")
+                .requestMatchers("/api/admins/**", "/api/customers/**", "/api/organizers/**")
                 .hasRole("ADMIN");
 
         http.authorizeHttpRequests()

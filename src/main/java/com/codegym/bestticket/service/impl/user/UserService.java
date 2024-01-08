@@ -9,7 +9,6 @@ import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.entity.user.Role;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.exception.EmailAlreadyExistsException;
-import com.codegym.bestticket.exception.InvalidUserException;
 import com.codegym.bestticket.exception.PhoneNumberAlreadyExistsException;
 import com.codegym.bestticket.exception.UserNotFoundException;
 import com.codegym.bestticket.exception.UsernameAlreadyExistsException;
@@ -37,9 +36,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -124,7 +121,7 @@ public class UserService implements IUserService {
         try {
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(
-                            loginRequest.getUsername(),
+                            loginRequest.getInput(),
                             loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user= userRepository.findByUsername(authentication.getName());
@@ -147,23 +144,6 @@ public class UserService implements IUserService {
                     .build();
         }
 
-    }
-
-    public String getUsernameOfEmailOrPhoneNumber(LoginRequest loginRequest) {
-        User user = userRepository.findByUsername(loginRequest.getUsername());
-        if (user == null) {
-            user = userRepository.findByEmail(loginRequest.getEmail());
-        }
-        if (user == null) {
-            Customer customer = customerRepository.findByPhoneNumber(loginRequest.getPhoneNumber());
-            if (customer != null) {
-                user = customer.getUser();
-            }
-        }
-        if (user == null) {
-            throw new InvalidUserException("Username/Email/Phone number is not blank.");
-        }
-        return null;
     }
 
 
