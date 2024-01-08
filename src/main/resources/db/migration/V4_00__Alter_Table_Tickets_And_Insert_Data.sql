@@ -1,25 +1,10 @@
-# Drop the foreign key constraint if it already exists
-ALTER TABLE tickets
-    DROP FOREIGN KEY event_time_id;
 
--- Drop the event_time_id column
-ALTER TABLE tickets
-    DROP COLUMN event_time_id;
-
--- Add event_id and time_id columns
-ALTER TABLE tickets
-    ADD COLUMN event_id BINARY(16) NULL,
-    ADD COLUMN time_id  BINARY(16) NULL;
 
 -- Add index on the event_times table
-ALTER TABLE event_times
-    ADD INDEX idx_event_times (event_id, time_id);
+
 
 -- Recreate foreign key constraint for event_id and time_id referencing event_times
-ALTER TABLE tickets
-    ADD CONSTRAINT tickets_event_times_fk
-        FOREIGN KEY (event_id, time_id)
-            REFERENCES event_times (event_id, time_id);
+
 
 -- Recreate the trigger to validate event_id and time_id values
 DROP TRIGGER IF EXISTS tickets_event_times_fk;
@@ -47,7 +32,7 @@ BEGIN
 END //
 DELIMITER ;
 
-DELETE FROM tickets;
+TRUNCATE tickets;
 
 INSERT INTO tickets (
     id, ticket_code, seat, promotion, is_deleted, ticket_type_id,
@@ -57,7 +42,7 @@ SELECT
     UUID_TO_BIN(UUID()), '6955-3059-8978', 'T-90', 20, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    et.event_id, et.time_id, 'All'
+    et.event_id, et.time_id, 'Success'
 FROM
     event_times et
 ORDER BY
@@ -143,7 +128,7 @@ SELECT
     UUID_TO_BIN(UUID()), '0629-3462-8263', 'O-66', 33, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Pending'
 FROM
     event_times
 ORDER BY
@@ -247,7 +232,7 @@ SELECT
     UUID_TO_BIN(UUID()), '2502-1334-0858', 'C-90', 48, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Success'
 FROM
     event_times
 ORDER BY
@@ -262,7 +247,7 @@ SELECT
     UUID_TO_BIN(UUID()), '0467-5822-6212', 'D-81', 1, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Reject'
 FROM
     event_times
 ORDER BY
@@ -291,7 +276,7 @@ SELECT
     UUID_TO_BIN(UUID()), '8690-9637-2074', 'C-66', 39, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Reject'
 FROM
     event_times
 ORDER BY
@@ -306,7 +291,7 @@ SELECT
     UUID_TO_BIN(UUID()), '9737-1504-8952', 'M-16', 38, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Reject'
 FROM
     event_times
 ORDER BY
@@ -321,7 +306,7 @@ SELECT
     UUID_TO_BIN(UUID()), '2500-4990-1690', 'Q-53', 9, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Pending'
 FROM
     event_times
 ORDER BY
@@ -351,7 +336,7 @@ SELECT
     UUID_TO_BIN(UUID()), '4511-5846-8492', 'W-31', 33, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Success'
 FROM
     event_times
 ORDER BY
@@ -395,7 +380,7 @@ SELECT
     UUID_TO_BIN(UUID()), '2777-5205-3364', 'S-56', 45, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Reject'
 FROM
     event_times
 ORDER BY
@@ -440,7 +425,7 @@ SELECT
     UUID_TO_BIN(UUID()), '6814-7834-5062', 'P-01', 35, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Reject'
 FROM
     event_times
 ORDER BY
@@ -455,7 +440,7 @@ SELECT
     UUID_TO_BIN(UUID()), '8157-9442-7395', 'Q-46', 30, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Success'
 FROM
     event_times
 ORDER BY
@@ -514,7 +499,7 @@ SELECT
     UUID_TO_BIN(UUID()), '1391-2760-1815', 'S-07', 3, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Pending'
 FROM
     event_times
 ORDER BY
@@ -544,7 +529,7 @@ SELECT
     UUID_TO_BIN(UUID()), '9998-8775-6454', 'T-24', 32, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Success'
 FROM
     event_times
 ORDER BY
@@ -573,7 +558,7 @@ SELECT
     UUID_TO_BIN(UUID()), '4041-7138-6536', 'F-37', 39, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Reject'
 FROM
     event_times
 ORDER BY
@@ -603,7 +588,7 @@ SELECT
     UUID_TO_BIN(UUID()), '2634-2085-2007', 'S-59', 7, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Pending'
 FROM
     event_times
 ORDER BY
@@ -678,7 +663,7 @@ SELECT
     UUID_TO_BIN(UUID()), '8502-2869-8361', 'I-35', 14, false,
     (SELECT id FROM ticket_types ORDER BY RAND() LIMIT 1),
     (SELECT id FROM booking_details ORDER BY RAND() LIMIT 1),
-    event_id, time_id, 'All'
+    event_id, time_id, 'Success'
 FROM
     event_times
 ORDER BY
