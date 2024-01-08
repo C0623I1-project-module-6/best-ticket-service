@@ -8,9 +8,7 @@ import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.entity.user.Role;
 import com.codegym.bestticket.entity.user.User;
-import com.codegym.bestticket.entity.user.UserRole;
 import com.codegym.bestticket.exception.EmailAlreadyExistsException;
-import com.codegym.bestticket.exception.InvalidPasswordException;
 import com.codegym.bestticket.exception.InvalidUserException;
 import com.codegym.bestticket.exception.PhoneNumberAlreadyExistsException;
 import com.codegym.bestticket.exception.UserNotFoundException;
@@ -24,9 +22,7 @@ import com.codegym.bestticket.repository.user.ICustomerRepository;
 import com.codegym.bestticket.repository.user.IOrganizerRepository;
 import com.codegym.bestticket.repository.user.IRoleRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
-import com.codegym.bestticket.repository.user.IUserRoleRepository;
 import com.codegym.bestticket.security.JwtTokenProvider;
-import com.codegym.bestticket.service.IRoleService;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -35,14 +31,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -52,8 +51,6 @@ public class UserService implements IUserService {
     private final ICustomerRepository customerRepository;
     private final IRoleRepository roleRepository;
     private final IOrganizerRepository organizerRepository;
-    private final IUserRoleRepository userRoleRepository;
-    private final IRoleService roleService;
     private final IRegisterConverter registerConverter;
     private final ILoginConverter loginConverter;
     private final IUserConverter userConverter;
@@ -94,20 +91,10 @@ public class UserService implements IUserService {
                 roles.add(roleRepository.findByName("ROLE_CUSTOMER")
                         .orElseThrow(() -> new RuntimeException("Can not find ROLE_CUSTOMER!")));
             }
+            user.setRoles(roles);
             userRepository.save(user);
+            RegisterResponse registerResponse = registerConverter.entityToDto(user);
             UUID userId = user.getId();
-            roles.forEach(role -> {
-                UserRole userRole = UserRole.builder()
-                        .user(user)
-                        .role(role)
-                        .build();
-                userRoleRepository.save(userRole);
-            });
-            List<String> userRoles=roles.stream()
-                    .map(Role::getName)
-                    .collect(Collectors.toList());
-            RegisterResponse registerResponse = registerConverter.entityToDto(user, userRoles);
-
             if (user.getId() == null) {
                 throw new UserNotFoundException("User by id not found!");
             }
@@ -135,27 +122,19 @@ public class UserService implements IUserService {
     @Override
     public ResponsePayload login(LoginRequest loginRequest) {
         try {
-            User user = userRepository.findByUsername(loginRequest.getUsername());
-            if (user == null) {
-                user = userRepository.findByEmail(loginRequest.getEmail());
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            User user= userRepository.findByUsername(authentication.getName());
+            Set<Role> roles = user.getRoles();
+            Set<String> listRoles= new HashSet<>();
+            for (Role role: roles){
+                listRoles.add(role.getName());
             }
-            if (user == null) {
-                Customer customer = customerRepository.findByPhoneNumber(loginRequest.getPhoneNumber());
-                if (customer != null) {
-                    user = customer.getUser();
-                }
-            }
-            if (user == null) {
-                throw new InvalidUserException("Username/Email/Phone number is not blank.");
-            }
-            String password = loginRequest.getPassword();
-            if (password == null || password.isEmpty()) {
-                throw new InvalidPasswordException("Password is not blank.");
-            }
-            if (!password.equals(user.getPassword())) {
-                throw new InvalidPasswordException("Password is incorrect.");
-            }
-            LoginResponse loginResponse = loginConverter.entityToDto(user);
+            String token = jwtTokenProvider.generateToken(authentication);
+            LoginResponse loginResponse=loginConverter.entityToDto(user,token);
             return ResponsePayload.builder()
                     .message("Login successfully!!!")
                     .status(HttpStatus.OK)
@@ -163,12 +142,30 @@ public class UserService implements IUserService {
                     .build();
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
-                    .message("Login failed.")
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .message("Login failed!")
+                    .status(HttpStatus.UNAUTHORIZED)
                     .build();
         }
 
     }
+
+    public String getUsernameOfEmailOrPhoneNumber(LoginRequest loginRequest) {
+        User user = userRepository.findByUsername(loginRequest.getUsername());
+        if (user == null) {
+            user = userRepository.findByEmail(loginRequest.getEmail());
+        }
+        if (user == null) {
+            Customer customer = customerRepository.findByPhoneNumber(loginRequest.getPhoneNumber());
+            if (customer != null) {
+                user = customer.getUser();
+            }
+        }
+        if (user == null) {
+            throw new InvalidUserException("Username/Email/Phone number is not blank.");
+        }
+        return null;
+    }
+
 
     @Override
     public ResponsePayload delete(UUID id) {

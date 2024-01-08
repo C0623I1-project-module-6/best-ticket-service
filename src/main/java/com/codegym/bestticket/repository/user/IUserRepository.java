@@ -13,9 +13,10 @@ import java.util.UUID;
 
 public interface IUserRepository extends JpaRepository<User, UUID> {
     @Query(nativeQuery = true,
-            value = "SELECT r.name FROM roles r " +
-                    "INNER JOIN users u ON r.id = u.role_id " +
-                    "WHERE u.username = :username")
+            value = " SELECT r.name FROM roles r " +
+                    " INNER JOIN user_roles ur ON r.id= ur.role_id" +
+                    " INNER JOIN users u ON ur.user_id = u.id " +
+                    " WHERE u.username = :username")
     List<String> findRolesByUsername(@Param("username") String username);
     User findByUsername(String username);
 

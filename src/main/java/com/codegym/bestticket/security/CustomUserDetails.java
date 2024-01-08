@@ -27,29 +27,31 @@
 //    private String avatar;
 //    private Boolean isDeleted;
 //    private Boolean isActived;
-//    private Collection<?extends GrantedAuthority> authorities;
+//    private Collection<? extends GrantedAuthority> authorities;
 //
 //    @Override
 //    public Collection<? extends GrantedAuthority> getAuthorities() {
 //        return this.authorities;
 //    }
-//public static CustomUserDetails mapUserToUserDetail(User user){
-//    List<GrantedAuthority> authorityList=user.getRoles().stream()
-//            .map(roles ->new SimpleGrantedAuthority(roles.getName()))
-//            .collect(Collectors.toList());
-//    return new CustomUserDetails(
-//            user.getId(),
-//            user.getUsername(),
-//            user.getPassword(),
-//            user.getEmail(),
-//            user.getCreated(),
-//            user.getRememberToken(),
-//            user.getAvatar(),
-//            user.getIsDeleted(),
-//            user.getIsActived(),
-//            authorityList
-//    );
-//}
+//
+//    public static CustomUserDetails mapUserToUserDetail(User user) {
+//        List<GrantedAuthority> authorityList = user.getUserRoles().stream()
+//                .map(roles -> new SimpleGrantedAuthority(roles.getRole().getName()))
+//                .collect(Collectors.toList());
+//        return new CustomUserDetails(
+//                user.getId(),
+//                user.getUsername(),
+//                user.getPassword(),
+//                user.getEmail(),
+//                user.getCreated(),
+//                user.getRememberToken(),
+//                user.getAvatar(),
+//                user.getIsDeleted(),
+//                user.getIsActived(),
+//                authorityList
+//        );
+//    }
+//
 //    @Override
 //    public String getPassword() {
 //        return this.password;

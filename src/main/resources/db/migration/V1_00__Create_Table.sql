@@ -19,9 +19,10 @@ CREATE TABLE IF NOT EXISTS roles
 
 CREATE TABLE IF NOT EXISTS user_roles
 (
-    id BINARY(16) PRIMARY KEY,
+
     user_id BINARY(36),
     role_id BINARY(36),
+    PRIMARY KEY (user_id,role_id),
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (role_id) REFERENCES roles (id)
 );

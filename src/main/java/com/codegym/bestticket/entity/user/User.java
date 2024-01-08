@@ -58,9 +58,13 @@ public class User {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<BankAccount> bankAccounts;
-    @OneToMany(mappedBy = "user")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     @JsonIgnore
-    private List<UserRole> userRoles;
+    private Set<Role> roles;
 
 
 }

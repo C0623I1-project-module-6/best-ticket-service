@@ -7,7 +7,7 @@ import com.codegym.bestticket.payload.response.user.RegisterResponse;
 import java.util.List;
 
 public interface IRegisterConverter {
-    RegisterResponse entityToDto(User user, List<String> userRoles);
+    RegisterResponse entityToDto(User user);
 
     User dtoToEntity(RegisterRequest registerRequest);
 }

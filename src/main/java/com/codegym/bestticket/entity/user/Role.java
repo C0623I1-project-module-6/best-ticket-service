@@ -32,8 +32,5 @@ public class Role {
     @Column( length = 50)
     private String name;
     private Boolean isDeleted;
-    @OneToMany(mappedBy = "role")
-    @JsonIgnore
-    private List<UserRole> userRoles;
 
 }

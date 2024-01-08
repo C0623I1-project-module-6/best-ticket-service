@@ -14,8 +14,9 @@ import java.util.List;
 
 public class RegisterConverter implements IRegisterConverter {
 
-    public RegisterResponse entityToDto(User user, List<String> userRoles) {
+    public RegisterResponse entityToDto(User user) {
         RegisterResponse registerResponse = new RegisterResponse();
+        registerResponse.setListRole(user.getRoles());
         BeanUtils.copyProperties(user, registerResponse);
         return registerResponse;
     }

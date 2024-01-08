@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -63,16 +64,23 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOriginPattern("*");
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
+        configuration.addAllowedOriginPattern("**");
+        configuration.addAllowedHeader("**");
+        configuration.addAllowedMethod("**");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
+@Bean
+public DaoAuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider provider=new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(bCryptPasswordEncoder());
+        return provider;
+}
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http.cors()
                 .configurationSource(corsConfigurationSource())
                 .and()
@@ -86,7 +94,7 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeHttpRequests()
-                .requestMatchers("/api/users/**", "/api/auth/**","/api/tests/**")
+                .requestMatchers("/api/users/**", "/api/auth/**", "/api/tests/**")
                 .permitAll();
 
         http.authorizeHttpRequests()
@@ -103,6 +111,13 @@ public class SecurityConfiguration {
 
         http.authorizeHttpRequests().and().exceptionHandling()
                 .accessDeniedPage("/access-denied");
+
+        http.authorizeHttpRequests()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .formLogin()
+                .permitAll();
 
         http.authorizeHttpRequests()
                 .and().rememberMe()
