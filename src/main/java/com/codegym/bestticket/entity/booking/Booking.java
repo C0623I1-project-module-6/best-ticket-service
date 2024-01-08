@@ -31,7 +31,7 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
+    private String date;
     @Column(columnDefinition = "DECIMAL(10, 2)")
     private Double totalAmount;
     @Column(length = 30)
