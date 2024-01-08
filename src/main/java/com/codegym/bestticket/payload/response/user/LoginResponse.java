@@ -1,13 +1,13 @@
 package com.codegym.bestticket.payload.response.user;
 
+import com.codegym.bestticket.entity.user.Role;
 import lombok.Data;
+
+import java.util.Set;
 
 @Data
 public class LoginResponse {
     private String token;
-    private String username;
-    private String email;
-
-
+    private Set<Role> listRole;
 
 }

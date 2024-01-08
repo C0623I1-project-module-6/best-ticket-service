@@ -14,8 +14,8 @@ public interface ITicketService {
     ResponsePayload createTicket(TicketResponse ticketResponse);
     ResponsePayload updateTicket(TicketResponse ticketResponse);
     ResponsePayload deleteTicketById(UUID id);
-    Iterable<ResponsePayload> searchTicketByStatus(String status,String time);
-    Iterable<ResponsePayload> searchTicketByTimeBefore();
-    Iterable<ResponsePayload> searchTicketByTimeAfter();
+    ResponsePayload showAllTicketUpcoming(Pageable pageable, String status);
+    ResponsePayload showAllTicketFinished(Pageable pageable,String status);
+
 
 }

@@ -27,7 +27,9 @@ public class Time {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     private LocalDateTime time;
+
     @ManyToMany(mappedBy = "times")
     private Set<Event> events;
 

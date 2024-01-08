@@ -49,6 +49,8 @@ public class User {
     private String rememberToken;
     private String avatar;
     private Boolean isDeleted;
+    private Boolean isActived;
+
     @OneToOne(mappedBy = "user")
     private Customer customer;
     @OneToOne(mappedBy = "user")
@@ -56,9 +58,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<BankAccount> bankAccounts;
-
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     @JsonIgnore
     private Set<Role> roles;

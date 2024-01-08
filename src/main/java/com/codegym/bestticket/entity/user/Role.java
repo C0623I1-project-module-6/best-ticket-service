@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,8 +32,5 @@ public class Role {
     @Column( length = 50)
     private String name;
     private Boolean isDeleted;
-    @ManyToMany(mappedBy = "roles")
-    @JsonIgnore
-    private List<User> users;
 
 }

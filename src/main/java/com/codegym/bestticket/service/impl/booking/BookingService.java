@@ -1,6 +1,6 @@
 package com.codegym.bestticket.service.impl.booking;
 
-import com.codegym.bestticket.constant.EBookingStatus;
+import com.codegym.bestticket.converter.user.impl.constant.EBookingStatus;
 import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.exception.BookingSaveException;
 import com.codegym.bestticket.payload.ResponsePayload;

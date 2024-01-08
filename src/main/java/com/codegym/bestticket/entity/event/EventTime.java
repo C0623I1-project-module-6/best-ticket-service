@@ -1,6 +1,7 @@
 package com.codegym.bestticket.entity.event;
 
 import com.codegym.bestticket.entity.ticket.Ticket;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,15 +29,15 @@ import java.util.UUID;
 public class EventTime {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
     @ManyToOne
-    @JoinColumn(name = "event_id")
+    @JsonIgnore
+    @JoinColumn(name = "event_id", referencedColumnName = "id")
     private Event event;
 
+    @Id
     @ManyToOne
-    @JoinColumn(name = "time_id")
+    @JsonIgnore
+    @JoinColumn(name = "time_id", referencedColumnName = "id")
     private Time time;
 
     @OneToMany(mappedBy = "eventTime")
