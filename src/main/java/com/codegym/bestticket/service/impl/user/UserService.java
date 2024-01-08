@@ -124,14 +124,14 @@ public class UserService implements IUserService {
                             loginRequest.getInput(),
                             loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            User user= userRepository.findByUsername(authentication.getName());
+            User user = userRepository.findByUsername(authentication.getName());
             Set<Role> roles = user.getRoles();
-            Set<String> listRoles= new HashSet<>();
-            for (Role role: roles){
+            Set<String> listRoles = new HashSet<>();
+            for (Role role : roles) {
                 listRoles.add(role.getName());
             }
             String token = jwtTokenProvider.generateToken(authentication);
-            LoginResponse loginResponse=loginConverter.entityToDto(user,token);
+            LoginResponse loginResponse = loginConverter.entityToDto(user, token);
             return ResponsePayload.builder()
                     .message("Login successfully!!!")
                     .status(HttpStatus.OK)
