@@ -7,6 +7,8 @@ import java.util.Set;
 
 @Data
 public class LoginResponse {
+    private String avatar;
+    private String username;
     private String token;
     private Set<Role> listRole;
 
