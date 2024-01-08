@@ -72,10 +72,8 @@ public class CustomerService implements ICustomerService {
                 throw new EntityNotFoundException("Customer not found is" + id);
             }
             Customer customer = optionalCustomer.get();
-            String oldIdCard = customer.getIdCard();
             String oldPhoneNumber = customer.getPhoneNumber();
             customerConverter.dtoToEntity(customerDto);
-            customer.setIdCard(oldIdCard);
             customer.setPhoneNumber(oldPhoneNumber);
             customerRepository.save(customer);
             CustomerResponse customerResponse = customerConverter.entityToDto(customer);

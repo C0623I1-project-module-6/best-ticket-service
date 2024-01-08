@@ -21,21 +21,8 @@ import java.util.UUID;
 @CrossOrigin("*")
 @RequestMapping("/api/users")
 public class UserController {
-    private final IUserService userService;
 
-    @GetMapping()
-    public ResponseEntity<ResponsePayload> shows(Pageable pageable) {
-        return new ResponseEntity<>(userService.findAll(pageable), HttpStatus.OK);
-    }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponsePayload> remove(@PathVariable UUID id) {
-        if (id == null) {
-            new ResponseEntity<>("Id not found!", HttpStatus.NOT_FOUND);
-        }
-        ResponsePayload responsePayload = userService.delete(id);
-        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
-    }
 
 
 }

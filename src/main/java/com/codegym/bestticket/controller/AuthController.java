@@ -4,9 +4,11 @@ import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
 import com.codegym.bestticket.service.IUserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +31,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponsePayload> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ResponsePayload> login(@Valid @RequestBody LoginRequest loginRequest) {
         if (loginRequest == null) {
             new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }

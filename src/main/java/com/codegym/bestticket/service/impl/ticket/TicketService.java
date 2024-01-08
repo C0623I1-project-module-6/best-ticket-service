@@ -1,6 +1,6 @@
 package com.codegym.bestticket.service.impl.ticket;
 
-import com.codegym.bestticket.constant.ETicketMessage;
+import com.codegym.bestticket.converter.user.impl.constant.ETicketMessage;
 import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.ticket.TicketRequest;

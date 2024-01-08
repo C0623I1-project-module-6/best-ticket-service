@@ -8,7 +8,8 @@ import com.codegym.bestticket.repository.user.IRoleRepository;
 import com.codegym.bestticket.service.IRoleService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
 @Transactional
+@ComponentScan(basePackageClasses = ModelMapper.class)
 public class RoleService implements IRoleService {
     private final IRoleConverter roleConverter;
     private final IRoleRepository roleRepository;
+    private final ModelMapper modelMapper;
+
+    public RoleService(IRoleConverter roleConverter, IRoleRepository roleRepository, ModelMapper modelMapper) {
+        this.roleRepository = roleRepository;
+        this.modelMapper = modelMapper;
+        this.roleConverter = roleConverter;
+    }
 
     @Override
     public ResponsePayload create(RoleDto roleDto) {
@@ -83,5 +91,11 @@ public class RoleService implements IRoleService {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
+    }
+
+    @Override
+    public Optional<RoleDto> findById(UUID id) {
+        Role entity = roleRepository.findById(id).orElse(null);
+        return Optional.ofNullable(modelMapper.map(entity, RoleDto.class));
     }
 }
