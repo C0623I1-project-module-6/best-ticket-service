@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -70,13 +69,15 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-@Bean
-public DaoAuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider provider=new DaoAuthenticationProvider();
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(bCryptPasswordEncoder());
         return provider;
-}
+    }
+
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -93,30 +94,18 @@ public DaoAuthenticationProvider authenticationProvider(){
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeHttpRequests()
-                .requestMatchers("/api/**", "/api/auth/**", "/api/tests/**")
-                .permitAll();
-
-        http.authorizeHttpRequests()
+                .requestMatchers("/api/**", "/api/auth/**").permitAll()
                 .requestMatchers("/api/admins/**", "/api/customers/**", "/api/organizers/**")
-                .hasRole("ADMIN");
-
-        http.authorizeHttpRequests()
+                .hasRole("ADMIN")
                 .requestMatchers("/api/customers/**")
-                .hasRole("CUSTOMER");
-
-        http.authorizeHttpRequests()
+                .hasRole("CUSTOMER")
                 .requestMatchers("/api/organizers/**")
-                .hasRole("ORGANIZER");
+                .hasRole("ORGANIZER")
+                .anyRequest().authenticated();
 
         http.authorizeHttpRequests().and().exceptionHandling()
                 .accessDeniedPage("/access-denied");
 
-        http.authorizeHttpRequests()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .formLogin()
-                .permitAll();
 
         http.authorizeHttpRequests()
                 .and().rememberMe()
