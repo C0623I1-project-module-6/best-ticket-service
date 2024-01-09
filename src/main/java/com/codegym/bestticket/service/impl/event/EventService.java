@@ -9,7 +9,6 @@ import com.codegym.bestticket.service.IEventService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class EventService implements IEventService {
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<Event> eventsPage = eventRepository.findAllByIsDeletedFalse(pageable);
         List<EventDTO> eventDTOs = eventConverter.entitiesToDTOs(eventsPage.getContent());
-        return EventResponse.builder().data(eventDTOs).httpStatus(HttpStatus.OK).build();
+        return EventResponse.builder().data(eventDTOs).totalPages(eventsPage.getTotalPages()).httpStatus(HttpStatus.OK).build();
     }
 
     @Override
@@ -112,23 +111,23 @@ public class EventService implements IEventService {
         Pageable pageable = PageRequest.of(page,pageSize);
         Page<Event> eventPage = eventRepository.findByNameContainingAndIsDeletedFalse(text,pageable);
         List<EventDTO> events = eventConverter.entitiesToDTOs(eventPage.getContent());
-        return EventResponse.builder().data(new PageImpl<>(events,pageable,eventPage.getTotalElements())).httpStatus(HttpStatus.OK).message("Page Event By Search Term").build();
+        return EventResponse.builder().data(events).totalPages(eventPage.getTotalPages()).httpStatus(HttpStatus.OK).message("Page Event By Search Term").build();
     }
 
     @Override
     public EventResponse findByEventTypeNamesAndIsDeletedFalse(List<String> eventTypeNames, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<Event> eventPage = eventRepository.findByEventTypeNamesAndIsDeletedFalse(eventTypeNames,pageable);
-        List<EventDTO> eventDTOList = eventConverter.entitiesToDTOs(eventPage.getContent());
-        return EventResponse.builder().data(new PageImpl<>(eventDTOList, pageable, eventPage.getTotalElements())).message("Page Event By List EventType").httpStatus(HttpStatus.OK).build();
+        List<EventDTO> eventDTOs = eventConverter.entitiesToDTOs(eventPage.getContent());
+        return EventResponse.builder().data(eventDTOs).totalPages(eventPage.getTotalPages()).message("Page Event By List EventType").httpStatus(HttpStatus.OK).build();
     }
 
     @Override
     public EventResponse findBySearchTermAndEventTypeNames(String searchTerm, List<String> eventTypeNames, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<Event> eventPage = eventRepository.findByTextAndEventTypeNames(searchTerm,eventTypeNames,pageable);
-        List<EventDTO> eventDTOList = eventConverter.entitiesToDTOs(eventPage.getContent());
-        return EventResponse.builder().data(new PageImpl<>(eventDTOList, pageable, eventPage.getTotalElements())).message("Page Event By Search Term List EventType").httpStatus(HttpStatus.OK).build();
+        List<EventDTO> eventDTOs = eventConverter.entitiesToDTOs(eventPage.getContent());
+        return EventResponse.builder().data(eventDTOs).totalPages(eventPage.getTotalPages()).message("Page Event By Search Term List EventType").httpStatus(HttpStatus.OK).build();
     }
 
 }

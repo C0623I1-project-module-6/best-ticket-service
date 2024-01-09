@@ -23,41 +23,41 @@ import java.util.UUID;
 @RequestMapping("/api/events")
 public class EventController {
 
-    private final IEventService IEventService;
+    private final IEventService eventService;
 
-    public EventController(IEventService IEventService) {
-        this.IEventService = IEventService;
+    public EventController(IEventService eventService) {
+        this.eventService = eventService;
     }
 
     @GetMapping
     public ResponseEntity<EventResponse> getAllEvent(@RequestParam(defaultValue = "0") int page,
                                                      @RequestParam(defaultValue = "10") int pageSize) {
-        EventResponse eventResponse = IEventService.findAll(page, pageSize);
+        EventResponse eventResponse = eventService.findAll(page, pageSize);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 
     @GetMapping("/{eventId}")
     public ResponseEntity<EventResponse> getEventById(@PathVariable("eventId") UUID eventId) {
-        EventResponse eventResponse = IEventService.findEventById(eventId);
+        EventResponse eventResponse = eventService.findEventById(eventId);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 
     @DeleteMapping("/{eventId}")
     public ResponseEntity<EventResponse> deleteEvent(@PathVariable("eventId") UUID eventId) {
-        EventResponse eventResponse = IEventService.removeEvent(eventId);
+        EventResponse eventResponse = eventService.removeEvent(eventId);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 
     @PutMapping("/{eventId}")
     public ResponseEntity<EventResponse> editEvent(@PathVariable("eventId") UUID eventId,
                                                    @RequestBody EventDTO eventDTO) {
-        EventResponse eventResponse = IEventService.updateEvent(eventId, eventDTO);
+        EventResponse eventResponse = eventService.updateEvent(eventId, eventDTO);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 
     @PostMapping
     public ResponseEntity<EventResponse> createEvent(@RequestBody EventDTO eventDTO) {
-        EventResponse eventResponse = IEventService.createEvent(eventDTO);
+        EventResponse eventResponse = eventService.createEvent(eventDTO);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 
@@ -67,7 +67,7 @@ public class EventController {
             @RequestParam(name = "page") int page,
             @RequestParam(name = "pageSize") int pageSize
     ) {
-        EventResponse eventResponse = IEventService.findByEventTypeNamesAndIsDeletedFalse(eventTypeNames, page, pageSize);
+        EventResponse eventResponse = eventService.findByEventTypeNamesAndIsDeletedFalse(eventTypeNames, page, pageSize);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 
@@ -77,7 +77,16 @@ public class EventController {
             @RequestParam(name = "eventTypeNames") List<String> eventTypeNames,
             @RequestParam(name = "page") int page,
             @RequestParam(name = "pageSize") int pageSize) {
-        EventResponse eventResponse = IEventService.findBySearchTermAndEventTypeNames(searchTerm, eventTypeNames, page, pageSize);
+        EventResponse eventResponse = eventService.findBySearchTermAndEventTypeNames(searchTerm, eventTypeNames, page, pageSize);
+        return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<EventResponse> findByNameContaining(
+            @RequestParam(name = "text") String text,
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "pageSize") int pageSize) {
+        EventResponse eventResponse = eventService.findByNameContaining(text, page, pageSize);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 }

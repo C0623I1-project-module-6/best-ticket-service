@@ -93,7 +93,7 @@ public DaoAuthenticationProvider authenticationProvider(){
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeHttpRequests()
-                .requestMatchers("/api/auth/login", "/api/auth/register","/api/tickets/**","/api/bookings/**")
+                .requestMatchers("/api/auth/login", "/api/auth/register","/api/tickets/**","/api/bookings/**","/api/events/**","/api/","/api/event-type/**")
                 .permitAll();
 
 //        http.authorizeHttpRequests()

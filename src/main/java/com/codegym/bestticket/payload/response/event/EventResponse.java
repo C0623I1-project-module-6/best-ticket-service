@@ -16,4 +16,5 @@ public class EventResponse {
     private Object data;
     private HttpStatus httpStatus= HttpStatus.OK;
     private String message;
+    private int totalPages;
 }
