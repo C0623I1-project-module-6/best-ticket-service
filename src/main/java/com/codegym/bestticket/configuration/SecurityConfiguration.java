@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -99,8 +98,10 @@ public class SecurityConfiguration {
                         "/api/auth/register",
                         "/api/tickets/**",
                         "/api/bookings/**",
-                        "/api/events",
-                        "/api/admin/**")
+                        "/api/events/**",
+                        "/api/event-type/**",
+                        "/api/admin/**"
+                )
                 .permitAll();
 
 //        http.authorizeHttpRequests()
@@ -115,15 +116,10 @@ public class SecurityConfiguration {
 //                .requestMatchers("/api/organizers/**")
 //                .hasRole("ORGANIZER");
 
+
         http.authorizeHttpRequests().and().exceptionHandling()
                 .accessDeniedPage("/access-denied");
 
-        http.authorizeHttpRequests()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .formLogin()
-                .permitAll();
 
         http.authorizeHttpRequests()
                 .and().rememberMe()

@@ -2,10 +2,7 @@ package com.codegym.bestticket.service.impl.user;
 
 import com.codegym.bestticket.converter.user.ILoginConverter;
 import com.codegym.bestticket.converter.user.IRegisterConverter;
-import com.codegym.bestticket.converter.user.IUserConverter;
-import com.codegym.bestticket.dto.user.UserDto;
 import com.codegym.bestticket.entity.user.Customer;
-import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.entity.user.Role;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.exception.EmailAlreadyExistsException;
@@ -18,16 +15,14 @@ import com.codegym.bestticket.payload.request.user.RegisterRequest;
 import com.codegym.bestticket.payload.response.user.LoginResponse;
 import com.codegym.bestticket.payload.response.user.RegisterResponse;
 import com.codegym.bestticket.repository.user.ICustomerRepository;
-import com.codegym.bestticket.repository.user.IOrganizerRepository;
 import com.codegym.bestticket.repository.user.IRoleRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.security.JwtTokenProvider;
+import com.codegym.bestticket.service.IRefreshTokenService;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,14 +42,12 @@ public class UserService implements IUserService {
     private final IUserRepository userRepository;
     private final ICustomerRepository customerRepository;
     private final IRoleRepository roleRepository;
-    private final IOrganizerRepository organizerRepository;
     private final IRegisterConverter registerConverter;
     private final ILoginConverter loginConverter;
-    private final IUserConverter userConverter;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
-
+    private final IRefreshTokenService refreshTokenService;
 
     @Override
     public ResponsePayload register(RegisterRequest registerRequest) {
@@ -103,6 +96,9 @@ public class UserService implements IUserService {
                         .build();
                 customerRepository.save(customer);
             }
+            if (!registerRequest.getConfirmPassword().equals(registerRequest.getPassword())) {
+                throw new RuntimeException("Password not match!");
+            }
             return ResponsePayload.builder()
                     .message("Register successfully!!!")
                     .status(HttpStatus.CREATED)
@@ -121,7 +117,7 @@ public class UserService implements IUserService {
         try {
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(
-                            loginRequest.getInput(),
+                            loginRequest.getUsername(),
                             loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user = userRepository.findByUsername(authentication.getName());
@@ -131,7 +127,11 @@ public class UserService implements IUserService {
                 listRoles.add(role.getName());
             }
             String token = jwtTokenProvider.generateToken(authentication);
-            LoginResponse loginResponse = loginConverter.entityToDto(user, token);
+
+            String refreshToken = String.valueOf(refreshTokenService.createRefreshToken(user.getId()));
+            LoginResponse loginResponse = loginConverter.entityToDto(user, token, refreshToken);
+
+
             return ResponsePayload.builder()
                     .message("Login successfully!!!")
                     .status(HttpStatus.OK)
@@ -146,6 +146,17 @@ public class UserService implements IUserService {
 
     }
 
+    @Override
+    public ResponsePayload logout(UUID id) {
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+        id = ((User) authentication.getPrincipal()).getId();
+        refreshTokenService.deleteByUserId(id);
+        return ResponsePayload.builder()
+                .message("Logout successfully!!!")
+                .status(HttpStatus.OK)
+                .build();
+    }
 
     @Override
     public ResponsePayload delete(UUID id) {
@@ -165,58 +176,7 @@ public class UserService implements IUserService {
                     .build();
         }
     }
-
-    @Override
-    public ResponsePayload findAll(Pageable pageable) {
-        try {
-            Page<User> users = userRepository.findAllByIsDeletedFalse(pageable);
-            Page<UserDto> userDtos = users.map(user -> {
-                UserDto userDto = userConverter.entityToDto(user);
-                Customer customer = customerRepository.findByUserIdAndIsDeletedFalse(userDto.getId())
-                        .orElse(null);
-                userDto.setCustomer(customer);
-                Organizer organizer = organizerRepository.findByUserIdAndIsDeletedFalse(userDto.getId())
-                        .orElse(null);
-                userDto.setOrganizer(organizer);
-                return userDto;
-            });
-            return ResponsePayload.builder()
-                    .message("User list!!!")
-                    .status(HttpStatus.OK)
-                    .data(userDtos)
-                    .build();
-        } catch (RuntimeException e) {
-            return ResponsePayload.builder()
-                    .message("User list not found")
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
-        }
-
-    }
-
-    @Override
-    public ResponsePayload filter(Pageable pageable, String username, String email) {
-        try {
-            Page<UserDto> users =
-                    userRepository.findAllByUsernameContainingOrEmailContainingAndIsDeletedFalse(pageable, username, email)
-                            .map(userConverter::entityToDto);
-            return ResponsePayload.builder()
-                    .message("SUCCESS")
-                    .status(HttpStatus.OK)
-                    .data(users)
-                    .build();
-        } catch (EntityNotFoundException e) {
-            return ResponsePayload.builder()
-                    .message("FAILED")
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
-        }
-    }
-
-    @Override
-    public ResponsePayload logout() {
-        return null;
-    }
 }
+
 
 

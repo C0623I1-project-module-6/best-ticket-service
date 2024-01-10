@@ -2,10 +2,7 @@ package com.codegym.bestticket.service.impl;
 
 import com.codegym.bestticket.converter.user.IUserConverter;
 import com.codegym.bestticket.dto.admin.UserAdminDto;
-import com.codegym.bestticket.dto.user.UserDto;
 import com.codegym.bestticket.entity.booking.Booking;
-import com.codegym.bestticket.entity.event.Event;
-import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.entity.user.User;
@@ -32,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 

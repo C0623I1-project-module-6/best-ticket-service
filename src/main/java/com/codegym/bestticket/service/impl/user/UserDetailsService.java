@@ -25,10 +25,10 @@ public class UserDetailsService implements org.springframework.security.core.use
     private ICustomerRepository customerRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String input) throws UsernameNotFoundException {
-        User user = findUser(input);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = findUser(username);
         if (user == null) {
-            throw new UsernameNotFoundException("User " + input + "was not found in database!");
+            throw new UsernameNotFoundException("User " + username + "was not found in database!");
         }
         Customer customer = null;
         List<String> roles = findRoles(user, customer);
