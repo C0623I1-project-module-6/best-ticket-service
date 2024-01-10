@@ -13,4 +13,5 @@ public class RegisterRequest {
     private String phoneNumber;
     private String avatar;
     private Set<String> listRole;
+    private String confirmPassword;
 }

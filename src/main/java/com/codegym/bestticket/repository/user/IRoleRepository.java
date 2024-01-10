@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface IRoleRepository extends JpaRepository<Role, UUID> {
-    Page<Role> findAllByNameContainingAndIsDeletedFalse(Pageable pageable, String status);
+    Page<Role> searchUserByIsDeletedFalseAndNameContaining(Pageable pageable, String status);
 
     Optional<Role> findByName(String name);
 
