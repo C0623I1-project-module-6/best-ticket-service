@@ -8,6 +8,8 @@ import java.util.UUID;
 
 @Data
 public class LoginResponse {
+    private String avatar;
+    private String username;
     private String token;
     private String type = "Bearer ";
     private String refreshToken;

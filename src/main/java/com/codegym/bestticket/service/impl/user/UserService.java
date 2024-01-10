@@ -129,8 +129,11 @@ public class UserService implements IUserService {
                 listRoles.add(role.getName());
             }
             String token = jwtTokenProvider.generateToken(authentication);
+
             String refreshToken = String.valueOf(refreshTokenService.createRefreshToken(user.getId()));
             LoginResponse loginResponse = loginConverter.entityToDto(user, token, refreshToken);
+
+         
             return ResponsePayload.builder()
                     .message("Login successfully!!!")
                     .status(HttpStatus.OK)

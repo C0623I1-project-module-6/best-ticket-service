@@ -62,9 +62,9 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOriginPattern("**");
-        configuration.addAllowedHeader("**");
-        configuration.addAllowedMethod("**");
+        configuration.addAllowedOriginPattern("*");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -94,14 +94,22 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeHttpRequests()
-                .requestMatchers("/api/**", "/api/auth/**").permitAll()
-                .requestMatchers("/api/admins/**", "/api/customers/**", "/api/organizers/**")
-                .hasRole("ADMIN")
-                .requestMatchers("/api/customers/**")
-                .hasRole("CUSTOMER")
-                .requestMatchers("/api/organizers/**")
-                .hasRole("ORGANIZER")
-                .anyRequest().authenticated();
+
+                .requestMatchers("/api/auth/login", "/api/auth/register","/api/tickets/**","/api/bookings/**")
+                .permitAll();
+
+//        http.authorizeHttpRequests()
+//                .requestMatchers("/api/admins/**", "/api/customers/**", "/api/organizers/**")
+//                .hasRole("ADMIN");
+//
+//        http.authorizeHttpRequests()
+//                .requestMatchers("/api/customers/**")
+//                .hasRole("CUSTOMER");
+//
+//        http.authorizeHttpRequests()
+//                .requestMatchers("/api/organizers/**")
+//                .hasRole("ORGANIZER");
+
 
         http.authorizeHttpRequests().and().exceptionHandling()
                 .accessDeniedPage("/access-denied");
