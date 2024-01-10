@@ -14,7 +14,6 @@ public class LoginResponse {
     private String type = "Bearer ";
     private String refreshToken;
     private UUID id;
-    private String username;
     private String email;
     private Set<Role> listRole;
 
