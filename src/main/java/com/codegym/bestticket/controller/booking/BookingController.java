@@ -47,13 +47,13 @@ public class BookingController {
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ResponsePayload> updateBooking(@PathVariable UUID id, @RequestBody BookingRequest bookingRequest) {
         ResponsePayload responsePayload = bookingService.save(bookingRequest, id);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
-    @DeleteMapping("/remove/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ResponsePayload> remove(@PathVariable UUID id) {
         ResponsePayload responsePayload = bookingService.remove(id);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());

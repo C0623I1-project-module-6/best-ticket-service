@@ -8,6 +8,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Import({com.codegym.bestticket.configuration.cors.CorsAutoConfiguration.class})
+
+@Import({CorsAutoConfiguration.class})
 public @interface EnableCORS {
 }

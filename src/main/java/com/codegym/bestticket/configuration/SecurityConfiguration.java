@@ -96,7 +96,7 @@ public DaoAuthenticationProvider authenticationProvider(){
 
                 .requestMatchers("/api/auth/login", "/api/auth/register","/api/tickets/**","/api/bookings/**")
                 .permitAll();
-//
+
 
 //        http.authorizeHttpRequests()
 //                .requestMatchers("/api/admins/**", "/api/customers/**", "/api/organizers/**")

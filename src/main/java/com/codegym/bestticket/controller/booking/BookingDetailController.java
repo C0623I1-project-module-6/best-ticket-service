@@ -40,19 +40,19 @@ public class BookingDetailController {
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<ResponsePayload> addBookingDetail(@PathVariable UUID ignoredBookingId, @RequestBody BookingDetailRequest bookingDetailRequest) {
         ResponsePayload responsePayload = bookingDetailService.save(ignoredBookingId, null, bookingDetailRequest);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ResponsePayload> updateBookingDetail(@PathVariable UUID ignoredBookingId, @PathVariable UUID id, @RequestBody BookingDetailRequest bookingDetailRequest) {
         ResponsePayload responsePayload = bookingDetailService.save(ignoredBookingId, id, bookingDetailRequest);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
-    @DeleteMapping("/remove/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<ResponsePayload> removeBookingDetail(@PathVariable UUID ignoredBookingId, @PathVariable UUID id) {
         ResponsePayload responsePayload = bookingDetailService.remove(id);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());

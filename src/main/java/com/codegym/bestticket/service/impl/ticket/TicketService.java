@@ -119,7 +119,7 @@ public class TicketService implements ITicketService {
                         return Stream.of(ticket).filter(t -> t.getStatus().equals(status));
                     }
                 })
-                .filter(ticket -> ticket.getEventTime().getTime().getTime().isBefore(currentDate))
+                .filter(ticket -> ticket.getEventTime().getTime().getTime().isAfter(currentDate))
                 .map(ticket -> {
                     TicketRequest ticketRequest = new TicketRequest();
                     BeanUtils.copyProperties(ticket, ticketRequest);
@@ -144,7 +144,7 @@ public class TicketService implements ITicketService {
                         return Stream.of(ticket).filter(t -> t.getStatus().equals(status));
                     }
                 })
-                .filter(ticket -> ticket.getEventTime().getTime().getTime().isAfter(currentDate))
+                .filter(ticket -> ticket.getEventTime().getTime().getTime().isBefore(currentDate))
                 .map(ticket -> {
                     TicketRequest ticketRequest = new TicketRequest();
                     BeanUtils.copyProperties(ticket, ticketRequest);

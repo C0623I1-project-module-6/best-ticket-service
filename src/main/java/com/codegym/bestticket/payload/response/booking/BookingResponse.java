@@ -11,7 +11,6 @@ import java.util.UUID;
 @Data
 public class BookingResponse {
     private UUID id;
-    private String Date;
     private Double totalAmount;
     private String status;
     private Timestamp createdAt;
