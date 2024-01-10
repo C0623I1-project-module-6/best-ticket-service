@@ -97,6 +97,9 @@ public class UserService implements IUserService {
                         .build();
                 customerRepository.save(customer);
             }
+            if (!registerRequest.getConfirmPassword().equals(registerRequest.getPassword())) {
+                throw new RuntimeException("Password not match!");
+            }
             return ResponsePayload.builder()
                     .message("Register successfully!!!")
                     .status(HttpStatus.CREATED)
@@ -109,6 +112,7 @@ public class UserService implements IUserService {
                     .build();
         }
     }
+
 
     @Override
     public ResponsePayload login(LoginRequest loginRequest) {
