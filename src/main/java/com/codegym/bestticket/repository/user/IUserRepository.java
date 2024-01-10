@@ -39,23 +39,6 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
 
     Page<User> findAllByIsDeletedFalse(Pageable pageable);
 
-    Page<User> searchUserByIsDeletedFalseAndCreatedContaining(Pageable pageable,
-                                                              @Param("status") String status);
-
-    Page<User> searchUserByIsDeletedFalseAndUsernameContaining(Pageable pageable,
-                                                               @Param("status") String status);
-
-    Page<User> searchUserByIsDeletedFalseAndIsActivedContaining(Pageable pageable,
-                                                                @Param("status") String status);
-
-    Page<User> searchUserByIsDeletedFalseAndRolesContaining(Pageable pageable,
-                                                                      @Param("status") String status, String role);
-
-    Page<User> searchUserByIsDeletedFalseAndCustomerFullNameContaining(Pageable pageable,
-                                                               @Param("status") String status);
-
-    Page<User> searchUserByIsDeletedFalseAndOrganizerNameContaining(Pageable pageable,
-                                                                @Param("status") String status);
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);

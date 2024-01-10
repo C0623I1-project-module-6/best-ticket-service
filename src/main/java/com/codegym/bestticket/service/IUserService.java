@@ -10,14 +10,8 @@ import java.util.UUID;
 
 public interface IUserService {
     ResponsePayload register(RegisterRequest registerRequest);
-
     ResponsePayload login(LoginRequest loginRequest);
     ResponsePayload logout(UUID id);
-
     ResponsePayload delete(UUID id);
-
-
-
-
 }
 

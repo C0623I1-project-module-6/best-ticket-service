@@ -49,7 +49,6 @@ public class UserService implements IUserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final IRefreshTokenService refreshTokenService;
 
-
     @Override
     public ResponsePayload register(RegisterRequest registerRequest) {
         try {
@@ -69,7 +68,7 @@ public class UserService implements IUserService {
             User user = registerConverter.dtoToEntity(registerRequest);
             user.setPassword(encoder.encode(user.getPassword()));
             user.setIsDeleted(false);
-            user.setIsActived(true);
+            user.setIsActivated(true);
             Set<String> strRole = registerRequest.getListRole();
             Set<Role> roles = new HashSet<>();
             if (strRole == null) {
@@ -113,7 +112,6 @@ public class UserService implements IUserService {
         }
     }
 
-
     @Override
     public ResponsePayload login(LoginRequest loginRequest) {
         try {
@@ -133,7 +131,7 @@ public class UserService implements IUserService {
             String refreshToken = String.valueOf(refreshTokenService.createRefreshToken(user.getId()));
             LoginResponse loginResponse = loginConverter.entityToDto(user, token, refreshToken);
 
-         
+
             return ResponsePayload.builder()
                     .message("Login successfully!!!")
                     .status(HttpStatus.OK)
@@ -160,7 +158,6 @@ public class UserService implements IUserService {
                 .build();
     }
 
-
     @Override
     public ResponsePayload delete(UUID id) {
         try {
@@ -179,8 +176,7 @@ public class UserService implements IUserService {
                     .build();
         }
     }
-
-
 }
+
 
 
