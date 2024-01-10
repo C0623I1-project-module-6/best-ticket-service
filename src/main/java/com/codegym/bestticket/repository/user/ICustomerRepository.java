@@ -13,8 +13,6 @@ import java.util.UUID;
 public interface ICustomerRepository extends JpaRepository<Customer, UUID> {
     Page<Customer> findAllByIsDeletedFalse(Pageable pageable);
 
-    Page<Customer> findAllByFullNameContainingAndIsDeletedFalse(Pageable pageable, String status);
-
     Optional<Customer> findByUserIdAndIsDeletedFalse(UUID id);
 
     Optional<Customer> findByIdAndIsDeletedFalse(UUID id);

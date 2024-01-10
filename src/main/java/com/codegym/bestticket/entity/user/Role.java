@@ -33,4 +33,7 @@ public class Role {
     private String name;
     private Boolean isDeleted;
 
+    public Role(String status) {
+
+    }
 }
