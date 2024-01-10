@@ -94,8 +94,8 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeHttpRequests()
+                .requestMatchers("/api/auth/login", "/api/auth/register","/api/tickets/**","/api/bookings/**","/api/events/**","/api/","/api/event-type/**")
 
-                .requestMatchers("/api/auth/login", "/api/auth/register","/api/tickets/**","/api/bookings/**")
                 .permitAll();
 
 //        http.authorizeHttpRequests()
