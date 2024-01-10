@@ -1,5 +1,6 @@
 package com.codegym.bestticket.entity.event;
 
+import com.codegym.bestticket.entity.location.Location;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -51,4 +52,8 @@ public class Event {
             inverseJoinColumns = @JoinColumn(name = "time_id"))
     @JsonIgnore
     private Set<Time> times;
+
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
 }
