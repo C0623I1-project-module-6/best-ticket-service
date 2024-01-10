@@ -19,5 +19,6 @@ public interface IUserService {
 
     ResponsePayload filter(Pageable pageable, String username, String email);
 
+    ResponsePayload logout();
 }
 

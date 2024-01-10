@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/admins")
+@RequestMapping("/api/admin")
 @AllArgsConstructor
 @CrossOrigin("*")
 public class AdminController {
@@ -36,11 +36,12 @@ public class AdminController {
     private final IUserService userService;
 
 
-
-    @GetMapping("/user")
-    public ResponseEntity<ResponsePayload> shows(Pageable pageable) {
-        return new ResponseEntity<>(userService.findAll(pageable), HttpStatus.OK);
+    @GetMapping("/users")
+    public ResponseEntity<ResponsePayload> shows(@PageableDefault(size = 5) Pageable pageable) {
+        ResponsePayload responsePayload = adminService.showUsers(pageable);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
+
     @DeleteMapping("/user/{id}")
     public ResponseEntity<ResponsePayload> remove(@PathVariable UUID id) {
         if (id == null) {
@@ -49,7 +50,6 @@ public class AdminController {
         ResponsePayload responsePayload = userService.delete(id);
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
-
     @PostMapping("/role/add")
     public ResponseEntity<ResponsePayload> add(@RequestBody RoleDto roleDto) {
         if (roleDto == null) {
@@ -57,7 +57,6 @@ public class AdminController {
         }
         return new ResponseEntity<>(roleService.create(roleDto), HttpStatus.CREATED);
     }
-
     @PostMapping("/role/{id}")
     public ResponseEntity<ResponsePayload> edit(@PathVariable UUID id,
                                                 @RequestBody RoleDto roleDto) {
@@ -68,7 +67,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/role/{id}")
-    public ResponseEntity<ResponsePayload> deleteRole( @Valid @PathVariable UUID id) {
+    public ResponseEntity<ResponsePayload> deleteRole(@Valid @PathVariable UUID id) {
         if (id == null) {
             new ResponseEntity<>("Id not found!", HttpStatus.NOT_FOUND);
         }
@@ -77,24 +76,18 @@ public class AdminController {
 
     @GetMapping("/bookings")
     public ResponseEntity<ResponsePayload> showBookings(@PageableDefault(size = 5) Pageable pageable) {
-        Page<Booking> bookings = adminService.showBookings(pageable);
-        return new ResponseEntity<>(
-                ResponsePayload
-                        .builder()
-                        .status(HttpStatus.OK)
-                        .data(bookings)
-                        .build(),
-                HttpStatus.OK);
+        ResponsePayload responsePayload = adminService.showBookings(pageable);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
     @GetMapping("/tickets")
     public ResponseEntity<ResponsePayload> showTicket(@PageableDefault(size = 5) Pageable pageable) {
-        Page<Ticket> tickets = adminService.showTickets(pageable);
+
         return new ResponseEntity<>(
                 ResponsePayload
                         .builder()
                         .status(HttpStatus.OK)
-                        .data(tickets)
+                        .data(null)
                         .build(),
                 HttpStatus.OK);
 

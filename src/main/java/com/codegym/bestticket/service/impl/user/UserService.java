@@ -75,7 +75,7 @@ public class UserService implements IUserService {
             User user = registerConverter.dtoToEntity(registerRequest);
             user.setPassword(encoder.encode(user.getPassword()));
             user.setIsDeleted(false);
-            user.setIsActived(true);
+            user.setIsActivated(true);
             Set<String> strRole = registerRequest.getListRole();
             Set<Role> roles = new HashSet<>();
             if (strRole == null) {
@@ -195,7 +195,6 @@ public class UserService implements IUserService {
     }
 
     @Override
-
     public ResponsePayload filter(Pageable pageable, String username, String email) {
         try {
             Page<UserDto> users =
@@ -212,6 +211,11 @@ public class UserService implements IUserService {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
+    }
+
+    @Override
+    public ResponsePayload logout() {
+        return null;
     }
 }
 

@@ -70,13 +70,15 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-@Bean
-public DaoAuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider provider=new DaoAuthenticationProvider();
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(bCryptPasswordEncoder());
         return provider;
-}
+    }
+
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -93,7 +95,12 @@ public DaoAuthenticationProvider authenticationProvider(){
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeHttpRequests()
-                .requestMatchers("/api/auth/login", "/api/auth/register","/api/tickets/**","/api/bookings/**")
+                .requestMatchers("/api/auth/login",
+                        "/api/auth/register",
+                        "/api/tickets/**",
+                        "/api/bookings/**",
+                        "/api/events",
+                        "/api/admin/**")
                 .permitAll();
 
 //        http.authorizeHttpRequests()
