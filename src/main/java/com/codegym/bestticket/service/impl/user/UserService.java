@@ -130,8 +130,8 @@ public class UserService implements IUserService {
             }
             String token = jwtTokenProvider.generateToken(authentication);
 
-            String refreshToken = String.valueOf(refreshTokenService.createRefreshToken(user.getId()));
-            LoginResponse loginResponse = loginConverter.entityToDto(user, token, refreshToken);
+//            String refreshToken = String.valueOf(refreshTokenService.createRefreshToken(user.getId()));
+            LoginResponse loginResponse = loginConverter.entityToDto(user, token);
 
          
             return ResponsePayload.builder()
