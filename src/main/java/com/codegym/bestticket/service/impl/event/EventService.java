@@ -1,11 +1,16 @@
 package com.codegym.bestticket.service.impl.event;
 
 import com.codegym.bestticket.converter.event.IEventConverter;
+import com.codegym.bestticket.converter.event.IEventTypeConverter;
 import com.codegym.bestticket.dto.event.EventDTO;
+import com.codegym.bestticket.dto.event.EventTypeDTO;
 import com.codegym.bestticket.entity.event.Event;
+import com.codegym.bestticket.entity.event.EventType;
+import com.codegym.bestticket.payload.request.event.CreateEventRequest;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.repository.event.IEventRepository;
 import com.codegym.bestticket.service.IEventService;
+import com.codegym.bestticket.service.IEventTypeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,15 +19,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class EventService implements IEventService {
     private final IEventRepository eventRepository;
     private final IEventConverter eventConverter;
+    private final IEventTypeService eventTypeService;
+    private final IEventTypeConverter eventTypeConverter;
 
     @Override
     public EventResponse findAll(int page, int pageSize) {
@@ -80,6 +87,34 @@ public class EventService implements IEventService {
                         .httpStatus(HttpStatus.BAD_REQUEST)
                         .message("EventDTO is not null")
                         .build());
+    }
+
+    @Override
+    public EventResponse createEventt(CreateEventRequest eventRequest) {
+        List<UUID> eventTypeIds = eventRequest.getEventTypeIds();
+        Set<EventTypeDTO> eventTypeDTOs = eventTypeIds.stream()
+                .map(eventTypeService::findById)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Set<EventType> eventTypes = eventTypeDTOs.stream()
+                .map(eventTypeConverter::dtoToEntity)
+                .collect(Collectors.toSet());
+        Event event = Event.builder()
+                .name(eventRequest.getName())
+                .image(eventRequest.getImage())
+                .description(eventRequest.getDescription())
+                .duration(eventRequest.getDuration())
+                .isDeleted(false)
+                .eventTypes(eventTypes)
+                .build();
+        Event savedEvent = eventRepository.saveAndFlush(event);
+        EventDTO savedEventDTO =eventConverter.entityToDTO(savedEvent);
+//        EventDTO savedEvent = eventConverter.entityToDTO(eventRepository.save(event));
+        return EventResponse.builder()
+                .data(savedEventDTO)
+                .httpStatus(HttpStatus.CREATED)
+                .message("Event created successfully")
+                .build();
     }
 
     @Override

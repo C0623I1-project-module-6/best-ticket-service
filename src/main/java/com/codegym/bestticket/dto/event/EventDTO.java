@@ -12,7 +12,6 @@ import java.util.UUID;
 public class EventDTO {
     private UUID id;
     private String name;
-    private String address;
     private String description;
     private String image;
     private String duration;

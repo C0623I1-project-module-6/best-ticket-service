@@ -1,6 +1,7 @@
 package com.codegym.bestticket.controller.event;
 
 import com.codegym.bestticket.dto.event.EventDTO;
+import com.codegym.bestticket.payload.request.event.CreateEventRequest;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.service.IEventService;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,12 @@ public class EventController {
     @PostMapping
     public ResponseEntity<EventResponse> createEvent(@RequestBody EventDTO eventDTO) {
         EventResponse eventResponse = eventService.createEvent(eventDTO);
+        return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<EventResponse> createEventt(@RequestBody CreateEventRequest eventRequest) {
+        EventResponse eventResponse = eventService.createEventt(eventRequest);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 
