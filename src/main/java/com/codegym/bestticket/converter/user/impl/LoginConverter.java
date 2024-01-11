@@ -18,8 +18,6 @@ public class LoginConverter implements ILoginConverter {
 
     public LoginResponse entityToDto(User user, String token) {
         LoginResponse loginResponse = new LoginResponse();
-        Set<String> roleNames = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
-        loginResponse.setListRole(new HashSet<>(roleNames));
         loginResponse.setToken(token);
         BeanUtils.copyProperties(user, loginResponse);
         return loginResponse;

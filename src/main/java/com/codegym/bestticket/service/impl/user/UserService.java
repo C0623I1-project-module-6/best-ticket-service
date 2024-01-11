@@ -79,7 +79,6 @@ public class UserService implements IUserService {
             user.setPassword(encoder.encode(user.getPassword()));
             user.setIsDeleted(false);
             user.setIsActivated(true);
-//            Set<String> strRole = registerRequest.getListRole();
             Set<Role> roles = new HashSet<>();
             if (user.getUsername().equals("admin")) {
                 roles.add(roleRepository.findByName("ADMIN")
@@ -141,6 +140,10 @@ public class UserService implements IUserService {
             user.setRememberToken(token);
             userRepository.save(user);
             LoginResponse loginResponse = loginConverter.entityToDto(user, token);
+            if (user.getCustomer() != null){
+                loginResponse.setFullName(user.getCustomer().getFullName());
+            }
+            loginResponse.setListRole(listRoles);
             return ResponsePayload.builder()
                     .message("Login successfully!!!")
                     .status(HttpStatus.OK)
