@@ -1,15 +1,11 @@
 package com.codegym.bestticket.controller;
 
-import com.codegym.bestticket.entity.RefreshToken;
-import com.codegym.bestticket.exception.TokenRefreshException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
-import com.codegym.bestticket.payload.request.user.TokenRefreshRequest;
-import com.codegym.bestticket.payload.response.TokenRefreshResponse;
 import com.codegym.bestticket.security.JwtTokenProvider;
-import com.codegym.bestticket.service.IRefreshTokenService;
 import com.codegym.bestticket.service.IUserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,7 +25,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AuthController {
     private final IUserService userService;
-    private final IRefreshTokenService refreshTokenService;
     private final JwtTokenProvider tokenProvider;
 
     @PostMapping("/register")
@@ -49,23 +44,9 @@ public class AuthController {
         return new ResponseEntity<>(userService.login(loginRequest), HttpStatus.OK);
     }
 
-    @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
-        String requestRefreshToken = request.getRefreshToken();
 
-        return refreshTokenService.findByToken(requestRefreshToken)
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(user -> {
-                    String token = tokenProvider.generateTokenFromUsername(user.getUsername());
-                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
-                })
-                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
-                        "Refresh token is not in database!"));
-    }
-
-    @PostMapping("/{id}")
-    public ResponseEntity<ResponsePayload> logout(@PathVariable UUID id) {
-        return new ResponseEntity<>(userService.logout(id), HttpStatus.OK);
+    @PostMapping("/logout")
+    public ResponseEntity<ResponsePayload> logout(HttpServletRequest request) {
+        return new ResponseEntity<>(userService.logout(request), HttpStatus.OK);
     }
 }

@@ -13,8 +13,6 @@ public class LoginResponse {
     private String username;
     private String email;
     private String token;
-    private String type = "Bearer ";
-    private String refreshToken;
-    private Set<Role> listRole;
+    private Set<String> listRole;
 
 }
