@@ -4,5 +4,5 @@ import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.payload.response.user.LoginResponse;
 
 public interface ILoginConverter {
-    LoginResponse entityToDto(User user, String token,String refreshToken);
+    LoginResponse entityToDto(User user, String token);
 }

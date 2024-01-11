@@ -2,7 +2,10 @@ package com.codegym.bestticket.service.impl.user;
 
 import com.codegym.bestticket.converter.user.ILoginConverter;
 import com.codegym.bestticket.converter.user.IRegisterConverter;
+import com.codegym.bestticket.converter.user.IUserConverter;
+import com.codegym.bestticket.dto.user.UserDto;
 import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.entity.user.Role;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.exception.EmailAlreadyExistsException;
@@ -15,14 +18,17 @@ import com.codegym.bestticket.payload.request.user.RegisterRequest;
 import com.codegym.bestticket.payload.response.user.LoginResponse;
 import com.codegym.bestticket.payload.response.user.RegisterResponse;
 import com.codegym.bestticket.repository.user.ICustomerRepository;
+import com.codegym.bestticket.repository.user.IOrganizerRepository;
 import com.codegym.bestticket.repository.user.IRoleRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.security.JwtTokenProvider;
-import com.codegym.bestticket.service.IRefreshTokenService;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,9 +37,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @AllArgsConstructor
@@ -42,12 +51,13 @@ public class UserService implements IUserService {
     private final IUserRepository userRepository;
     private final ICustomerRepository customerRepository;
     private final IRoleRepository roleRepository;
+    private final IOrganizerRepository organizerRepository;
+    private final IUserConverter userConverter;
     private final IRegisterConverter registerConverter;
     private final ILoginConverter loginConverter;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
-    private final IRefreshTokenService refreshTokenService;
 
     @Override
     public ResponsePayload register(RegisterRequest registerRequest) {
@@ -69,17 +79,17 @@ public class UserService implements IUserService {
             user.setPassword(encoder.encode(user.getPassword()));
             user.setIsDeleted(false);
             user.setIsActivated(true);
-            Set<String> strRole = registerRequest.getListRole();
             Set<Role> roles = new HashSet<>();
-            if (strRole == null) {
-                roles.add(roleRepository.findByName("ROLE_USER")
-                        .orElseThrow(() -> new RuntimeException("Can not find ROLE_USER!")));
-            } else if (user.getUsername().equals("admin")) {
-                roles.add(roleRepository.findByName("ROLE_ADMIN")
+            if (user.getUsername().equals("admin")) {
+                roles.add(roleRepository.findByName("ADMIN")
                         .orElseThrow(() -> new RuntimeException("Can not find ROLE_ADMIN!")));
-            } else if (registerRequest.getPhoneNumber() != null) {
-                roles.add(roleRepository.findByName("ROLE_CUSTOMER")
+            }
+            if (registerRequest.getPhoneNumber() != null) {
+                roles.add(roleRepository.findByName("CUSTOMER")
                         .orElseThrow(() -> new RuntimeException("Can not find ROLE_CUSTOMER!")));
+            } else {
+                roles.add(roleRepository.findByName("USER")
+                        .orElseThrow(() -> new RuntimeException("Can not find ROLE_USER!")));
             }
             user.setRoles(roles);
             userRepository.save(user);
@@ -127,11 +137,13 @@ public class UserService implements IUserService {
                 listRoles.add(role.getName());
             }
             String token = jwtTokenProvider.generateToken(authentication);
-
-            String refreshToken = String.valueOf(refreshTokenService.createRefreshToken(user.getId()));
-            LoginResponse loginResponse = loginConverter.entityToDto(user, token, refreshToken);
-
-
+            user.setRememberToken(token);
+            userRepository.save(user);
+            LoginResponse loginResponse = loginConverter.entityToDto(user, token);
+            if (user.getCustomer() != null){
+                loginResponse.setFullName(user.getCustomer().getFullName());
+            }
+            loginResponse.setListRole(listRoles);
             return ResponsePayload.builder()
                     .message("Login successfully!!!")
                     .status(HttpStatus.OK)
@@ -147,11 +159,12 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponsePayload logout(UUID id) {
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-        id = ((User) authentication.getPrincipal()).getId();
-        refreshTokenService.deleteByUserId(id);
+    public ResponsePayload logout(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        SecurityContextHolder.clearContext();
+        User user = userRepository.findByToken(token);
+        user.setRememberToken(null);
+        userRepository.save(user);
         return ResponsePayload.builder()
                 .message("Logout successfully!!!")
                 .status(HttpStatus.OK)
@@ -172,6 +185,85 @@ public class UserService implements IUserService {
         } catch (EntityNotFoundException e) {
             return ResponsePayload.builder()
                     .message("User not found or is deleted!")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+    }
+
+    @Override
+    public ResponsePayload findAll(Pageable pageable) {
+        try {
+            Page<User> users = userRepository.findAllByIsDeletedFalse(pageable);
+            Page<UserDto> userDtos = users.map(user -> {
+                UserDto userDto = userConverter.entityToDto(user);
+                Customer customer = customerRepository.findByUserIdAndIsDeletedFalse(userDto.getId())
+                        .orElse(null);
+                userDto.setCustomer(customer);
+                Organizer organizer = organizerRepository.findByUserIdAndIsDeletedFalse(userDto.getId())
+                        .orElse(null);
+                userDto.setOrganizer(organizer);
+                return userDto;
+            });
+            return ResponsePayload.builder()
+                    .message("User list!!!")
+                    .status(HttpStatus.OK)
+                    .data(userDtos)
+                    .build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .message("User list not found")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+    }
+
+    @Override
+    public ResponsePayload filterUsers(Pageable pageable, String status, String filterType) {
+        try {
+            Iterable<User> result;
+            switch (filterType) {
+                case "username":
+                    result = userRepository.searchUserByIsDeletedFalseAndUsernameContaining(pageable, status);
+                    break;
+                case "role":
+                    Role role = new Role(status);
+                    result = userRepository.searchUserByIsDeletedFalseAndRolesContaining(pageable, status, String.valueOf(role));
+                    break;
+                case "customer":
+                    result = userRepository.searchUserByIsDeletedFalseAndCustomerFullNameContaining(pageable, status);
+                    break;
+                case "organizer":
+                    result = userRepository.searchUserByIsDeletedFalseAndOrganizerNameContaining(pageable, status);
+                    break;
+                case "organizerType":
+                    result = organizerRepository.searchUserByIsDeletedFalseAndOrganizerTypeContaining(pageable, status);
+                    break;
+                case "created":
+                    result = userRepository.searchUserByIsDeletedFalseAndCreatedContaining(pageable, status);
+                    break;
+                case "active":
+                    result = userRepository.searchUserByIsDeletedFalseAndIsActivatedContaining(pageable, status);
+                    break;
+                default:
+                    return findAll(pageable);
+            }
+            if (result == null | !result.iterator().hasNext()) {
+                return ResponsePayload.builder()
+                        .message("List user not found!")
+                        .status(HttpStatus.NOT_FOUND)
+                        .build();
+            }
+            Iterable<User> sortedUser = StreamSupport.stream(result.spliterator(), false)
+                    .sorted(Comparator.comparing(User::getCreated).reversed())
+                    .collect(Collectors.toList());
+            return ResponsePayload.builder()
+                    .message("List users")
+                    .status(HttpStatus.OK)
+                    .data(sortedUser)
+                    .build();
+        } catch (EntityNotFoundException e) {
+            return ResponsePayload.builder()
+                    .message("FAILED")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }

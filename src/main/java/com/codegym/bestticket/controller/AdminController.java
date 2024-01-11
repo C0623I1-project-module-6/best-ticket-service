@@ -36,12 +36,12 @@ public class AdminController {
 
 
     @GetMapping("/users")
-    public ResponseEntity<ResponsePayload> shows(@PageableDefault(size = 5) Pageable pageable) {
+    public ResponseEntity<ResponsePayload> shows(@PageableDefault(size = 8) Pageable pageable) {
         ResponsePayload responsePayload = adminService.showUsers(pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
     @GetMapping("/bookings")
-    public ResponseEntity<ResponsePayload> showBookings(@PageableDefault(size = 5) Pageable pageable) {
+    public ResponseEntity<ResponsePayload> showBookings(@PageableDefault(size = 8) Pageable pageable) {
         ResponsePayload responsePayload = adminService.showBookings(pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }

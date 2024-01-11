@@ -10,11 +10,8 @@ import java.util.UUID;
 public class LoginResponse {
     private String avatar;
     private String username;
+    private String fullName;
     private String token;
-    private String type = "Bearer ";
-    private String refreshToken;
-    private UUID id;
-    private String email;
-    private Set<Role> listRole;
+    private Set<String> listRole;
 
 }
