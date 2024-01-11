@@ -1,6 +1,5 @@
 package com.codegym.bestticket.entity.user;
 
-import com.codegym.bestticket.entity.RefreshToken;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,8 +55,6 @@ public class User {
     private Customer customer;
     @OneToOne(mappedBy = "user")
     private Organizer organizer;
-    @OneToOne(mappedBy = "user")
-    private RefreshToken refreshToken;
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<BankAccount> bankAccounts;

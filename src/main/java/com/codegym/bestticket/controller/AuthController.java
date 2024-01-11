@@ -1,14 +1,9 @@
 package com.codegym.bestticket.controller;
 
-import com.codegym.bestticket.entity.RefreshToken;
-import com.codegym.bestticket.exception.TokenRefreshException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
-import com.codegym.bestticket.payload.request.user.TokenRefreshRequest;
-import com.codegym.bestticket.payload.response.TokenRefreshResponse;
 import com.codegym.bestticket.security.JwtTokenProvider;
-import com.codegym.bestticket.service.IRefreshTokenService;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -29,7 +24,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AuthController {
     private final IUserService userService;
-    private final IRefreshTokenService refreshTokenService;
     private final JwtTokenProvider tokenProvider;
 
     @PostMapping("/register")
@@ -47,21 +41,6 @@ public class AuthController {
             new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(userService.login(loginRequest), HttpStatus.OK);
-    }
-
-    @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
-        String requestRefreshToken = request.getRefreshToken();
-
-        return refreshTokenService.findByToken(requestRefreshToken)
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(user -> {
-                    String token = tokenProvider.generateTokenFromUsername(user.getUsername());
-                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
-                })
-                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
-                        "Refresh token is not in database!"));
     }
 
     @PostMapping("/{id}")

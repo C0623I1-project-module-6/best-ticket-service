@@ -18,7 +18,6 @@ import com.codegym.bestticket.repository.user.ICustomerRepository;
 import com.codegym.bestticket.repository.user.IRoleRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.security.JwtTokenProvider;
-import com.codegym.bestticket.service.IRefreshTokenService;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -47,7 +46,6 @@ public class UserService implements IUserService {
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
-    private final IRefreshTokenService refreshTokenService;
 
     @Override
     public ResponsePayload register(RegisterRequest registerRequest) {
@@ -128,10 +126,11 @@ public class UserService implements IUserService {
             }
             String token = jwtTokenProvider.generateToken(authentication);
 
-            String refreshToken = String.valueOf(refreshTokenService.createRefreshToken(user.getId()));
-            LoginResponse loginResponse = loginConverter.entityToDto(user, token, refreshToken);
-
-
+            LoginResponse loginResponse = loginConverter.entityToDto(user, token);
+            if (user.getCustomer() != null){
+                loginResponse.setFullName(user.getCustomer().getFullName());
+            }
+            loginResponse.setListRole(listRoles);
             return ResponsePayload.builder()
                     .message("Login successfully!!!")
                     .status(HttpStatus.OK)
@@ -151,7 +150,6 @@ public class UserService implements IUserService {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
         id = ((User) authentication.getPrincipal()).getId();
-        refreshTokenService.deleteByUserId(id);
         return ResponsePayload.builder()
                 .message("Logout successfully!!!")
                 .status(HttpStatus.OK)
