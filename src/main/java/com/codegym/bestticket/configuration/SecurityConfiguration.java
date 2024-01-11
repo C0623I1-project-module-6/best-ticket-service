@@ -96,6 +96,7 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests()
                 .requestMatchers("/api/auth/login",
                         "/api/auth/register",
+                        "/api/auth/logout",
                         "/api/tickets/**",
                         "/api/bookings/**",
                         "/api/events/**",

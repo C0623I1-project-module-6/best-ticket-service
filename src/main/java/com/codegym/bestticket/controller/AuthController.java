@@ -5,6 +5,7 @@ import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
 import com.codegym.bestticket.security.JwtTokenProvider;
 import com.codegym.bestticket.service.IUserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,8 +44,9 @@ public class AuthController {
         return new ResponseEntity<>(userService.login(loginRequest), HttpStatus.OK);
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<ResponsePayload> logout(@PathVariable UUID id) {
-        return new ResponseEntity<>(userService.logout(id), HttpStatus.OK);
+    @PostMapping("/logout")
+    public ResponseEntity<ResponsePayload> logout(HttpServletRequest request) {
+        return new ResponseEntity<>(userService.logout(request), HttpStatus.OK);
+
     }
 }
