@@ -37,8 +37,8 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
 
     User findByEmail(String email);
 
-    @Query("SELECT u FROM User u WHERE u.rememberToken = :token")
-    Optional<User> findByToken(@Param("token") String token);
+
+    User findUserByRememberToken(String token);
 
     Page<User> findAllByIsDeletedFalse(Pageable pageable);
 
