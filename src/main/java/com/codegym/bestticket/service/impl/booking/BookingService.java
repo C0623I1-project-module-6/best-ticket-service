@@ -143,8 +143,6 @@ public class BookingService implements IBookingService {
             Iterable<Booking> searchedBookings;
             if (category.equals("customers")) {
                 searchedBookings = iBookingRepository.searchBookingsByIsDeletedFalseAndCustomerFullNameContaining(keyword, pageable);
-            } else if (category.equals("organizers")) {
-                searchedBookings = iBookingRepository.searchBookingsByIsDeletedFalseAndOrganizerNameContainingIgnoreCase(keyword, pageable);
             } else return createBookingResponsePayload("Invalid category!", HttpStatus.INTERNAL_SERVER_ERROR, null);
             if (!searchedBookings.iterator().hasNext()) {
                 return createBookingResponsePayload("No bookings found!", HttpStatus.NOT_FOUND, null);
