@@ -158,8 +158,7 @@ public class UserService implements IUserService {
     public ResponsePayload logout(HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
         SecurityContextHolder.clearContext();
-        User user = userRepository.findByToken(token)
-                .orElseThrow(()-> new NullPointerException("Token not found"));
+        User user = userRepository.findUserByRememberToken(token);
         if (user != null) {
             user.setRememberToken(null);
             userRepository.save(user);
