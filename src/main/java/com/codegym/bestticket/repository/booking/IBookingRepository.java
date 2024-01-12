@@ -12,7 +12,10 @@ import java.util.UUID;
 public interface IBookingRepository extends JpaRepository<Booking, UUID> {
     Page<Booking> findAllByIsDeletedFalse(Pageable pageable);
 
+    Page<Booking> findAllByCustomerIdAndIsDeletedFalse(UUID customerId, Pageable pageable);
+
     Page<Booking> searchBookingsByIsDeletedFalseAndCustomerFullNameContaining(@Param("keyword") String keyword, Pageable pageable);
 
     Page<Booking> searchBookingsByIsDeletedFalseAndOrganizerNameContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
+
 }
