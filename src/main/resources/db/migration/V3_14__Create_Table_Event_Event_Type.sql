@@ -28,11 +28,5 @@ CREATE INDEX index_event_event_types_event
 CREATE INDEX index_event_event_types_event_types
     ON event_event_types (event_type_id);
 
-CREATE TABLE IF NOT EXISTS locations(
-    id BINARY(16),
-    city VARCHAR(100),
-    address VARCHAR(50),
-    event_id BINARY(16),
-    FOREIGN KEY (event_id) REFERENCES events(id)
 );
 
