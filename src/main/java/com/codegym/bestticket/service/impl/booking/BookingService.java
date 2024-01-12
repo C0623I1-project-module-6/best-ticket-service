@@ -42,19 +42,34 @@ public class BookingService implements IBookingService {
     public ResponsePayload findAllByIsDeletedFalse(Pageable pageable) {
         try {
             Iterable<Booking> bookings = iBookingRepository.findAllByIsDeletedFalse(pageable);
-            Iterable<BookingResponse> bookingResponses = StreamSupport.stream(bookings.spliterator(), false)
-                    .map(booking -> {
-                        BookingResponse bookingResponse = new BookingResponse();
-                        BeanUtils.copyProperties(booking, bookingResponse);
-                        return bookingResponse;
-                    })
-                    .sorted(Comparator.comparing(BookingResponse::getCreatedAt).reversed())
-                    .collect(Collectors.toList());
-            return createBookingResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
+            return getBookingResponsePayload(bookings);
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);
             return createBookingResponsePayload("Fetch data failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
+    }
+
+    @Override
+    public ResponsePayload findAllByCustomerIdAndIsDeletedFalse(UUID customerId, Pageable pageable) {
+        try {
+            Iterable<Booking> bookings = iBookingRepository.findAllByCustomerIdAndIsDeletedFalse(customerId, Pageable.unpaged());
+            return getBookingResponsePayload(bookings);
+        } catch (Exception e) {
+            log.log(Level.WARNING, e.getMessage(), e);
+            return createBookingResponsePayload("Fetch data failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
+        }
+    }
+
+    private ResponsePayload getBookingResponsePayload(Iterable<Booking> bookings) {
+        Iterable<BookingResponse> bookingResponses = StreamSupport.stream(bookings.spliterator(), false)
+                .map(booking -> {
+                    BookingResponse bookingResponse = new BookingResponse();
+                    BeanUtils.copyProperties(booking, bookingResponse);
+                    return bookingResponse;
+                })
+                .sorted(Comparator.comparing(BookingResponse::getCreatedAt).reversed())
+                .collect(Collectors.toList());
+        return createBookingResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
     }
 
     @Override
@@ -128,8 +143,6 @@ public class BookingService implements IBookingService {
             Iterable<Booking> searchedBookings;
             if (category.equals("customers")) {
                 searchedBookings = iBookingRepository.searchBookingsByIsDeletedFalseAndCustomerFullNameContaining(keyword, pageable);
-            } else if (category.equals("organizers")) {
-                searchedBookings = iBookingRepository.searchBookingsByIsDeletedFalseAndOrganizerNameContainingIgnoreCase(keyword, pageable);
             } else return createBookingResponsePayload("Invalid category!", HttpStatus.INTERNAL_SERVER_ERROR, null);
             if (!searchedBookings.iterator().hasNext()) {
                 return createBookingResponsePayload("No bookings found!", HttpStatus.NOT_FOUND, null);

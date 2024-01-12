@@ -30,8 +30,14 @@ public class BookingController {
     private final IBookingService bookingService;
 
     @GetMapping
-    public ResponseEntity<ResponsePayload> getBookingListByIsDeletedFalse(@PageableDefault Pageable pageable) {
+    public ResponseEntity<ResponsePayload> getBookingListByCustomerIdAndIsDeletedFalse(@PageableDefault Pageable pageable) {
         ResponsePayload responsePayload = bookingService.findAllByIsDeletedFalse(pageable);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
+
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<ResponsePayload> getBookingListByCustomerIdAndIsDeletedFalse(@PathVariable UUID customerId, @PageableDefault Pageable pageable) {
+        ResponsePayload responsePayload = bookingService.findAllByCustomerIdAndIsDeletedFalse(customerId, pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 

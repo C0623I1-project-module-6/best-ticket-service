@@ -38,8 +38,7 @@ public class TicketService implements ITicketService {
 
     @Override
     public ResponsePayload showTicket(Pageable pageable) {
-        Iterable<Ticket> tickets = ticketRepository.findAll(pageable);
-
+            Iterable<Ticket> tickets = ticketRepository.findAll(pageable);
         List<TicketRequest> ticketRequests = StreamSupport.stream(tickets.spliterator(), true)
                 .map(ticket -> {
                     TicketRequest ticketRequest = new TicketRequest();
@@ -47,7 +46,6 @@ public class TicketService implements ITicketService {
                     return ticketRequest;
                 })
                 .toList();
-
         return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.CREATED, ticketRequests);
     }
 

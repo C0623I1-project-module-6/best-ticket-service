@@ -28,5 +28,4 @@ CREATE INDEX index_event_event_types_event
 CREATE INDEX index_event_event_types_event_types
     ON event_event_types (event_type_id);
 
-);
 

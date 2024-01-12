@@ -43,9 +43,6 @@ public class Booking {
     @OneToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
-    @OneToOne
-    @JoinColumn(name = "organizer_id")
-    private Organizer organizer;
     @Column(name = "is_deleted", columnDefinition = "DEFAULT 0")
     private Boolean isDeleted;
 }

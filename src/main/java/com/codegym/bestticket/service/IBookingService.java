@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public interface IBookingService {
     ResponsePayload findAllByIsDeletedFalse(Pageable pageable);
+    ResponsePayload findAllByCustomerIdAndIsDeletedFalse(UUID customerId, Pageable pageable);
     ResponsePayload findById(UUID id);
     ResponsePayload save(BookingRequest bookingRequest, UUID id);
     ResponsePayload remove(UUID id);

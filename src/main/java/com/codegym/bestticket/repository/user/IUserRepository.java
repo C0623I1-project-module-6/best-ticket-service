@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface IUserRepository extends JpaRepository<User, UUID> {
@@ -19,11 +20,10 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
                     " WHERE u.username = :username")
     List<String> findRolesByUsername(@Param("username") String username);
 
-    @Query(nativeQuery = true,
-            value =
-                    "SELECT r.name FROM roles r " +
-                            "INNER JOIN customers c ON c.user.roles = r.id " +
-                            "WHERE c.phoneNumber = :phoneNumber")
+    @Query("SELECT r.name FROM Role r " +
+            "JOIN Customer c " +
+            "JOIN c.user.roles " +
+            "WHERE c.phoneNumber = :phoneNumber")
     List<String> findRolesByPhoneNumber(@Param("phoneNumber") String phoneNumber);
 
     @Query(nativeQuery = true,
@@ -37,10 +37,31 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
 
     User findByEmail(String email);
 
+
+    User findUserByRememberToken(String token);
+
     Page<User> findAllByIsDeletedFalse(Pageable pageable);
 
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
+
+    Page<User> searchUserByIsDeletedFalseAndCreatedContaining(Pageable pageable,
+                                                              @Param("status") String status);
+
+    Page<User> searchUserByIsDeletedFalseAndUsernameContaining(Pageable pageable,
+                                                               @Param("status") String status);
+
+    Page<User> searchUserByIsDeletedFalseAndIsActivatedContaining(Pageable pageable,
+                                                                  @Param("status") String status);
+
+    Page<User> searchUserByIsDeletedFalseAndRolesContaining(Pageable pageable,
+                                                            @Param("status") String status, String role);
+
+    Page<User> searchUserByIsDeletedFalseAndCustomerFullNameContaining(Pageable pageable,
+                                                                       @Param("status") String status);
+
+    Page<User> searchUserByIsDeletedFalseAndOrganizerNameContaining(Pageable pageable,
+                                                                    @Param("status") String status);
 }
 

@@ -1,6 +1,7 @@
 package com.codegym.bestticket.service.impl;
 
 import com.codegym.bestticket.converter.user.IUserConverter;
+import com.codegym.bestticket.dto.admin.BookingAdminDto;
 import com.codegym.bestticket.dto.admin.UserAdminDto;
 import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.entity.user.Customer;
@@ -52,18 +53,24 @@ public class AdminService implements IAdminService {
     @Override
     public ResponsePayload showBookings(Pageable pageable) {
         try {
-            Iterable<Booking> bookings = bookingRepository.findAllByIsDeletedFalse(pageable);
-            Iterable<BookingResponse> bookingResponses = StreamSupport.stream(bookings.spliterator(), false)
-                    .map(booking -> {
-                        BookingResponse bookingResponse = new BookingResponse();
-                        BeanUtils.copyProperties(booking, bookingResponse);
-                        return bookingResponse;
-                    })
-                    .sorted(Comparator.comparing(BookingResponse::getCreatedAt).reversed())
-                    .collect(Collectors.toList());
-            return createResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
+            Page<Booking> bookings = bookingRepository.findAllByIsDeletedFalse(pageable);
+            Page<BookingAdminDto> bookingResponses = bookings.map(booking -> {
+                BookingAdminDto adminDto = new BookingAdminDto();
+                BeanUtils.copyProperties(booking, adminDto);
+                adminDto.setCustomerName(booking.getCustomer().getFullName());
+                adminDto.setCustomerId(booking.getCustomer().getId());
+                return adminDto;
+            });
+            return ResponsePayload.builder()
+                    .data(bookingResponses)
+                    .message("Booking page")
+                    .status(HttpStatus.OK)
+                    .build();
         } catch (Exception e) {
-            return createResponsePayload("Fetch data failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
+            return ResponsePayload.builder()
+                    .status(HttpStatus.NO_CONTENT)
+                    .message(e.getMessage())
+                    .build();
         }
     }
 
@@ -89,11 +96,11 @@ public class AdminService implements IAdminService {
                 BeanUtils.copyProperties(user, adminDto);
                 Optional<Customer> customer = customerRepository.findByUserIdAndIsDeletedFalse(user.getId());
                 Optional<Organizer> organizer = organizerRepository.findByUserIdAndIsDeletedFalse(user.getId());
-                if (customer.isPresent()){
+                if (customer.isPresent()) {
                     adminDto.setCustomerId(customer.get().getId());
                     adminDto.setCustomerName(customer.get().getFullName());
                 }
-                if (organizer.isPresent()){
+                if (organizer.isPresent()) {
                     adminDto.setOrganizerId(organizer.get().getId());
                     adminDto.setOrganizerName(organizer.get().getName());
                 }
