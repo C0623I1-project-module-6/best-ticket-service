@@ -23,7 +23,7 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
             value =
                     "SELECT r.name FROM roles r " +
                             "INNER JOIN customers c ON c.user.roles = r.id " +
-                            "WHERE c.phoneNumber = :phoneNumber")
+                            "WHERE c.phone_number = :phoneNumber")
     List<String> findRolesByPhoneNumber(@Param("phoneNumber") String phoneNumber);
 
     @Query(nativeQuery = true,
