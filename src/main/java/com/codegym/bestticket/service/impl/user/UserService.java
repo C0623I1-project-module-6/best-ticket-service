@@ -24,6 +24,7 @@ import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.security.JwtTokenProvider;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,9 +37,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @AllArgsConstructor
@@ -48,13 +52,12 @@ public class UserService implements IUserService {
     private final ICustomerRepository customerRepository;
     private final IRoleRepository roleRepository;
     private final IOrganizerRepository organizerRepository;
+    private final IUserConverter userConverter;
     private final IRegisterConverter registerConverter;
     private final ILoginConverter loginConverter;
-    private final IUserConverter userConverter;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
-
 
     @Override
     public ResponsePayload register(RegisterRequest registerRequest) {
@@ -75,18 +78,14 @@ public class UserService implements IUserService {
             User user = registerConverter.dtoToEntity(registerRequest);
             user.setPassword(encoder.encode(user.getPassword()));
             user.setIsDeleted(false);
-            user.setIsActived(true);
-            Set<String> strRole = registerRequest.getListRole();
+            user.setIsActivated(true);
             Set<Role> roles = new HashSet<>();
-            if (strRole == null) {
-                roles.add(roleRepository.findByName("ROLE_USER")
-                        .orElseThrow(() -> new RuntimeException("Can not find ROLE_USER!")));
-            } else if (user.getUsername().equals("admin")) {
-                roles.add(roleRepository.findByName("ROLE_ADMIN")
-                        .orElseThrow(() -> new RuntimeException("Can not find ROLE_ADMIN!")));
-            } else if (registerRequest.getPhoneNumber() != null) {
-                roles.add(roleRepository.findByName("ROLE_CUSTOMER")
+            if (registerRequest.getPhoneNumber() != null) {
+                roles.add(roleRepository.findByName("CUSTOMER")
                         .orElseThrow(() -> new RuntimeException("Can not find ROLE_CUSTOMER!")));
+            } else {
+                roles.add(roleRepository.findByName("USER")
+                        .orElseThrow(() -> new RuntimeException("Can not find ROLE_USER!")));
             }
             user.setRoles(roles);
             userRepository.save(user);
@@ -102,6 +101,9 @@ public class UserService implements IUserService {
                         .isDeleted(false)
                         .build();
                 customerRepository.save(customer);
+            }
+            if (!registerRequest.getConfirmPassword().equals(registerRequest.getPassword())) {
+                throw new RuntimeException("Password not match!");
             }
             return ResponsePayload.builder()
                     .message("Register successfully!!!")
@@ -121,7 +123,7 @@ public class UserService implements IUserService {
         try {
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(
-                            loginRequest.getInput(),
+                            loginRequest.getUsername(),
                             loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user = userRepository.findByUsername(authentication.getName());
@@ -131,7 +133,13 @@ public class UserService implements IUserService {
                 listRoles.add(role.getName());
             }
             String token = jwtTokenProvider.generateToken(authentication);
+            user.setRememberToken(token);
+            userRepository.save(user);
             LoginResponse loginResponse = loginConverter.entityToDto(user, token);
+            if (user.getCustomer() != null) {
+                loginResponse.setFullName(user.getCustomer().getFullName());
+            }
+            loginResponse.setListRole(listRoles);
             return ResponsePayload.builder()
                     .message("Login successfully!!!")
                     .status(HttpStatus.OK)
@@ -146,6 +154,25 @@ public class UserService implements IUserService {
 
     }
 
+    @Override
+    public ResponsePayload logout(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        SecurityContextHolder.clearContext();
+        User user = userRepository.findByToken(token)
+                .orElseThrow(()-> new NullPointerException("Token not found"));
+        if (user != null) {
+            user.setRememberToken(null);
+            userRepository.save(user);
+            return ResponsePayload.builder()
+                    .message("Logout successfully!!!")
+                    .status(HttpStatus.OK)
+                    .build();
+        }
+        return ResponsePayload.builder()
+                .message("User not found!")
+                .status(HttpStatus.UNAUTHORIZED)
+                .build();
+    }
 
     @Override
     public ResponsePayload delete(UUID id) {
@@ -191,20 +218,51 @@ public class UserService implements IUserService {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
-
     }
 
     @Override
-
-    public ResponsePayload filter(Pageable pageable, String username, String email) {
+    public ResponsePayload filterUsers(Pageable pageable, String status, String filterType) {
         try {
-            Page<UserDto> users =
-                    userRepository.findAllByUsernameContainingOrEmailContainingAndIsDeletedFalse(pageable, username, email)
-                            .map(userConverter::entityToDto);
+            Iterable<User> result;
+            switch (filterType) {
+                case "username":
+                    result = userRepository.searchUserByIsDeletedFalseAndUsernameContaining(pageable, status);
+                    break;
+                case "role":
+                    Role role = new Role(status);
+                    result = userRepository.searchUserByIsDeletedFalseAndRolesContaining(pageable, status, String.valueOf(role));
+                    break;
+                case "customer":
+                    result = userRepository.searchUserByIsDeletedFalseAndCustomerFullNameContaining(pageable, status);
+                    break;
+                case "organizer":
+                    result = userRepository.searchUserByIsDeletedFalseAndOrganizerNameContaining(pageable, status);
+                    break;
+                case "organizerType":
+                    result = organizerRepository.searchUserByIsDeletedFalseAndOrganizerTypeContaining(pageable, status);
+                    break;
+                case "created":
+                    result = userRepository.searchUserByIsDeletedFalseAndCreatedContaining(pageable, status);
+                    break;
+                case "active":
+                    result = userRepository.searchUserByIsDeletedFalseAndIsActivatedContaining(pageable, status);
+                    break;
+                default:
+                    return findAll(pageable);
+            }
+            if (!result.iterator().hasNext()) {
+                return ResponsePayload.builder()
+                        .message("List user not found!")
+                        .status(HttpStatus.NOT_FOUND)
+                        .build();
+            }
+            Iterable<User> sortedUser = StreamSupport.stream(result.spliterator(), false)
+                    .sorted(Comparator.comparing(User::getCreated).reversed())
+                    .collect(Collectors.toList());
             return ResponsePayload.builder()
-                    .message("SUCCESS")
+                    .message("List users")
                     .status(HttpStatus.OK)
-                    .data(users)
+                    .data(sortedUser)
                     .build();
         } catch (EntityNotFoundException e) {
             return ResponsePayload.builder()
@@ -214,5 +272,6 @@ public class UserService implements IUserService {
         }
     }
 }
+
 
 

@@ -49,7 +49,7 @@ public class User {
     private String rememberToken;
     private String avatar;
     private Boolean isDeleted;
-    private Boolean isActived;
+    private Boolean isActivated;
 
     @OneToOne(mappedBy = "user")
     private Customer customer;

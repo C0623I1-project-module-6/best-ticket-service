@@ -25,12 +25,12 @@ public class UserDetailsService implements org.springframework.security.core.use
     private ICustomerRepository customerRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String input) throws UsernameNotFoundException {
-        User user = findUser(input);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = findUser(username);
         if (user == null) {
-            throw new UsernameNotFoundException("User " + input + "was not found in database!");
+            throw new UsernameNotFoundException("User " + username + "was not found in database!");
         }
-        Customer customer = null;
+        Customer customer = new Customer();
         List<String> roles = findRoles(user, customer);
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
@@ -68,7 +68,7 @@ public class UserDetailsService implements org.springframework.security.core.use
         }
     }
 
-    public boolean isNumeric(String string) {
-        return StringUtils.isNumeric(string);
+    public boolean isNumeric(String input) {
+        return StringUtils.isNumeric(input);
     }
 }
