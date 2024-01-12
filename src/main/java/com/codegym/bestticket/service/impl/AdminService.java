@@ -59,8 +59,6 @@ public class AdminService implements IAdminService {
                 BeanUtils.copyProperties(booking, adminDto);
                 adminDto.setCustomerName(booking.getCustomer().getFullName());
                 adminDto.setCustomerId(booking.getCustomer().getId());
-                adminDto.setOrganizeId(booking.getOrganizer().getId());
-                adminDto.setOrganizeName(booking.getOrganizer().getName());
                 return adminDto;
             });
             return ResponsePayload.builder()
