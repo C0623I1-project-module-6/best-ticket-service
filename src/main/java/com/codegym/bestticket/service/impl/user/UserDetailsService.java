@@ -30,7 +30,7 @@ public class UserDetailsService implements org.springframework.security.core.use
         if (user == null) {
             throw new UsernameNotFoundException("User " + username + "was not found in database!");
         }
-        Customer customer = null;
+        Customer customer = new Customer();
         List<String> roles = findRoles(user, customer);
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
@@ -68,7 +68,7 @@ public class UserDetailsService implements org.springframework.security.core.use
         }
     }
 
-    public boolean isNumeric(String string) {
-        return StringUtils.isNumeric(string);
+    public boolean isNumeric(String input) {
+        return StringUtils.isNumeric(input);
     }
 }

@@ -80,10 +80,6 @@ public class UserService implements IUserService {
             user.setIsDeleted(false);
             user.setIsActivated(true);
             Set<Role> roles = new HashSet<>();
-            if (user.getUsername().equals("admin")) {
-                roles.add(roleRepository.findByName("ADMIN")
-                        .orElseThrow(() -> new RuntimeException("Can not find ROLE_ADMIN!")));
-            }
             if (registerRequest.getPhoneNumber() != null) {
                 roles.add(roleRepository.findByName("CUSTOMER")
                         .orElseThrow(() -> new RuntimeException("Can not find ROLE_CUSTOMER!")));
@@ -140,7 +136,7 @@ public class UserService implements IUserService {
             user.setRememberToken(token);
             userRepository.save(user);
             LoginResponse loginResponse = loginConverter.entityToDto(user, token);
-            if (user.getCustomer() != null){
+            if (user.getCustomer() != null) {
                 loginResponse.setFullName(user.getCustomer().getFullName());
             }
             loginResponse.setListRole(listRoles);
@@ -162,12 +158,19 @@ public class UserService implements IUserService {
     public ResponsePayload logout(HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
         SecurityContextHolder.clearContext();
-        User user = userRepository.findByToken(token);
-        user.setRememberToken(null);
-        userRepository.save(user);
+        User user = userRepository.findByToken(token)
+                .orElseThrow(()-> new NullPointerException("Token not found"));
+        if (user != null) {
+            user.setRememberToken(null);
+            userRepository.save(user);
+            return ResponsePayload.builder()
+                    .message("Logout successfully!!!")
+                    .status(HttpStatus.OK)
+                    .build();
+        }
         return ResponsePayload.builder()
-                .message("Logout successfully!!!")
-                .status(HttpStatus.OK)
+                .message("User not found!")
+                .status(HttpStatus.UNAUTHORIZED)
                 .build();
     }
 
@@ -247,7 +250,7 @@ public class UserService implements IUserService {
                 default:
                     return findAll(pageable);
             }
-            if (result == null | !result.iterator().hasNext()) {
+            if (!result.iterator().hasNext()) {
                 return ResponsePayload.builder()
                         .message("List user not found!")
                         .status(HttpStatus.NOT_FOUND)
