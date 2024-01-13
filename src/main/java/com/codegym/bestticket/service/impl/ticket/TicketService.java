@@ -1,6 +1,7 @@
 package com.codegym.bestticket.service.impl.ticket;
 
 import com.codegym.bestticket.converter.user.impl.constant.ETicketMessage;
+import com.codegym.bestticket.dto.ticket.TicketDto;
 import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.ticket.TicketRequest;
@@ -133,7 +134,7 @@ public class TicketService implements ITicketService {
         Iterable<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
         LocalDateTime currentDate = LocalDateTime.now();
 
-        List<TicketRequest> ticketRequests = StreamSupport.stream(tickets.spliterator(), true)
+        List<TicketDto> ticketDto = StreamSupport.stream(tickets.spliterator(), true)
 
                 .flatMap(ticket -> {
                     if (StringUtils.isEmpty(status)) {
@@ -144,12 +145,18 @@ public class TicketService implements ITicketService {
                 })
                 .filter(ticket -> ticket.getEventTime().getTime().getTime().isBefore(currentDate))
                 .map(ticket -> {
-                    TicketRequest ticketRequest = new TicketRequest();
-                    BeanUtils.copyProperties(ticket, ticketRequest);
-                    return ticketRequest;
+                    TicketDto ticketDto1 = TicketDto
+                            .builder()
+                            .eventName(ticket.getEventTime().getEvent().getName())
+                            .time(ticket.getEventTime().getTime().getTime())
+                            .location(ticket.getEventTime().getEvent().getLocation())
+
+                            .build();
+                    BeanUtils.copyProperties(ticket, ticketDto1);
+                    return ticketDto1;
                 })
                 .toList();
 
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequests);
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
     }
 }
