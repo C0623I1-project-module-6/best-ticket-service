@@ -73,4 +73,10 @@ public class BookingController {
         ResponsePayload responsePayload = bookingService.search(category, keyword, pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
+
+    @GetMapping("/event/{eventId}")
+    public ResponseEntity<ResponsePayload> findAllByEventId(@PathVariable UUID eventId, Pageable pageable) {
+        ResponsePayload responsePayload = bookingService.findAllByEventId(eventId, pageable);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
 }
