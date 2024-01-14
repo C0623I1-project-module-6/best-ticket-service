@@ -12,6 +12,7 @@ import com.codegym.bestticket.service.IBookingDetailService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class BookingDetailService implements IBookingDetailService {
     public ResponsePayload findAllByBookingIdAndIsDeletedFalse(UUID bookingId, Pageable pageable) {
         try {
             updateBookingTotalAmount(bookingId);
-            Iterable<BookingDetail> bookingDetailList = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId, pageable);
+            Page<BookingDetail> bookingDetailList = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId, pageable);
             Iterable<BookingDetailResponse> bookingDetailResponseList = StreamSupport.stream(bookingDetailList.spliterator(), false)
                     .map(bookingDetail -> {
                         BookingDetailResponse bookingDetailResponse = new BookingDetailResponse();
@@ -116,7 +117,7 @@ public class BookingDetailService implements IBookingDetailService {
     //Developing function
     private void updateBookingTotalAmount(UUID bookingId) {
         Optional<Booking> optionalBooking = iBookingRepository.findById(bookingId);
-        Iterable<BookingDetail> bookingDetailList = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId);
+        Iterable<BookingDetail> bookingDetailList = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId,Pageable.unpaged());
         optionalBooking.ifPresent(booking -> {
             double totalAmount = StreamSupport.stream(bookingDetailList.spliterator(), false)
                     .filter(bookingDetail -> !bookingDetail.getIsDeleted())
