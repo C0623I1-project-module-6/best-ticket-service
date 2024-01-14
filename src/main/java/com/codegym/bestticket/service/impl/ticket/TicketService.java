@@ -11,10 +11,10 @@ import com.codegym.bestticket.service.ITicketService;
 import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,8 +39,8 @@ public class TicketService implements ITicketService {
 
     @Override
     public ResponsePayload showTicket(Pageable pageable) {
-            Iterable<Ticket> tickets = ticketRepository.findAll(pageable);
-        List<TicketRequest> ticketRequests = StreamSupport.stream(tickets.spliterator(), true)
+        Page<Ticket> tickets = ticketRepository.findAll(pageable);
+        Iterable<TicketRequest> ticketRequests = StreamSupport.stream(tickets.spliterator(), true)
                 .map(ticket -> {
                     TicketRequest ticketRequest = new TicketRequest();
                     BeanUtils.copyProperties(ticket, ticketRequest);
@@ -93,7 +93,7 @@ public class TicketService implements ITicketService {
     public ResponsePayload deleteTicketById(UUID id) {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
         if (ticket != null) {
-            ticket.setIsDeleted(false);
+            ticket.setIsDeleted(true);
             Ticket ticketSave = ticketRepository.save(ticket);
             TicketRequest ticketRequest = new TicketRequest();
             BeanUtils.copyProperties(ticketSave, ticketRequest);

@@ -1,20 +1,22 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.payload.request.ticket.TicketTypeRequest;
+import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.response.ticket.TicketTypeResponse;
+import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
 
 public interface ITicketTypeService {
 
-    Iterable<TicketTypeRequest> getAllTicketType();
+    ResponsePayload getAllTicketType(Pageable pageable);
 
-    TicketTypeResponse getTicketTypeById(UUID id);
+    ResponsePayload getTicketTypeById(UUID id);
 
-    TicketTypeRequest createTicketType(TicketTypeRequest ticketTypeRequest);
+    ResponsePayload createTicketType(TicketTypeResponse ticketTypeResponse);
 
-    void deleteTicketType(UUID id);
+    ResponsePayload updateTicketType(TicketTypeResponse ticketTypeResponse);
 
-    void updateTicketType(TicketTypeResponse ticketTypeResponse);
+    ResponsePayload deleteTicketTypeById(UUID id);
+
 }
