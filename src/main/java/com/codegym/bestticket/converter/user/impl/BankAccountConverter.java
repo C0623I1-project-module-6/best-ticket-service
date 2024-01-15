@@ -2,7 +2,7 @@ package com.codegym.bestticket.converter.user.impl;
 
 import com.codegym.bestticket.converter.user.IBankAccountConverter;
 import com.codegym.bestticket.entity.user.BankAccount;
-import com.codegym.bestticket.payload.request.user.BankAccountRequest;
+import com.codegym.bestticket.dto.user.BankAccountDto;
 import com.codegym.bestticket.payload.response.user.BankAccountResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
@@ -20,9 +20,9 @@ public class BankAccountConverter implements IBankAccountConverter {
 
     }
 
-    public BankAccount dtoToEntity(BankAccountRequest bankAccountRequest) {
+    public BankAccount dtoToEntity(BankAccountDto bankAccountDto) {
         BankAccount bankAccount = new BankAccount();
-        BeanUtils.copyProperties(bankAccountRequest, bankAccount);
+        BeanUtils.copyProperties(bankAccountDto, bankAccount);
         return bankAccount;
     }
 

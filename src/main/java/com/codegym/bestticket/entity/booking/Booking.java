@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -31,7 +33,6 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
     @Column(columnDefinition = "DECIMAL(10, 2)")
     private Double totalAmount;
     @Column(length = 30)
@@ -45,4 +46,7 @@ public class Booking {
     private Customer customer;
     @Column(name = "is_deleted", columnDefinition = "DEFAULT 0")
     private Boolean isDeleted;
+
+    @OneToMany(mappedBy = "booking")
+    private List<BookingDetail> bookingDetailList;
 }

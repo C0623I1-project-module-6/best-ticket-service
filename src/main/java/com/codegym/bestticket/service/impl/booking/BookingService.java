@@ -11,6 +11,7 @@ import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,10 @@ public class BookingService implements IBookingService {
     @Override
     public ResponsePayload findAllByIsDeletedFalse(Pageable pageable) {
         try {
-            Iterable<Booking> bookings = iBookingRepository.findAllByIsDeletedFalse(pageable);
+            Page<Booking> bookings = iBookingRepository.findAllByIsDeletedFalse(pageable);
+            if(bookings.isEmpty()) {
+                return createBookingResponsePayload("There is no bookings.", HttpStatus.OK, bookings);
+            }
             return getBookingResponsePayload(bookings);
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);
@@ -52,7 +56,10 @@ public class BookingService implements IBookingService {
     @Override
     public ResponsePayload findAllByCustomerIdAndIsDeletedFalse(UUID customerId, Pageable pageable) {
         try {
-            Iterable<Booking> bookings = iBookingRepository.findAllByCustomerIdAndIsDeletedFalse(customerId, Pageable.unpaged());
+            Page<Booking> bookings = iBookingRepository.findAllByCustomerIdAndIsDeletedFalse(customerId, pageable);
+            if(bookings.isEmpty()) {
+                return createBookingResponsePayload("There is no bookings.", HttpStatus.OK, bookings);
+            }
             return getBookingResponsePayload(bookings);
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);
@@ -62,6 +69,7 @@ public class BookingService implements IBookingService {
 
     private ResponsePayload getBookingResponsePayload(Iterable<Booking> bookings) {
         Iterable<BookingResponse> bookingResponses = StreamSupport.stream(bookings.spliterator(), false)
+                .filter(booking -> !booking.getIsDeleted())
                 .map(booking -> {
                     BookingResponse bookingResponse = new BookingResponse();
                     BeanUtils.copyProperties(booking, bookingResponse);
@@ -154,6 +162,20 @@ public class BookingService implements IBookingService {
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);
             return createBookingResponsePayload("Searching failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
+        }
+    }
+
+    @Override
+    public ResponsePayload findAllByEventId(UUID eventId, Pageable pageable) {
+        try {
+            Page<Booking> bookings = iBookingRepository.findAllByEventId(eventId, pageable);
+            if(bookings.isEmpty()) {
+                return createBookingResponsePayload("There is no bookings.", HttpStatus.OK, bookings);
+            }
+            return getBookingResponsePayload(bookings);
+        } catch (Exception e) {
+            log.log(Level.WARNING, e.getMessage(), e);
+            return createBookingResponsePayload("Fetch data failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
     }
 }

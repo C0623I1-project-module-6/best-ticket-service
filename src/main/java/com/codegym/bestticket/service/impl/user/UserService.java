@@ -70,11 +70,12 @@ public class UserService implements IUserService {
                     registerRequest.getEmail())) {
                 throw new EmailAlreadyExistsException("Email already exists!");
             }
-            if (customerRepository.existsByPhoneNumber(
-                    registerRequest.getPhoneNumber())) {
-                throw new PhoneNumberAlreadyExistsException("Phone number already exists!");
+            String phoneNumber = registerRequest.getPhoneNumber();
+            if (phoneNumber != null) {
+                if (customerRepository.existsByPhoneNumber(phoneNumber)) {
+                    throw new PhoneNumberAlreadyExistsException("Phone number already exists!");
+                }
             }
-
             User user = registerConverter.dtoToEntity(registerRequest);
             user.setPassword(encoder.encode(user.getPassword()));
             user.setIsDeleted(false);
@@ -82,10 +83,10 @@ public class UserService implements IUserService {
             Set<Role> roles = new HashSet<>();
             if (registerRequest.getPhoneNumber() != null) {
                 roles.add(roleRepository.findByName("CUSTOMER")
-                        .orElseThrow(() -> new RuntimeException("Can not find ROLE_CUSTOMER!")));
+                        .orElseThrow(() -> new RuntimeException("Role CUSTOMER not found!")));
             } else {
                 roles.add(roleRepository.findByName("USER")
-                        .orElseThrow(() -> new RuntimeException("Can not find ROLE_USER!")));
+                        .orElseThrow(() -> new RuntimeException("Role USER not found!")));
             }
             user.setRoles(roles);
             userRepository.save(user);
@@ -105,6 +106,11 @@ public class UserService implements IUserService {
             if (!registerRequest.getConfirmPassword().equals(registerRequest.getPassword())) {
                 throw new RuntimeException("Password not match!");
             }
+            Set<String> listRole = user.getRoles()
+                    .stream()
+                    .map(Role::getName)
+                    .collect(Collectors.toSet());
+            registerResponse.setListRole(listRole);
             return ResponsePayload.builder()
                     .message("Register successfully!!!")
                     .status(HttpStatus.CREATED)

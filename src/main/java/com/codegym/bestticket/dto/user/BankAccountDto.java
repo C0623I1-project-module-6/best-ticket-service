@@ -1,13 +1,11 @@
-package com.codegym.bestticket.payload.request.user;
+package com.codegym.bestticket.dto.user;
 
-import com.codegym.bestticket.entity.user.User;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
 
 @Data
-public class BankAccountRequest {
+public class BankAccountDto {
     private UUID id;
     private String accountName;
     private String accountNumber;
