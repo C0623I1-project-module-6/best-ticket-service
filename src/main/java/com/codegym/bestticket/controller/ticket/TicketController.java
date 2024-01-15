@@ -83,7 +83,7 @@ public class TicketController {
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
     @GetMapping("/show-ticket/finished")
-    public ResponseEntity<ResponsePayload> showTicketFinished(@PageableDefault(page = 0, size = 200) Pageable pageable, @RequestParam String status) {
+    public ResponseEntity<ResponsePayload> showTicketFinished(@PageableDefault(page = 0, size = 10) Pageable pageable, @RequestParam String status) {
         ResponsePayload responsePayload = ticketService.showAllTicketFinished(pageable, status);
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
