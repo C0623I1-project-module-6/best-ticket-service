@@ -2,11 +2,11 @@ package com.codegym.bestticket.controller.ticket;
 
 import com.codegym.bestticket.converter.user.impl.constant.ETicketMessage;
 import com.codegym.bestticket.payload.ResponsePayload;
-import com.codegym.bestticket.payload.request.ticket.TicketTypeRequest;
 import com.codegym.bestticket.payload.response.ticket.TicketTypeResponse;
 import com.codegym.bestticket.service.ITicketTypeService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,72 +28,28 @@ public class TicketTypeController {
     private final ITicketTypeService ticketTypeService;
 
     @GetMapping()
-    public ResponseEntity<ResponsePayload> getAllTicketType() {
-        Iterable<TicketTypeRequest> ticketTypeRequestDTOS = ticketTypeService.getAllTicketType();
-
-        ResponsePayload responsePayload;
-
-        if (ticketTypeRequestDTOS == null) {
-            responsePayload = ResponsePayload.builder()
-                    .message(String.valueOf(ETicketMessage.FAIL))
-                    .status(HttpStatus.NOT_FOUND)
-                    .build();
-            return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
-        }
-
-        responsePayload = ResponsePayload.builder()
-                .status(HttpStatus.OK)
-                .message(String.valueOf(ETicketMessage.SUCCESS))
-                .data(ticketTypeRequestDTOS)
-                .build();
-
+    public ResponseEntity<ResponsePayload> getAllTicketType(@PageableDefault Pageable pageable) {
+        ResponsePayload responsePayload = ticketTypeService.getAllTicketType(pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
-
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponsePayload> getTicketTypeById(@PathVariable UUID id) {
-        TicketTypeResponse ticketTypeResponse = ticketTypeService.getTicketTypeById(id);
-        ResponsePayload responsePayload;
-
-        if (ticketTypeResponse == null) {
-            responsePayload = ResponsePayload.builder()
-                    .status(HttpStatus.NOT_FOUND)
-                    .message(String.valueOf(ETicketMessage.FAIL))
-                    .build();
-            return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+        ResponsePayload responsePayload = ticketTypeService.getTicketTypeById(id);
+        if (responsePayload == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        responsePayload = ResponsePayload.builder()
-                .message(String.valueOf(ETicketMessage.SUCCESS))
-                .status(HttpStatus.OK)
-                .data(ticketTypeResponse)
-                .build();
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
 
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<ResponsePayload> createTicketType(@RequestBody TicketTypeRequest ticketTypeRequest) {
-        if (ticketTypeRequest == null) {
-            ResponsePayload responsePayload = ResponsePayload.builder()
-                    .status(HttpStatus.NOT_FOUND)
-                    .message(String.valueOf(ETicketMessage.FAIL))
-                    .build();
-            return new ResponseEntity<>(responsePayload.getStatus());
+    @PostMapping()
+    public ResponseEntity<ResponsePayload> createTicketType(@RequestBody TicketTypeResponse ticketTypeResponse) {
+        ResponsePayload responsePayload = ticketTypeService.createTicketType(ticketTypeResponse);
+        if (responsePayload == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        TicketTypeResponse ticketTypeResponse = new TicketTypeResponse();
-        TicketTypeRequest ticketTypeRequest1 = ticketTypeService.createTicketType(ticketTypeRequest);
-        BeanUtils.copyProperties(ticketTypeRequest1, ticketTypeResponse);
-
-        ResponsePayload responsePayload;
-
-        responsePayload = ResponsePayload.builder()
-                .status(HttpStatus.CREATED)
-                .message(String.valueOf(ETicketMessage.SUCCESS))
-                .data(ticketTypeRequest)
-                .build();
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
@@ -108,7 +64,7 @@ public class TicketTypeController {
             responsePayload.setMessage(String.valueOf(ETicketMessage.FAIL));
         }
 
-        ticketTypeService.deleteTicketType(id);
+        ticketTypeService.deleteTicketTypeById(id);
         responsePayload = ResponsePayload.builder()
                 .status(HttpStatus.OK)
                 .message(String.valueOf(ETicketMessage.SUCCESS))
@@ -118,23 +74,13 @@ public class TicketTypeController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<ResponsePayload> updateTicketType(@PathVariable UUID id, @RequestBody TicketTypeResponse ticketTypeResponse) {
-        ResponsePayload responsePayload;
         if (ticketTypeResponse != null) {
             ticketTypeResponse.setId(id);
-            ticketTypeService.updateTicketType(ticketTypeResponse);
-
-            responsePayload = ResponsePayload.builder()
-                    .status(HttpStatus.OK)
-                    .message(String.valueOf(ETicketMessage.SUCCESS))
-                    .data(ticketTypeResponse)
-                    .build();
+            ResponsePayload responsePayload = ticketTypeService.updateTicketType(ticketTypeResponse);
             return new ResponseEntity<>(responsePayload, HttpStatus.OK);
+
         }
-        responsePayload = ResponsePayload.builder()
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .message(String.valueOf(ETicketMessage.SUCCESS))
-                .build();
-        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
     }
 

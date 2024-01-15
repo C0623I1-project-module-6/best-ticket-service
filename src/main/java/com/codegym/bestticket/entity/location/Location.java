@@ -19,6 +19,8 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    private String address;
+
     private String province;
 
     private String district;

@@ -70,26 +70,23 @@ public class UserService implements IUserService {
                     registerRequest.getEmail())) {
                 throw new EmailAlreadyExistsException("Email already exists!");
             }
-            if (customerRepository.existsByPhoneNumber(
-                    registerRequest.getPhoneNumber())) {
-                throw new PhoneNumberAlreadyExistsException("Phone number already exists!");
+            String phoneNumber = registerRequest.getPhoneNumber();
+            if (phoneNumber != null) {
+                if (customerRepository.existsByPhoneNumber(phoneNumber)) {
+                    throw new PhoneNumberAlreadyExistsException("Phone number already exists!");
+                }
             }
-
             User user = registerConverter.dtoToEntity(registerRequest);
             user.setPassword(encoder.encode(user.getPassword()));
             user.setIsDeleted(false);
             user.setIsActivated(true);
             Set<Role> roles = new HashSet<>();
-            if (user.getUsername().equals("admin")) {
-                roles.add(roleRepository.findByName("ADMIN")
-                        .orElseThrow(() -> new RuntimeException("Can not find ROLE_ADMIN!")));
-            }
             if (registerRequest.getPhoneNumber() != null) {
                 roles.add(roleRepository.findByName("CUSTOMER")
-                        .orElseThrow(() -> new RuntimeException("Can not find ROLE_CUSTOMER!")));
+                        .orElseThrow(() -> new RuntimeException("Role CUSTOMER not found!")));
             } else {
                 roles.add(roleRepository.findByName("USER")
-                        .orElseThrow(() -> new RuntimeException("Can not find ROLE_USER!")));
+                        .orElseThrow(() -> new RuntimeException("Role USER not found!")));
             }
             user.setRoles(roles);
             userRepository.save(user);
@@ -109,6 +106,11 @@ public class UserService implements IUserService {
             if (!registerRequest.getConfirmPassword().equals(registerRequest.getPassword())) {
                 throw new RuntimeException("Password not match!");
             }
+            Set<String> listRole = user.getRoles()
+                    .stream()
+                    .map(Role::getName)
+                    .collect(Collectors.toSet());
+            registerResponse.setListRole(listRole);
             return ResponsePayload.builder()
                     .message("Register successfully!!!")
                     .status(HttpStatus.CREATED)
@@ -140,7 +142,7 @@ public class UserService implements IUserService {
             user.setRememberToken(token);
             userRepository.save(user);
             LoginResponse loginResponse = loginConverter.entityToDto(user, token);
-            if (user.getCustomer() != null){
+            if (user.getCustomer() != null) {
                 loginResponse.setFullName(user.getCustomer().getFullName());
             }
             loginResponse.setListRole(listRoles);
@@ -161,13 +163,20 @@ public class UserService implements IUserService {
     @Override
     public ResponsePayload logout(HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
+
         SecurityContextHolder.clearContext();
-        User user = userRepository.findByToken(token);
-        user.setRememberToken(null);
-        userRepository.save(user);
+        User user = userRepository.findUserByRememberToken(token);
+        if (user != null) {
+            user.setRememberToken(null);
+            userRepository.save(user);
+            return ResponsePayload.builder()
+                    .message("Logout successfully!!!")
+                    .status(HttpStatus.OK)
+                    .build();
+        }
         return ResponsePayload.builder()
-                .message("Logout successfully!!!")
-                .status(HttpStatus.OK)
+                .message("User not found!")
+                .status(HttpStatus.UNAUTHORIZED)
                 .build();
     }
 
@@ -247,7 +256,7 @@ public class UserService implements IUserService {
                 default:
                     return findAll(pageable);
             }
-            if (result == null | !result.iterator().hasNext()) {
+            if (!result.iterator().hasNext()) {
                 return ResponsePayload.builder()
                         .message("List user not found!")
                         .status(HttpStatus.NOT_FOUND)

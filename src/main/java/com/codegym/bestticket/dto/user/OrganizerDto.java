@@ -13,5 +13,4 @@ public class OrganizerDto {
     private String taxCode;
     private UUID organizerType;
     private UUID user;
-
 }

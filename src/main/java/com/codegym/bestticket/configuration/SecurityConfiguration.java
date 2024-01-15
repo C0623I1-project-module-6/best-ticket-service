@@ -101,9 +101,12 @@ public class SecurityConfiguration {
                         "/api/bookings/**",
                         "/api/events/**",
                         "/api/event-type/**",
-                        "/api/admin/**"
+                        "/api/admin/**",
+                        "/api/customers/**",
+                        "/api/organizers/**"
                 )
                 .permitAll();
+
 
 //        http.authorizeHttpRequests()
 //                .requestMatchers("/api/admins/**", "/api/customers/**", "/api/organizers/**")
