@@ -163,6 +163,7 @@ public class UserService implements IUserService {
     @Override
     public ResponsePayload logout(HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
+
         SecurityContextHolder.clearContext();
         User user = userRepository.findUserByRememberToken(token);
         if (user != null) {

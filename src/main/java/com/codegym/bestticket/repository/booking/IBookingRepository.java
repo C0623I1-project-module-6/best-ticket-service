@@ -16,6 +16,6 @@ public interface IBookingRepository extends JpaRepository<Booking, UUID> {
 
     Page<Booking> searchBookingsByIsDeletedFalseAndCustomerFullNameContaining(@Param("keyword") String keyword, Pageable pageable);
 
-    Page<Booking> searchBookingsByIsDeletedFalseAndOrganizerNameContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
-
+    @Query("SELECT b FROM Booking b JOIN b.bookingDetailList bd JOIN bd.tickets t JOIN t.eventTime et JOIN et.event e WHERE e.id = :eventId")
+    Page<Booking> findAllByEventId(UUID eventId, Pageable pageable);
 }
