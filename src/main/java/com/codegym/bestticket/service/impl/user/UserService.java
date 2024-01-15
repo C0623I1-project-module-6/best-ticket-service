@@ -106,6 +106,11 @@ public class UserService implements IUserService {
             if (!registerRequest.getConfirmPassword().equals(registerRequest.getPassword())) {
                 throw new RuntimeException("Password not match!");
             }
+            Set<String> listRole = user.getRoles()
+                    .stream()
+                    .map(Role::getName)
+                    .collect(Collectors.toSet());
+            registerResponse.setListRole(listRole);
             return ResponsePayload.builder()
                     .message("Register successfully!!!")
                     .status(HttpStatus.CREATED)
