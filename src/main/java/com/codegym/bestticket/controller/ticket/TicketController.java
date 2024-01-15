@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,13 +23,14 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/tickets")
+@CrossOrigin(origins = "*")
 @AllArgsConstructor
 public class TicketController {
 
     private final ITicketService ticketService;
 
     @GetMapping
-    public ResponseEntity<ResponsePayload> getAllTicket(@PageableDefault(size = 10, page = 0) Pageable pageable) {
+    public ResponseEntity<ResponsePayload> getAllTicket(@PageableDefault(size = 20, page = 0) Pageable pageable) {
         ResponsePayload responsePayload = ticketService.showTicket(pageable);
         if (responsePayload == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

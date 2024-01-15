@@ -22,6 +22,8 @@ public class TicketRequest {
 
     private String status;
 
+    private String description;
+
     private TicketType ticketType;
 
     private BookingDetail bookingDetail;
