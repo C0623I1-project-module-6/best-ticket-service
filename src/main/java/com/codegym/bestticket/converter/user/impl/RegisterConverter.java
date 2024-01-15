@@ -16,7 +16,6 @@ public class RegisterConverter implements IRegisterConverter {
 
     public RegisterResponse entityToDto(User user) {
         RegisterResponse registerResponse = new RegisterResponse();
-        registerResponse.setListRole(user.getRoles());
         BeanUtils.copyProperties(user, registerResponse);
         return registerResponse;
     }

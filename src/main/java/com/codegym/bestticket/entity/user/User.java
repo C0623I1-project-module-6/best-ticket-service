@@ -44,7 +44,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
     @CreationTimestamp
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime created;
     private String rememberToken;
     private String avatar;
