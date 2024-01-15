@@ -1,11 +1,8 @@
 package com.codegym.bestticket.payload.request.booking;
 
-
-
 import com.codegym.bestticket.entity.user.Customer;
-import com.codegym.bestticket.entity.user.Organizer;
-import lombok.Data;
 
+import lombok.Data;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -17,6 +14,5 @@ public class BookingRequest {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Customer customer;
-    private Organizer organizer;
     private Boolean isDeleted;
 }
