@@ -35,7 +35,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponsePayload> login(HttpServletRequest request, @Valid @RequestBody LoginRequest loginRequest) {
-        try {
             ResponsePayload responsePayload;
             if (loginRequest == null) {
                 responsePayload = userService.keepLogin(request);
@@ -43,14 +42,6 @@ public class AuthController {
                 responsePayload = userService.login(loginRequest);
             }
             return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
-        } catch (Exception e) {
-            return new ResponseEntity<>(
-                    ResponsePayload.builder()
-                            .message(e.getMessage())
-                            .build(),
-                    HttpStatus.BAD_REQUEST);
-        }
-
     }
 
     @PostMapping("/logout")

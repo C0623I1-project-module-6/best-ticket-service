@@ -34,11 +34,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -174,7 +176,7 @@ public class UserService implements IUserService {
         String token = request.getHeader("Authorization").substring(7);
 
         SecurityContextHolder.clearContext();
-        User user = userRepository.findUserByRememberToken(token);
+        User user = userRepository.findUserByRememberToken(token).orElse(null);
         if (user != null) {
             user.setRememberToken(null);
             userRepository.save(user);
@@ -209,6 +211,12 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public ResponsePayload getInfo(UUID id) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return null;
+    }
+
+    @Override
     public ResponsePayload findAll(Pageable pageable) {
         try {
             Page<User> users = userRepository.findAllByIsDeletedFalse(pageable);
@@ -233,6 +241,11 @@ public class UserService implements IUserService {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
+    }
+
+    @Override
+    public Optional<User> findUserByRememberToken(String token) {
+        return userRepository.findUserByRememberToken(token);
     }
 
     @Override

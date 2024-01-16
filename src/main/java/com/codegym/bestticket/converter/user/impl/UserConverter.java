@@ -18,7 +18,6 @@ public class UserConverter implements IUserConverter {
     @Override
     public UserDto entityToDto(User user) {
         UserDto userDto = new UserDto();
-        userDto.setListRoles(user.getRoles());
         BeanUtils.copyProperties(user, userDto);
         return userDto;
     }
