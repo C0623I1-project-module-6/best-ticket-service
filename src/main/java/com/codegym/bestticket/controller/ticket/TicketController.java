@@ -30,7 +30,7 @@ public class TicketController {
     private final ITicketService ticketService;
 
     @GetMapping
-    public ResponseEntity<ResponsePayload> getAllTicket(@PageableDefault(size = 20, page = 0) Pageable pageable) {
+    public ResponseEntity<ResponsePayload> getAllTicket(@PageableDefault(size = 200, page = 0) Pageable pageable) {
         ResponsePayload responsePayload = ticketService.showTicket(pageable);
         if (responsePayload == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
