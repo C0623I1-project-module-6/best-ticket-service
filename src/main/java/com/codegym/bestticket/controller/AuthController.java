@@ -11,13 +11,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.UUID;
 
 @RestController
 @CrossOrigin("*")
@@ -36,17 +34,27 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponsePayload> login(@Valid @RequestBody LoginRequest loginRequest) {
-
-        if (loginRequest == null) {
-            new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ResponsePayload> login(HttpServletRequest request, @Valid @RequestBody LoginRequest loginRequest) {
+        try {
+            ResponsePayload responsePayload;
+            if (loginRequest == null) {
+                responsePayload = userService.keepLogin(request);
+            } else {
+                responsePayload = userService.login(loginRequest);
+            }
+            return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    ResponsePayload.builder()
+                            .message(e.getMessage())
+                            .build(),
+                    HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(userService.login(loginRequest), HttpStatus.OK);
+
     }
 
     @PostMapping("/logout")
     public ResponseEntity<ResponsePayload> logout(HttpServletRequest request) {
         return new ResponseEntity<>(userService.logout(request), HttpStatus.OK);
-
     }
 }

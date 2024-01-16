@@ -161,6 +161,14 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public ResponsePayload keepLogin(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(object);
+        return ResponsePayload.builder().build();
+    }
+
+    @Override
     public ResponsePayload logout(HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
 
