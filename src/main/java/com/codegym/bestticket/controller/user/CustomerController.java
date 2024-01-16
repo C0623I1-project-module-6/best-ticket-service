@@ -29,7 +29,7 @@ public class CustomerController {
         if (customerRequest == null) {
             new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(customerService.addInfo(customerRequest), HttpStatus.CREATED);
+        return new ResponseEntity<>(customerService.addProfile(customerRequest), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

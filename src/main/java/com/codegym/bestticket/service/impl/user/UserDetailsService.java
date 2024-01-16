@@ -54,7 +54,8 @@ public class UserDetailsService implements org.springframework.security.core.use
             Customer customer = customerRepository.findByPhoneNumber(input);
             return customer.getUser();
         } else {
-            return userRepository.findByUsername(input);
+            return userRepository.findByUsername(input)
+                    .orElseThrow(() -> new RuntimeException("User not found!"));
         }
     }
 

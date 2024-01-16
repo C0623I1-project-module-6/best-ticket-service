@@ -8,9 +8,9 @@ import java.util.UUID;
 
 
 public interface ICustomerService {
-    ResponsePayload addInfo(CustomerDto request);
+    ResponsePayload addProfile(CustomerDto customerDto);
 
-    ResponsePayload update(UUID id, CustomerDto request);
+    ResponsePayload update(UUID id, CustomerDto customerDto);
 
     ResponsePayload findAll(Pageable pageable);
 

@@ -17,4 +17,5 @@ public class TicketDto {
     private String seat;
     private LocalDateTime time;
     private Location location;
+    private Integer ticketAmount;
 }
