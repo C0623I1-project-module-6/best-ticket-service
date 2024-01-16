@@ -107,6 +107,7 @@ public class SecurityConfiguration {
                 )
                 .permitAll();
 
+
 //        http.authorizeHttpRequests()
 //                .requestMatchers("/api/admins/**", "/api/customers/**", "/api/organizers/**")
 //                .hasRole("ADMIN");
