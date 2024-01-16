@@ -132,7 +132,8 @@ public class UserService implements IUserService {
                             loginRequest.getUsername(),
                             loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            User user = userRepository.findByUsername(authentication.getName());
+            User user = userRepository.findByUsername(authentication.getName())
+                    .orElseThrow(() -> new RuntimeException("User not found!"));
             Set<Role> roles = user.getRoles();
             Set<String> listRoles = new HashSet<>();
             for (Role role : roles) {

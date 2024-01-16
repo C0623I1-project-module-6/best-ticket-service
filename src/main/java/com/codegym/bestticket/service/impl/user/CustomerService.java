@@ -1,9 +1,9 @@
 package com.codegym.bestticket.service.impl.user;
 
 import com.codegym.bestticket.converter.user.ICustomerConverter;
+import com.codegym.bestticket.converter.user.IUserConverter;
 import com.codegym.bestticket.dto.user.CustomerDto;
 import com.codegym.bestticket.entity.user.Customer;
-import com.codegym.bestticket.entity.user.Role;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.repository.user.ICustomerRepository;
@@ -21,30 +21,29 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 @Transactional
 public class CustomerService implements ICustomerService {
     private final ICustomerConverter customerConverter;
+    private final IUserConverter userConverter;
     private final ICustomerRepository customerRepository;
     private final IUserRepository userRepository;
     private final IRoleRepository roleRepository;
 
 
     @Override
-    public ResponsePayload addInfo(CustomerDto customerDto) {
+    public ResponsePayload addProfile(CustomerDto customerDto) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String username = userDetails.getUsername();
-            User user = userRepository.findByUsername(username);
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
             Customer customer = customerConverter.dtoToEntity(customerDto);
             customer.setIsDeleted(false);
             customer.setUser(user);
@@ -52,13 +51,7 @@ public class CustomerService implements ICustomerService {
             CustomerDto response = customerConverter.entityToDto(customer);
             user.getRoles().add(roleRepository.findByName("CUSTOMER")
                     .orElseThrow(() -> new RuntimeException("Role CUSTOMER not found!")));
-            Map<String, Object> result = new HashMap<>();
-            result.put("username", username);
-            Set<String> roles = user.getRoles()
-                    .stream()
-                    .map(Role::getName)
-                    .collect(Collectors.toSet());
-            result.put("listRole", roles);
+            Map<String, Object> result = userConverter.mapUserToResult(user);
             response.setResult(result);
             return ResponsePayload.builder()
                     .message("Add customer successfully!!!")
@@ -79,7 +72,8 @@ public class CustomerService implements ICustomerService {
             Authentication authentication = SecurityContextHolder.createEmptyContext().getAuthentication();
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String username = userDetails.getUsername();
-            User user = userRepository.findByUsername(username);
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found!"));
             Optional<Customer> optionalCustomer = customerRepository.findById(id);
             if (optionalCustomer.isEmpty()) {
                 throw new EntityNotFoundException("Customer not found is" + id);
