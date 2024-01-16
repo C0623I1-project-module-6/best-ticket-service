@@ -56,15 +56,10 @@ public class EventController {
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 
-    @PostMapping
-    public ResponseEntity<EventResponse> createEvent(@RequestBody EventDTO eventDTO) {
-        EventResponse eventResponse = eventService.createEvent(eventDTO);
-        return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
-    }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<EventResponse> createEventt(@RequestBody CreateEventRequest eventRequest) {
-        EventResponse eventResponse = eventService.createEventt(eventRequest);
+        EventResponse eventResponse = eventService.createEvent(eventRequest);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 

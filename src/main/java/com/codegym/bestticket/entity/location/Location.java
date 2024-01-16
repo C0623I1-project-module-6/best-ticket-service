@@ -23,6 +23,7 @@ public class Location {
 
     private String district;
 
+    private String address;
     @OneToMany(mappedBy = "location")
     private List<Event> events;
 }

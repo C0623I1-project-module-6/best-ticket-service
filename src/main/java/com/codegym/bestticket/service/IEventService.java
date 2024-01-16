@@ -13,9 +13,7 @@ public interface IEventService {
 
     EventResponse removeEvent(UUID event_id);
 
-    EventResponse createEvent(EventDTO eventDTO);
-
-    EventResponse createEventt(CreateEventRequest eventRequest);
+    EventResponse createEvent(CreateEventRequest eventRequest);
 
 
     EventResponse updateEvent(UUID event_id,EventDTO eventDTO);
