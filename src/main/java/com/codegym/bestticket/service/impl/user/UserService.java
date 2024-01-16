@@ -34,6 +34,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -146,6 +147,7 @@ public class UserService implements IUserService {
             if (user.getCustomer() != null) {
                 loginResponse.setFullName(user.getCustomer().getFullName());
             }
+
             loginResponse.setListRole(listRoles);
             return ResponsePayload.builder()
                     .message("Login successfully!!!")
@@ -162,23 +164,51 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponsePayload logout(HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
+    public ResponsePayload refreshToken (HttpServletRequest request) {
+        try {
+            String token = request.getHeader("Authorization").substring(7);
+            User user = userRepository.findUserByRememberToken(token)
+                    .orElseThrow(() -> new UserNotFoundException("User not found!"));
+            if (user.getRememberToken().equals(token)) {
+                throw new RuntimeException("Token not match!");
+            }
+            String newToken = token;
+            if (jwtTokenProvider.isTokenExpired(newToken)) {
+                newToken = jwtTokenProvider.generateToken((Authentication) user );
+            }
 
-        SecurityContextHolder.clearContext();
-        User user = userRepository.findUserByRememberToken(token);
-        if (user != null) {
+            return ResponsePayload.builder()
+                    .message("Login successfully!!!")
+                    .status(HttpStatus.OK)
+                    .data(newToken)
+                    .build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .message("Login failed!")
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
+        }
+    }
+
+    @Override
+    public ResponsePayload logout(HttpServletRequest request) {
+        try {
+            String token = request.getHeader("Authorization").substring(7);
+            SecurityContextHolder.clearContext();
+            User user = userRepository.findUserByRememberToken(token)
+                    .orElseThrow(() -> new UserNotFoundException("User not found!"));
             user.setRememberToken(null);
             userRepository.save(user);
             return ResponsePayload.builder()
                     .message("Logout successfully!!!")
                     .status(HttpStatus.OK)
                     .build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .message("User not found!")
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
         }
-        return ResponsePayload.builder()
-                .message("User not found!")
-                .status(HttpStatus.UNAUTHORIZED)
-                .build();
     }
 
     @Override

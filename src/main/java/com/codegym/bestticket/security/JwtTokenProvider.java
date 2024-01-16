@@ -22,6 +22,8 @@ public class JwtTokenProvider {
     private String jwtSecret;
     @Value("${app.jwtExpirationInMs}")
     private int jwtExpirationInMs;
+    @Value("${app.jwtRefreshExpirationMs}")
+    private int jwtRefreshExpirationMs;
 
 
     public String generateToken(Authentication authentication) {
@@ -36,6 +38,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+
     public String getUsernameFromJWT(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -43,16 +46,6 @@ public class JwtTokenProvider {
                 .getBody();
 
         return claims.getSubject();
-    }
-
-    public String generateTokenFromUsername(String username) {
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date())
-                        .getTime() + jwtExpirationInMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
     }
 
     public String getJwtFromBearerToken(String token) {
@@ -64,6 +57,16 @@ public class JwtTokenProvider {
         return claims.getSubject();
     }
 
+    public boolean isTokenExpired(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+        Date expiration = claims.getExpiration();
+        return expiration.before(new Date());
+    }
+
+
     public boolean validateToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
@@ -74,7 +77,7 @@ public class JwtTokenProvider {
         } catch (MalformedJwtException ex) {
             logger.error("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
-            logger.error("Expired JWT tpoken");
+            logger.error("Expired JWT token");
         } catch (UnsupportedJwtException ex) {
             logger.error("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {

@@ -38,7 +38,7 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
     User findByEmail(String email);
 
 
-    User findUserByRememberToken(String token);
+    Optional<User> findUserByRememberToken(String token);
 
     Page<User> findAllByIsDeletedFalse(Pageable pageable);
 

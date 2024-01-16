@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +43,11 @@ public class AuthController {
             new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(userService.login(loginRequest), HttpStatus.OK);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ResponsePayload> refreshToken(@Valid HttpServletRequest request) {
+        return new ResponseEntity<>(userService.refreshToken(request), HttpStatus.OK);
     }
 
     @PostMapping("/logout")
