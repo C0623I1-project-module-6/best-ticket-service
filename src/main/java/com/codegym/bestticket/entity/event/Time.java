@@ -31,7 +31,7 @@ public class Time {
 
     private LocalDateTime time;
 
-    @ManyToMany(mappedBy = "times")
+    @ManyToMany(mappedBy = "times") 
     @JsonIgnore
     private Set<Event> events;
 
