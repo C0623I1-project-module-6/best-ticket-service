@@ -1,24 +1,15 @@
 package com.codegym.bestticket.entity.event;
 
 import com.codegym.bestticket.entity.location.Location;
-import com.codegym.bestticket.entity.user.Organizer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,8 +29,10 @@ public class Event {
     private String image;
     private String duration;
     private Integer ticketAmount;
-    private Boolean isDeleted;
 
+    @Column(columnDefinition = "boolean default false")
+    private Boolean isDeleted;
+    private String status;
 
     @ManyToMany
     @JoinTable(
@@ -59,8 +52,4 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
-
-    @OneToOne
-    @JoinColumn(name = "organizer_id")
-    private Organizer organizer;
 }
