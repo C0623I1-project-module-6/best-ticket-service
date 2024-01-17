@@ -15,7 +15,7 @@ public class UserDto {
     private String password;
     private String email;
     private String avatar;
-    private Set<Role> listRoles;
+    private Set<String> listRoles;
     private Customer customer;
     private Organizer organizer;
     private Boolean isDeleted;

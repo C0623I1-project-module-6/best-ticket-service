@@ -101,7 +101,8 @@ public class SecurityConfiguration {
                         "/api/event-type/**",
                         "/api/admin/**",
                         "/api/customers/**",
-                        "/api/organizers/**"
+                        "/api/organizers/**",
+                        "/api/users/**"
                 )
                 .permitAll();
 

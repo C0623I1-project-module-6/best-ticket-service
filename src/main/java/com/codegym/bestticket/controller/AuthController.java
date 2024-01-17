@@ -33,7 +33,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponsePayload> login(HttpServletRequest request, @Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ResponsePayload> login(HttpServletRequest request,
+                                                 @Valid @RequestBody(required = false) LoginRequest loginRequest) {
         try {
             ResponsePayload responsePayload;
             if (loginRequest == null) {
@@ -42,6 +43,7 @@ public class AuthController {
                 responsePayload = userService.login(loginRequest);
             }
             return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+
         } catch (Exception e) {
             return new ResponseEntity<>(
                     ResponsePayload.builder()
@@ -54,6 +56,7 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<ResponsePayload> refreshToken(@Valid HttpServletRequest request) {
         return new ResponseEntity<>(userService.refreshToken(request), HttpStatus.OK);
+
     }
 
     @PostMapping("/logout")

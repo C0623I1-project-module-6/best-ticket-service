@@ -34,11 +34,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -195,7 +197,22 @@ public class UserService implements IUserService {
         String token = request.getHeader("Authorization").substring(7);
         Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         System.out.println(object);
-        return ResponsePayload.builder().build();
+        String username = ((org.springframework.security.core.userdetails.User) object).getUsername();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        Set<Role> roles = user.getRoles();
+        Set<String> listRoles = new HashSet<>();
+        for (Role role : roles) {
+            listRoles.add(role.getName());
+        }
+        LoginResponse loginResponse = loginConverter.entityToDto(user, token);
+        if (user.getCustomer() != null) {
+            loginResponse.setFullName(user.getCustomer().getFullName());
+        }
+        return ResponsePayload.builder()
+                .message("Login successfully")
+                .status(HttpStatus.OK)
+                .data(loginResponse)
+                .build();
     }
 
 
@@ -206,8 +223,10 @@ public class UserService implements IUserService {
             SecurityContextHolder.clearContext();
             User user = userRepository.findUserByRememberToken(token)
                     .orElseThrow(() -> new UserNotFoundException("User not found!"));
-            user.setRememberToken(null);
-            userRepository.save(user);
+            if (user != null) {
+                user.setRememberToken(null);
+                userRepository.save(user);
+            }
             return ResponsePayload.builder()
                     .message("Logout successfully!!!")
                     .status(HttpStatus.OK)
@@ -240,6 +259,13 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public ResponsePayload getInfo(UUID id) {
+        UserDetails userDetails =
+                (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return null;
+    }
+
+    @Override
     public ResponsePayload findAll(Pageable pageable) {
         try {
             Page<User> users = userRepository.findAllByIsDeletedFalse(pageable);
@@ -264,6 +290,11 @@ public class UserService implements IUserService {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
+    }
+
+    @Override
+    public Optional<User> findUserByRememberToken(String token) {
+        return userRepository.findUserByRememberToken(token);
     }
 
     @Override
