@@ -29,10 +29,14 @@ public class SecurityService implements ISecurityService {
     }
 
     @Override
-    public boolean isValidToken(String authToken) {
+    public boolean isValidToken(String authToken)  {
         String jwt = jwtTokenProvider.getJwtFromBearerToken(authToken);
-        if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(authToken)) {
-            return true;
+        try {
+            if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(authToken)) {
+                return true;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return false;
     }

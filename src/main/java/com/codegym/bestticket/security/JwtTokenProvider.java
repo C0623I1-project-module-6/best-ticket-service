@@ -22,8 +22,6 @@ public class JwtTokenProvider {
     private String jwtSecret;
     @Value("${app.jwtExpirationInMs}")
     private int jwtExpirationInMs;
-    @Value("${app.jwtRefreshExpirationMs}")
-    private int jwtRefreshExpirationMs;
 
 
     public String generateToken(Authentication authentication) {
@@ -33,16 +31,6 @@ public class JwtTokenProvider {
                 .setSubject(authentication.getName())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
-    }
-
-    public String generateRefreshToken(Authentication authentication) {
-        return Jwts.builder()
-                .setSubject(authentication.getName())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date())
-                        .getTime() + jwtRefreshExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
@@ -75,21 +63,20 @@ public class JwtTokenProvider {
     }
 
 
-    public boolean validateToken(String authToken) {
+    public boolean validateToken(String authToken) throws Exception {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {
-            logger.error("Invalid JWT signature");
+            throw new Exception("Invalid JWT signature", ex);
         } catch (MalformedJwtException ex) {
-            logger.error("Invalid JWT token");
+            throw new Exception("Invalid JWT token", ex);
         } catch (ExpiredJwtException ex) {
-            logger.error("Expired JWT token");
+            throw new Exception("Expired JWT token", ex);
         } catch (UnsupportedJwtException ex) {
-            logger.error("Unsupported JWT token");
+            throw new Exception("Unsupported JWT token", ex);
         } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty.");
+            throw new Exception("JWT claims string is empty", ex);
         }
-        return false;
     }
 }

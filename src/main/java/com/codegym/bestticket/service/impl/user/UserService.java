@@ -79,6 +79,7 @@ public class UserService implements IUserService {
                 }
             }
             User user = registerConverter.dtoToEntity(registerRequest);
+            user.setOldPassword(user.getPassword());
             user.setPassword(encoder.encode(user.getPassword()));
             user.setIsDeleted(false);
             user.setIsActivated(true);
@@ -148,7 +149,6 @@ public class UserService implements IUserService {
             if (user.getCustomer() != null) {
                 loginResponse.setFullName(user.getCustomer().getFullName());
             }
-
             loginResponse.setListRole(listRoles);
             return ResponsePayload.builder()
                     .message("Login successfully!!!")
@@ -161,7 +161,6 @@ public class UserService implements IUserService {
                     .status(HttpStatus.UNAUTHORIZED)
                     .build();
         }
-
     }
 
     @Override

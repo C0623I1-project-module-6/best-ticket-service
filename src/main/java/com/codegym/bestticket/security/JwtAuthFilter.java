@@ -16,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -34,6 +37,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private IUserService userService;
 
+
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
@@ -47,31 +51,34 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     @NotNull HttpServletResponse response,
                                     @NotNull FilterChain filterChain)
             throws ServletException, IOException {
-        String jwt = getJwtFromRequest(request);
-        try {
-            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                String username = tokenProvider.getUsernameFromJWT(jwt);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-            filterChain.doFilter(request, response);
-        } catch (ExpiredJwtException e) {
-            Optional<User> user = userService.findUserByRememberToken(jwt);
-            if (user.isPresent()) {
-                LoginRequest loginRequest = new LoginRequest();
-                loginRequest.setUsername(user.get().getUsername());
-                loginRequest.setPassword(user.get().getPassword());
-                userService.login(loginRequest);
-            } else logger.error("Could not set user authentication in security context", e);
 
-            filterChain.doFilter(request, response);
-        } catch (Exception ex) {
+        try {
+            String jwt = getJwtFromRequest(request);
+            try {
+                if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+                    String username = tokenProvider.getUsernameFromJWT(jwt);
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } catch (Exception ex) {
+                Optional<User> user = userService.findUserByRememberToken(jwt);
+                if (user.isPresent()) {
+                    LoginRequest loginRequest = new LoginRequest();
+                    loginRequest.setUsername(user.get().getUsername());
+                    loginRequest.setPassword(user.get().getOldPassword());
+                    userService.login(loginRequest);
+                } else logger.error("Could not set user authentication in security context", ex);
+            }
+        } catch (
+                Exception ex) {
             logger.error("Could not set user authentication in security context", ex);
         }
-
-//        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 }
+
+
+
