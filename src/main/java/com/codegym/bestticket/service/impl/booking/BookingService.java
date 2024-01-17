@@ -72,6 +72,7 @@ public class BookingService implements IBookingService {
                 .filter(booking -> !booking.getIsDeleted())
                 .map(booking -> {
                     BookingResponse bookingResponse = new BookingResponse();
+                    bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
                     BeanUtils.copyProperties(booking, bookingResponse);
                     return bookingResponse;
                 })
