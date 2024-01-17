@@ -34,7 +34,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponsePayload> login(HttpServletRequest request, @Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ResponsePayload> login(HttpServletRequest request, @Valid @RequestBody(required = false) LoginRequest loginRequest) {
             ResponsePayload responsePayload;
             if (loginRequest == null) {
                 responsePayload = userService.keepLogin(request);

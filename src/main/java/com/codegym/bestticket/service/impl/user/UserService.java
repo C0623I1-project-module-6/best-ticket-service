@@ -168,7 +168,22 @@ public class UserService implements IUserService {
         String token = request.getHeader("Authorization").substring(7);
         Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         System.out.println(object);
-        return ResponsePayload.builder().build();
+        String username = ((org.springframework.security.core.userdetails.User) object).getUsername();
+        User user = userRepository.findByUsername(username).orElseThrow(()->new RuntimeException("User not found"));
+        Set<Role> roles = user.getRoles();
+        Set<String> listRoles = new HashSet<>();
+        for (Role role : roles){
+            listRoles.add(role.getName());
+        }
+        LoginResponse loginResponse = loginConverter.entityToDto(user,token);
+        if (user.getCustomer()!=null){
+            loginResponse.setFullName(user.getCustomer().getFullName());
+        }
+        return ResponsePayload.builder()
+                .message("Login successfully")
+                .status(HttpStatus.OK)
+                .data(loginResponse)
+                .build();
     }
 
     @Override
