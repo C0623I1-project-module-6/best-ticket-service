@@ -23,15 +23,15 @@ import java.util.UUID;
 public class OrganizerController {
     private final IOrganizerService organizerService;
 
-    @PostMapping("/")
-    public ResponseEntity<ResponsePayload> add(@RequestBody OrganizerDto organizerDto) {
-        if (organizerDto == null) {
+    @PostMapping("/add")
+    public ResponseEntity<ResponsePayload> registerProfile(@RequestBody OrganizerDto organizerRequest) {
+        if (organizerRequest == null) {
             new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(organizerService.create(organizerDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(organizerService.create(organizerRequest), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/edit/{id}")
     public ResponseEntity<ResponsePayload> edit(@PathVariable UUID id,
                                                 @RequestBody OrganizerDto organizerDto) {
         if (organizerDto == null) {

@@ -33,12 +33,12 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
                     " WHERE u.email = :email")
     List<String> findRolesByEmail(@Param("email") String email);
 
-    User findByUsername(String username);
+    Optional<User> findByUsername(String username);
 
     User findByEmail(String email);
 
 
-    User findUserByRememberToken(String token);
+    Optional<User> findUserByRememberToken(String token);
 
     Page<User> findAllByIsDeletedFalse(Pageable pageable);
 

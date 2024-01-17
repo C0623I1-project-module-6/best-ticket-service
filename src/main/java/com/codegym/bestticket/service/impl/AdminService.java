@@ -102,7 +102,7 @@ public class AdminService implements IAdminService {
                 }
                 if (organizer.isPresent()) {
                     adminDto.setOrganizerId(organizer.get().getId());
-                    adminDto.setOrganizerName(organizer.get().getName());
+//                    adminDto.setOrganizerName(organizer.get().getName());
                 }
                 return adminDto;
             });

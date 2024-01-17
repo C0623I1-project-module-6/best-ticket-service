@@ -5,6 +5,7 @@ import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.repository.user.ICustomerRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,11 +19,10 @@ import java.util.List;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
-    @Autowired
-    private IUserRepository userRepository;
-    @Autowired
-    private ICustomerRepository customerRepository;
+    private final IUserRepository userRepository;
+    private final ICustomerRepository customerRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -54,7 +54,8 @@ public class UserDetailsService implements org.springframework.security.core.use
             Customer customer = customerRepository.findByPhoneNumber(input);
             return customer.getUser();
         } else {
-            return userRepository.findByUsername(input);
+            return userRepository.findByUsername(input)
+                    .orElseThrow(() -> new RuntimeException("User not found!"));
         }
     }
 
