@@ -13,6 +13,9 @@ public interface IUserService {
     ResponsePayload register(RegisterRequest registerRequest);
     ResponsePayload login(LoginRequest loginRequest);
     ResponsePayload refreshToken (HttpServletRequest request);
+
+    ResponsePayload keepLogin(HttpServletRequest request);
+
     ResponsePayload logout(HttpServletRequest request);
     ResponsePayload delete(UUID id);
     ResponsePayload findAll(Pageable pageable);

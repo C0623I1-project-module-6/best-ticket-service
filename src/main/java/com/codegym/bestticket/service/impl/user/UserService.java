@@ -34,7 +34,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -164,31 +163,41 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponsePayload refreshToken (HttpServletRequest request) {
+    public ResponsePayload refreshToken(HttpServletRequest request) {
         try {
             String token = request.getHeader("Authorization").substring(7);
-            User user = userRepository.findUserByRememberToken(token)
-                    .orElseThrow(() -> new UserNotFoundException("User not found!"));
-            if (user.getRememberToken().equals(token)) {
-                throw new RuntimeException("Token not match!");
+            if (jwtTokenProvider.isTokenExpired(token)) {
+                User user = userRepository.findUserByRememberToken(token)
+                        .orElseThrow(() -> new UserNotFoundException("User not found!"));
+                String newToken = jwtTokenProvider.generateToken((Authentication) user);
+                return ResponsePayload.builder()
+                        .message("Token expired! Refresh new token!!!")
+                        .status(HttpStatus.OK)
+                        .data(newToken)
+                        .build();
+            } else {
+                return ResponsePayload.builder()
+                        .message("Token not expired")
+                        .status(HttpStatus.OK)
+                        .data(token)
+                        .build();
             }
-            String newToken = token;
-            if (jwtTokenProvider.isTokenExpired(newToken)) {
-                newToken = jwtTokenProvider.generateToken((Authentication) user );
-            }
-
+        } catch (Exception e) {
             return ResponsePayload.builder()
-                    .message("Login successfully!!!")
-                    .status(HttpStatus.OK)
-                    .data(newToken)
-                    .build();
-        } catch (RuntimeException e) {
-            return ResponsePayload.builder()
-                    .message("Login failed!")
-                    .status(HttpStatus.UNAUTHORIZED)
+                    .message("...")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
     }
+
+    @Override
+    public ResponsePayload keepLogin(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(object);
+        return ResponsePayload.builder().build();
+    }
+
 
     @Override
     public ResponsePayload logout(HttpServletRequest request) {

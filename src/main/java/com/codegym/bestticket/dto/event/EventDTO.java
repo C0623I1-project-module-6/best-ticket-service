@@ -16,7 +16,7 @@ public class EventDTO {
     private String description;
     private String image;
     private String duration;
+    private Integer ticketAmount;
     private Boolean isDeleted;
-
 
 }

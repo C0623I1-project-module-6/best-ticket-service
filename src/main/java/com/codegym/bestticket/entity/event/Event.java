@@ -35,6 +35,7 @@ public class Event {
     private String description;
     private String image;
     private String duration;
+    private Integer ticketAmount;
     private Boolean isDeleted;
 
 

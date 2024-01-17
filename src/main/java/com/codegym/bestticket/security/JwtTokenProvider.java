@@ -38,6 +38,15 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public String generateRefreshToken(Authentication authentication) {
+        return Jwts.builder()
+                .setSubject(authentication.getName())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date())
+                        .getTime() + jwtRefreshExpirationMs))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
 
     public String getUsernameFromJWT(String token) {
         Claims claims = Jwts.parser()
@@ -63,7 +72,7 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
         Date expiration = claims.getExpiration();
-        return expiration.before(new Date());
+        return expiration != null && expiration.before(new Date());
     }
 
 
