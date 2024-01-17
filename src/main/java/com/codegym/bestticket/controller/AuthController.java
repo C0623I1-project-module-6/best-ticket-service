@@ -53,11 +53,6 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<ResponsePayload> refreshToken(@Valid HttpServletRequest request) {
-        return new ResponseEntity<>(userService.refreshToken(request), HttpStatus.OK);
-
-    }
 
     @PostMapping("/logout")
     public ResponseEntity<ResponsePayload> logout(HttpServletRequest request) {

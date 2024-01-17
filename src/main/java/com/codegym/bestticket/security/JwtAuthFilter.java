@@ -4,7 +4,6 @@ import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.service.IUserService;
 import com.codegym.bestticket.service.impl.user.UserDetailsService;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,9 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -49,6 +45,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request,
                                     @NotNull HttpServletResponse response,
+
                                     @NotNull FilterChain filterChain)
             throws ServletException, IOException {
 
@@ -72,8 +69,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     userService.login(loginRequest);
                 } else logger.error("Could not set user authentication in security context", ex);
             }
-        } catch (
-                Exception ex) {
+        } catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex);
         }
         filterChain.doFilter(request, response);

@@ -164,53 +164,36 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponsePayload refreshToken(HttpServletRequest request) {
+    public ResponsePayload keepLogin(HttpServletRequest request) {
+
         try {
             String token = request.getHeader("Authorization").substring(7);
-            if (jwtTokenProvider.isTokenExpired(token)) {
-                User user = userRepository.findUserByRememberToken(token)
-                        .orElseThrow(() -> new UserNotFoundException("User not found!"));
-                String newToken = jwtTokenProvider.generateToken((Authentication) user);
+            if (jwtTokenProvider.validateToken(token)) {
+                Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                String username = ((org.springframework.security.core.userdetails.User) object).getUsername();
+                User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+                Set<Role> roles = user.getRoles();
+                Set<String> listRoles = new HashSet<>();
+                for (Role role : roles) {
+                    listRoles.add(role.getName());
+                }
+                LoginResponse loginResponse = loginConverter.entityToDto(user, token);
+                loginResponse.setListRole(listRoles);
+                if (user.getCustomer() != null) {
+                    loginResponse.setFullName(user.getCustomer().getFullName());
+                }
                 return ResponsePayload.builder()
-                        .message("Token expired! Refresh new token!!!")
+                        .message("Login successfully")
                         .status(HttpStatus.OK)
-                        .data(newToken)
-                        .build();
-            } else {
-                return ResponsePayload.builder()
-                        .message("Token not expired")
-                        .status(HttpStatus.OK)
-                        .data(token)
+                        .data(loginResponse)
                         .build();
             }
-        } catch (Exception e) {
-            return ResponsePayload.builder()
-                    .message("...")
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
-        }
-    }
-
-    @Override
-    public ResponsePayload keepLogin(HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
-        Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(object);
-        String username = ((org.springframework.security.core.userdetails.User) object).getUsername();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
-        Set<Role> roles = user.getRoles();
-        Set<String> listRoles = new HashSet<>();
-        for (Role role : roles) {
-            listRoles.add(role.getName());
-        }
-        LoginResponse loginResponse = loginConverter.entityToDto(user, token);
-        if (user.getCustomer() != null) {
-            loginResponse.setFullName(user.getCustomer().getFullName());
+        } catch (Exception ignored) {
         }
         return ResponsePayload.builder()
-                .message("Login successfully")
-                .status(HttpStatus.OK)
-                .data(loginResponse)
+                .message("Not accepted !")
+                .status(HttpStatus.UNAUTHORIZED)
+                .data(null)
                 .build();
     }
 

@@ -125,7 +125,8 @@ public class SecurityConfiguration {
 
 
         http.authorizeHttpRequests()
-                .and().rememberMe()
+                .and()
+                .rememberMe()
                 .tokenRepository(this.persistentTokenRepository())
                 .tokenValiditySeconds(24 * 60 * 60);//24 hours
 
