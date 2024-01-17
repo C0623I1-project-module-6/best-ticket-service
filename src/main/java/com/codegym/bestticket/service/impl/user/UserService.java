@@ -79,6 +79,7 @@ public class UserService implements IUserService {
                 }
             }
             User user = registerConverter.dtoToEntity(registerRequest);
+            user.setOldPassword(user.getPassword());
             user.setPassword(encoder.encode(user.getPassword()));
             user.setIsDeleted(false);
             user.setIsActivated(true);
@@ -160,11 +161,11 @@ public class UserService implements IUserService {
                     .status(HttpStatus.UNAUTHORIZED)
                     .build();
         }
-
     }
 
     @Override
     public ResponsePayload keepLogin(HttpServletRequest request) {
+
         try {
             String token = request.getHeader("Authorization").substring(7);
             if (jwtTokenProvider.validateToken(token)) {
@@ -188,7 +189,6 @@ public class UserService implements IUserService {
                         .build();
             }
         } catch (Exception ignored) {
-
         }
         return ResponsePayload.builder()
                 .message("Not accepted !")
@@ -197,23 +197,28 @@ public class UserService implements IUserService {
                 .build();
     }
 
+
     @Override
     public ResponsePayload logout(HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
-        SecurityContextHolder.setContext(null);
-        User user = userRepository.findUserByRememberToken(token).orElse(null);
-        if (user != null) {
-            user.setRememberToken(null);
-            userRepository.save(user);
+        try {
+            String token = request.getHeader("Authorization").substring(7);
+            SecurityContextHolder.clearContext();
+            User user = userRepository.findUserByRememberToken(token)
+                    .orElseThrow(() -> new UserNotFoundException("User not found!"));
+            if (user != null) {
+                user.setRememberToken(null);
+                userRepository.save(user);
+            }
             return ResponsePayload.builder()
                     .message("Logout successfully!!!")
                     .status(HttpStatus.OK)
                     .build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .message("User not found!")
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
         }
-        return ResponsePayload.builder()
-                .message("User not found!")
-                .status(HttpStatus.UNAUTHORIZED)
-                .build();
     }
 
     @Override
@@ -237,7 +242,8 @@ public class UserService implements IUserService {
 
     @Override
     public ResponsePayload getInfo(UUID id) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails =
+                (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return null;
     }
 
