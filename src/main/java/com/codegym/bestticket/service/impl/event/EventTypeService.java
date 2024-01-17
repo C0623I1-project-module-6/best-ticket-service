@@ -38,4 +38,8 @@ public class EventTypeService implements IEventTypeService {
         eventTypeRepository.delete(eventType);
     }
 
+    @Override
+    public EventTypeDTO findByName(String name) {
+        return IEventTypeConverter.entityToDTO(eventTypeRepository.findEventTypeByName(name));
+    }
 }
