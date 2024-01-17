@@ -1,6 +1,7 @@
 package com.codegym.bestticket.service.impl.ticket;
 
 import com.codegym.bestticket.converter.user.impl.constant.ETicketMessage;
+import com.codegym.bestticket.dto.ticket.TicketDto;
 import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.ticket.TicketRequest;
@@ -10,13 +11,12 @@ import com.codegym.bestticket.service.ITicketService;
 import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -38,17 +38,19 @@ public class TicketService implements ITicketService {
 
     @Override
     public ResponsePayload showTicket(Pageable pageable) {
-        Iterable<Ticket> tickets = ticketRepository.findAll(pageable);
-
-        List<TicketRequest> ticketRequests = StreamSupport.stream(tickets.spliterator(), true)
+        Page<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
+        Iterable<TicketDto> ticketDtos = StreamSupport.stream(tickets.spliterator(), true)
                 .map(ticket -> {
-                    TicketRequest ticketRequest = new TicketRequest();
-                    BeanUtils.copyProperties(ticket, ticketRequest);
-                    return ticketRequest;
+                    TicketDto ticketDto = TicketDto
+                            .builder()
+                            .ticketAmount(ticket.getEventTime().getEvent().getTicketAmount())
+                            .eventName(ticket.getEventTime().getEvent().getName())
+                            .build();
+                    BeanUtils.copyProperties(ticket, ticketDto);
+                    return ticketDto;
                 })
                 .toList();
-
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.CREATED, ticketRequests);
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.CREATED, ticketDtos);
     }
 
     @Override
@@ -56,10 +58,13 @@ public class TicketService implements ITicketService {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
         assert ticket != null;
         if (Boolean.FALSE.equals(ticket.getIsDeleted())) {
-            TicketResponse ticketResponse = new TicketResponse();
+            TicketDto ticketDto = TicketDto
+                    .builder()
+                    .ticketAmount(ticket.getEventTime().getEvent().getTicketAmount())
+                    .build();
 
-            BeanUtils.copyProperties(ticket, ticketResponse);
-            return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketResponse);
+            BeanUtils.copyProperties(ticket, ticketDto);
+            return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
         }
         return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
     }
@@ -94,7 +99,7 @@ public class TicketService implements ITicketService {
     public ResponsePayload deleteTicketById(UUID id) {
         Ticket ticket = ticketRepository.findById(id).orElse(null);
         if (ticket != null) {
-            ticket.setIsDeleted(false);
+            ticket.setIsDeleted(true);
             Ticket ticketSave = ticketRepository.save(ticket);
             TicketRequest ticketRequest = new TicketRequest();
             BeanUtils.copyProperties(ticketSave, ticketRequest);
@@ -106,10 +111,10 @@ public class TicketService implements ITicketService {
 
     @Override
     public ResponsePayload showAllTicketUpcoming(Pageable pageable, String status) {
-        Iterable<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
+        Page<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
 
         LocalDateTime currentDate = LocalDateTime.now();
-        List<TicketRequest> ticketRequests = StreamSupport.stream(tickets.spliterator(), true)
+        Iterable<TicketDto> ticketDto = StreamSupport.stream(tickets.spliterator(), true)
                 .flatMap(ticket -> {
                     if (StringUtils.isEmpty(status)) {
                         // Nếu status là rỗng, không áp dụng filter đầu tiên
@@ -119,23 +124,28 @@ public class TicketService implements ITicketService {
                         return Stream.of(ticket).filter(t -> t.getStatus().equals(status));
                     }
                 })
-                .filter(ticket -> ticket.getEventTime().getTime().getTime().isBefore(currentDate))
+                .filter(ticket -> ticket.getEventTime().getTime().getTime().isAfter(currentDate))
                 .map(ticket -> {
-                    TicketRequest ticketRequest = new TicketRequest();
-                    BeanUtils.copyProperties(ticket, ticketRequest);
-                    return ticketRequest;
+                    TicketDto ticketDto1 = TicketDto
+                            .builder()
+                            .eventName(ticket.getEventTime().getEvent().getName())
+                            .time(ticket.getEventTime().getTime().getTime())
+                            .location(ticket.getEventTime().getEvent().getLocation())
+
+                            .build();
+                    BeanUtils.copyProperties(ticket, ticketDto1);
+                    return ticketDto1;
                 })
                 .toList();
-
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequests);
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
     }
 
     @Override
     public ResponsePayload showAllTicketFinished(Pageable pageable, String status) {
-        Iterable<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
+        Page<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
         LocalDateTime currentDate = LocalDateTime.now();
 
-        List<TicketRequest> ticketRequests = StreamSupport.stream(tickets.spliterator(), true)
+        Iterable<TicketDto> ticketDto = StreamSupport.stream(tickets.spliterator(), true)
 
                 .flatMap(ticket -> {
                     if (StringUtils.isEmpty(status)) {
@@ -144,14 +154,20 @@ public class TicketService implements ITicketService {
                         return Stream.of(ticket).filter(t -> t.getStatus().equals(status));
                     }
                 })
-                .filter(ticket -> ticket.getEventTime().getTime().getTime().isAfter(currentDate))
+                .filter(ticket -> ticket.getEventTime().getTime().getTime().isBefore(currentDate))
                 .map(ticket -> {
-                    TicketRequest ticketRequest = new TicketRequest();
-                    BeanUtils.copyProperties(ticket, ticketRequest);
-                    return ticketRequest;
+                    TicketDto ticketDto1 = TicketDto
+                            .builder()
+                            .eventName(ticket.getEventTime().getEvent().getName())
+                            .time(ticket.getEventTime().getTime().getTime())
+                            .location(ticket.getEventTime().getEvent().getLocation())
+
+                            .build();
+                    BeanUtils.copyProperties(ticket, ticketDto1);
+                    return ticketDto1;
                 })
                 .toList();
 
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketRequests);
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
     }
 }

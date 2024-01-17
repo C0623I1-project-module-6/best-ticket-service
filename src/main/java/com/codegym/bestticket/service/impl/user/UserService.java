@@ -34,11 +34,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -70,11 +72,12 @@ public class UserService implements IUserService {
                     registerRequest.getEmail())) {
                 throw new EmailAlreadyExistsException("Email already exists!");
             }
-            if (customerRepository.existsByPhoneNumber(
-                    registerRequest.getPhoneNumber())) {
-                throw new PhoneNumberAlreadyExistsException("Phone number already exists!");
+            String phoneNumber = registerRequest.getPhoneNumber();
+            if (phoneNumber != null) {
+                if (customerRepository.existsByPhoneNumber(phoneNumber)) {
+                    throw new PhoneNumberAlreadyExistsException("Phone number already exists!");
+                }
             }
-
             User user = registerConverter.dtoToEntity(registerRequest);
             user.setPassword(encoder.encode(user.getPassword()));
             user.setIsDeleted(false);
@@ -82,10 +85,10 @@ public class UserService implements IUserService {
             Set<Role> roles = new HashSet<>();
             if (registerRequest.getPhoneNumber() != null) {
                 roles.add(roleRepository.findByName("CUSTOMER")
-                        .orElseThrow(() -> new RuntimeException("Can not find ROLE_CUSTOMER!")));
+                        .orElseThrow(() -> new RuntimeException("Role CUSTOMER not found!")));
             } else {
                 roles.add(roleRepository.findByName("USER")
-                        .orElseThrow(() -> new RuntimeException("Can not find ROLE_USER!")));
+                        .orElseThrow(() -> new RuntimeException("Role USER not found!")));
             }
             user.setRoles(roles);
             userRepository.save(user);
@@ -105,6 +108,11 @@ public class UserService implements IUserService {
             if (!registerRequest.getConfirmPassword().equals(registerRequest.getPassword())) {
                 throw new RuntimeException("Password not match!");
             }
+            Set<String> listRole = user.getRoles()
+                    .stream()
+                    .map(Role::getName)
+                    .collect(Collectors.toSet());
+            registerResponse.setListRole(listRole);
             return ResponsePayload.builder()
                     .message("Register successfully!!!")
                     .status(HttpStatus.CREATED)
@@ -126,7 +134,8 @@ public class UserService implements IUserService {
                             loginRequest.getUsername(),
                             loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            User user = userRepository.findByUsername(authentication.getName());
+            User user = userRepository.findByUsername(authentication.getName())
+                    .orElseThrow(() -> new RuntimeException("User not found!"));
             Set<Role> roles = user.getRoles();
             Set<String> listRoles = new HashSet<>();
             for (Role role : roles) {
@@ -155,11 +164,34 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public ResponsePayload keepLogin(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(object);
+        String username = ((org.springframework.security.core.userdetails.User) object).getUsername();
+        User user = userRepository.findByUsername(username).orElseThrow(()->new RuntimeException("User not found"));
+        Set<Role> roles = user.getRoles();
+        Set<String> listRoles = new HashSet<>();
+        for (Role role : roles){
+            listRoles.add(role.getName());
+        }
+        LoginResponse loginResponse = loginConverter.entityToDto(user,token);
+        if (user.getCustomer()!=null){
+            loginResponse.setFullName(user.getCustomer().getFullName());
+        }
+        return ResponsePayload.builder()
+                .message("Login successfully")
+                .status(HttpStatus.OK)
+                .data(loginResponse)
+                .build();
+    }
+
+    @Override
     public ResponsePayload logout(HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
+
         SecurityContextHolder.clearContext();
-        User user = userRepository.findByToken(token)
-                .orElseThrow(()-> new NullPointerException("Token not found"));
+        User user = userRepository.findUserByRememberToken(token).orElse(null);
         if (user != null) {
             user.setRememberToken(null);
             userRepository.save(user);
@@ -194,6 +226,12 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public ResponsePayload getInfo(UUID id) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return null;
+    }
+
+    @Override
     public ResponsePayload findAll(Pageable pageable) {
         try {
             Page<User> users = userRepository.findAllByIsDeletedFalse(pageable);
@@ -218,6 +256,11 @@ public class UserService implements IUserService {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
+    }
+
+    @Override
+    public Optional<User> findUserByRememberToken(String token) {
+        return userRepository.findUserByRememberToken(token);
     }
 
     @Override

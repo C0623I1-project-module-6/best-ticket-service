@@ -28,6 +28,7 @@ public class Event {
     private String description;
     private String image;
     private String duration;
+    private Integer ticketAmount;
 
     @Column(columnDefinition = "boolean default false")
     private Boolean isDeleted;

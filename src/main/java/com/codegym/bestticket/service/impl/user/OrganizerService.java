@@ -1,14 +1,15 @@
 package com.codegym.bestticket.service.impl.user;
 
 import com.codegym.bestticket.converter.user.IOrganizerConverter;
+import com.codegym.bestticket.converter.user.IUserConverter;
 import com.codegym.bestticket.dto.user.OrganizerDto;
 import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.entity.user.OrganizerType;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.payload.ResponsePayload;
-import com.codegym.bestticket.payload.response.user.OrganizerResponse;
 import com.codegym.bestticket.repository.user.IOrganizerRepository;
 import com.codegym.bestticket.repository.user.IOrganizerTypeRepository;
+import com.codegym.bestticket.repository.user.IRoleRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.service.IOrganizerService;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,8 +18,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,29 +32,43 @@ import java.util.UUID;
 @Transactional
 public class OrganizerService implements IOrganizerService {
     private final IOrganizerConverter organizerConverter;
+    private final IUserConverter userConverter;
     private final IOrganizerRepository organizerRepository;
     private final IUserRepository userRepository;
+    private final IRoleRepository roleRepository;
     private final IOrganizerTypeRepository organizerTypeRepository;
 
     @Override
     public ResponsePayload create(OrganizerDto organizerDto) {
         try {
-            UUID userId = organizerDto.getUser();
-            User user = userRepository.findById(userId)
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String username = userDetails.getUsername();
+            User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new EntityNotFoundException("User not found!"));
-            UUID organizerTypeId = organizerDto.getOrganizerType();
-            OrganizerType organizerType = organizerTypeRepository.findById(organizerTypeId)
-                    .orElseThrow(() -> new EntityNotFoundException("Organizer type not found!"));
             Organizer organizer = organizerConverter.dtoToEntity(organizerDto);
+            if (organizerDto.getIdCard() != null) {
+                OrganizerType individualType = organizerTypeRepository.findByName("Cá nhân")
+                        .orElseThrow(() -> new RuntimeException("Organizer type not found!"));
+                organizer.setOrganizerType(individualType);
+            } else if (organizerDto.getBusinessCode() != null) {
+                OrganizerType companyType = organizerTypeRepository.findByName("Doanh nghiệp/Nhà tổ chức")
+                        .orElseThrow(() -> new RuntimeException("Organizer type not found!"));
+                organizer.setOrganizerType(companyType);
+            }
             organizer.setUser(user);
-            organizer.setOrganizerType(organizerType);
             organizer.setIsDeleted(false);
             organizerRepository.save(organizer);
-            OrganizerResponse organizerResponse = organizerConverter.entityToDto(organizer);
+            OrganizerDto response = organizerConverter.entityToDto(organizer);
+            user.getRoles().add(roleRepository.findByName("ORGANIZER")
+                    .orElseThrow(() -> new RuntimeException("Role not found!")));
+            Map<String, Object> result = userConverter.mapUserToResult(user);
+            response.setResult(result);
+            response.setOrganizerType(organizer.getOrganizerType().getName());
             return ResponsePayload.builder()
                     .message("Add organizer successfully!!!")
                     .status(HttpStatus.CREATED)
-                    .data(organizerResponse)
+                    .data(response)
                     .build();
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
@@ -78,11 +97,11 @@ public class OrganizerService implements IOrganizerService {
             organizer.setIdCard(oldIdCard);
             organizer.setTaxCode(oldTaxCode);
             organizerRepository.save(organizer);
-            OrganizerResponse organizerResponse = organizerConverter.entityToDto(organizer);
+            OrganizerDto response = organizerConverter.entityToDto(organizer);
             return ResponsePayload.builder()
                     .message("Edit organizer successfully!!!")
                     .status(HttpStatus.OK)
-                    .data(organizerResponse)
+                    .data(response)
                     .build();
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
@@ -95,7 +114,7 @@ public class OrganizerService implements IOrganizerService {
     @Override
     public ResponsePayload findAll(Pageable pageable) {
         try {
-            Page<OrganizerResponse> organizers = organizerRepository.findAllByIsDeletedFalse(pageable)
+            Page<OrganizerDto> organizers = organizerRepository.findAllByIsDeletedFalse(pageable)
                     .map(organizerConverter::entityToDto);
             return ResponsePayload.builder()
                     .message("Organizer list!!!")
@@ -116,11 +135,11 @@ public class OrganizerService implements IOrganizerService {
         try {
             Organizer organizer = organizerRepository.findByIdAndIsDeletedFalse(id)
                     .orElseThrow(() -> new EntityNotFoundException("Id not found!"));
-            OrganizerResponse organizerResponse = organizerConverter.entityToDto(organizer);
+            OrganizerDto response = organizerConverter.entityToDto(organizer);
             return ResponsePayload.builder()
                     .message("Organizer by" + id)
                     .status(HttpStatus.OK)
-                    .data(organizerResponse)
+                    .data(response)
                     .build();
         } catch (RuntimeException e) {
             return ResponsePayload.builder()

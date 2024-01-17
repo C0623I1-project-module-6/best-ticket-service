@@ -5,8 +5,10 @@ import com.codegym.bestticket.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +29,11 @@ public class UserController {
         }
         ResponsePayload responsePayload = userService.delete(id);
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
+    }
+    @GetMapping
+    public ResponseEntity<ResponsePayload> getInfo() {
+        ResponsePayload responsePayload = userService.getInfo(null);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
 }

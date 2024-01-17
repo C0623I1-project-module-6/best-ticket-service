@@ -1,5 +1,6 @@
 package com.codegym.bestticket.entity.event;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,7 +31,8 @@ public class Time {
 
     private LocalDateTime time;
 
-    @ManyToMany(mappedBy = "times")
+    @ManyToMany(mappedBy = "times") 
+    @JsonIgnore
     private Set<Event> events;
 
 }

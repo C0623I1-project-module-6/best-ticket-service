@@ -1,21 +1,20 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.payload.request.user.BankAccountRequest;
-import com.codegym.bestticket.payload.response.user.BankAccountResponse;
+import com.codegym.bestticket.dto.user.BankAccountDto;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface IBankAccountService {
-    BankAccountResponse create(BankAccountRequest bankAccountRequestDTO);
+    BankAccountDto create(BankAccountDto bankAccountDto);
 
-    BankAccountResponse update(UUID id, BankAccountRequest bankAccountRequestDTO);
+    BankAccountDto update(UUID id, BankAccountDto bankAccountDto);
 
     void remove(UUID id);
 
     void delete(UUID id);
 
-    List<BankAccountResponse> findAll();
+    List<BankAccountDto> findAll();
 
-    BankAccountResponse findById(UUID id);
+    BankAccountDto findById(UUID id);
 }

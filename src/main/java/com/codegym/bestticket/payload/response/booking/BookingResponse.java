@@ -16,6 +16,5 @@ public class BookingResponse {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Customer customer;
-    private Organizer organizer;
     private Boolean isDeleted;
 }

@@ -2,7 +2,6 @@ package com.codegym.bestticket.controller.user;
 
 import com.codegym.bestticket.dto.user.CustomerDto;
 import com.codegym.bestticket.payload.ResponsePayload;
-import com.codegym.bestticket.payload.request.user.CustomerRequest;
 import com.codegym.bestticket.service.ICustomerService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,23 +23,23 @@ import java.util.UUID;
 public class CustomerController {
     private final ICustomerService customerService;
 
-    @PostMapping("/{id}")
-    public ResponseEntity<ResponsePayload> addInfo(@PathVariable UUID id,
-                                                   @RequestBody CustomerRequest customerRequest) {
+    @PostMapping("/add")
+    public ResponseEntity<ResponsePayload> addInfo(@RequestBody CustomerDto customerRequest
+                                                   ) {
         if (customerRequest == null) {
             new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(customerService.addInfo(id, customerRequest), HttpStatus.CREATED);
+        return new ResponseEntity<>(customerService.addProfile(customerRequest), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponsePayload> update(@PathVariable UUID id,
-                                                  @RequestBody CustomerDto customerDto) {
+                                                  @RequestBody CustomerDto customerRequest) {
 
-        if (customerDto == null) {
+        if (customerRequest == null) {
             new ResponseEntity<>("Request not found or id not found!", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(customerService.update(id, customerDto), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.update(id, customerRequest), HttpStatus.OK);
     }
 
 }

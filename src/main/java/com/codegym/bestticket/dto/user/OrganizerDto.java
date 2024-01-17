@@ -2,6 +2,8 @@ package com.codegym.bestticket.dto.user;
 
 import lombok.Data;
 
+import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -10,8 +12,11 @@ public class OrganizerDto {
     private String name;
     private String phoneNumber;
     private String email;
+    private String idCard;
     private String taxCode;
-    private UUID organizerType;
-    private UUID user;
-
+    private String businessCode;
+    private Date dateRange;
+    private String issuedBy;
+    private String organizerType;
+    private Map<String, Object> result;
 }

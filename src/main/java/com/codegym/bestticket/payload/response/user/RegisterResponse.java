@@ -12,5 +12,5 @@ public class RegisterResponse {
     private String username;
     private String email;
     private String avatar;
-    private Set<Role> listRole;
+    private Set<String> listRole;
 }
