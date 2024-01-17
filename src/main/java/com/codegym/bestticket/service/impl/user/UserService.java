@@ -165,32 +165,42 @@ public class UserService implements IUserService {
 
     @Override
     public ResponsePayload keepLogin(HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
-        Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(object);
-        String username = ((org.springframework.security.core.userdetails.User) object).getUsername();
-        User user = userRepository.findByUsername(username).orElseThrow(()->new RuntimeException("User not found"));
-        Set<Role> roles = user.getRoles();
-        Set<String> listRoles = new HashSet<>();
-        for (Role role : roles){
-            listRoles.add(role.getName());
-        }
-        LoginResponse loginResponse = loginConverter.entityToDto(user,token);
-        if (user.getCustomer()!=null){
-            loginResponse.setFullName(user.getCustomer().getFullName());
+        try {
+            String token = request.getHeader("Authorization").substring(7);
+            if (jwtTokenProvider.validateToken(token)) {
+                Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                String username = ((org.springframework.security.core.userdetails.User) object).getUsername();
+                User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+                Set<Role> roles = user.getRoles();
+                Set<String> listRoles = new HashSet<>();
+                for (Role role : roles) {
+                    listRoles.add(role.getName());
+                }
+                LoginResponse loginResponse = loginConverter.entityToDto(user, token);
+                loginResponse.setListRole(listRoles);
+                if (user.getCustomer() != null) {
+                    loginResponse.setFullName(user.getCustomer().getFullName());
+                }
+                return ResponsePayload.builder()
+                        .message("Login successfully")
+                        .status(HttpStatus.OK)
+                        .data(loginResponse)
+                        .build();
+            }
+        } catch (Exception ignored) {
+
         }
         return ResponsePayload.builder()
-                .message("Login successfully")
-                .status(HttpStatus.OK)
-                .data(loginResponse)
+                .message("Not accepted !")
+                .status(HttpStatus.UNAUTHORIZED)
+                .data(null)
                 .build();
     }
 
     @Override
     public ResponsePayload logout(HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7);
-
-        SecurityContextHolder.clearContext();
+        SecurityContextHolder.setContext(null);
         User user = userRepository.findUserByRememberToken(token).orElse(null);
         if (user != null) {
             user.setRememberToken(null);
