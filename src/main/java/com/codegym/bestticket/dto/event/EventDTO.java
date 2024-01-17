@@ -1,10 +1,8 @@
 package com.codegym.bestticket.dto.event;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.codegym.bestticket.entity.user.Organizer;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
@@ -17,6 +15,6 @@ public class EventDTO {
     private String image;
     private String duration;
     private Boolean isDeleted;
-
+    private Organizer organizer;
 
 }
