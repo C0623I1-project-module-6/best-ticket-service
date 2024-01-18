@@ -211,6 +211,7 @@ public class BookingService implements IBookingService {
             return createBookingResponsePayload("Searching failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
     }
+
     public ResponsePayload findBookingByTimeId(UUID timeId) {
         Booking booking = iBookingRepository.findBookingByTimeId(timeId);
         if (booking == null) {
