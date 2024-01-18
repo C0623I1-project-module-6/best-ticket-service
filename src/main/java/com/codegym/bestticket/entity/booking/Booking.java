@@ -49,6 +49,5 @@ public class Booking {
     private Boolean isDeleted;
     @JsonIgnore
     @OneToMany(mappedBy = "booking")
-    @JsonIgnore
     private List<BookingDetail> bookingDetailList;
 }
