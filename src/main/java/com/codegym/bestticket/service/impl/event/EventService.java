@@ -157,6 +157,7 @@ public class EventService implements IEventService {
         Optional.ofNullable(eventDTO.getDescription()).ifPresent(event::setDescription);
         Optional.ofNullable(eventDTO.getImage()).ifPresent(event::setImage);
         Optional.ofNullable(eventDTO.getDuration()).ifPresent(event::setDuration);
+//        Optional.ofNullable(eventDTO.getOrganizer()).ifPresent(event::setOrganizer);
         Optional.ofNullable(eventDTO.getIsDeleted()).ifPresent(event::setIsDeleted);
         eventRepository.save(event);
         EventDTO updatedEventDTO = eventConverter.entityToDTO(event);

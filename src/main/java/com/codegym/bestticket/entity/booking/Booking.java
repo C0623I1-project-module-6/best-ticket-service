@@ -47,7 +47,7 @@ public class Booking {
     private Customer customer;
     @Column(name = "is_deleted", columnDefinition = "DEFAULT 0")
     private Boolean isDeleted;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "booking")
     @JsonIgnore
     private List<BookingDetail> bookingDetailList;

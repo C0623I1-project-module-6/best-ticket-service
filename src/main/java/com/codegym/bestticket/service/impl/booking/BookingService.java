@@ -2,6 +2,9 @@ package com.codegym.bestticket.service.impl.booking;
 
 import com.codegym.bestticket.converter.user.impl.constant.EBookingStatus;
 import com.codegym.bestticket.entity.booking.Booking;
+import com.codegym.bestticket.entity.booking.BookingDetail;
+import com.codegym.bestticket.entity.ticket.Ticket;
+import com.codegym.bestticket.entity.ticket.TicketType;
 import com.codegym.bestticket.exception.BookingSaveException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
@@ -58,6 +61,22 @@ public class BookingService implements IBookingService {
         try {
             Page<Booking> bookings = iBookingRepository.findAllByCustomerIdAndIsDeletedFalse(customerId, pageable);
             if (bookings.isEmpty()) {
+
+                return createBookingResponsePayload("There is no bookings.", HttpStatus.OK, bookings);
+            }
+            return getBookingResponsePayload(bookings);
+        } catch (Exception e) {
+            log.log(Level.WARNING, e.getMessage(), e);
+            return createBookingResponsePayload("Fetch data failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
+        }
+    }
+
+
+    @Override
+    public ResponsePayload findAllByEventId(UUID eventId, Pageable pageable) {
+        try {
+            Page<Booking> bookings = iBookingRepository.findAllByEventId(eventId, pageable);
+            if (bookings.isEmpty()) {
                 return createBookingResponsePayload("There is no bookings.", HttpStatus.OK, bookings);
             }
             return getBookingResponsePayload(bookings);
@@ -72,12 +91,46 @@ public class BookingService implements IBookingService {
                 .filter(booking -> !booking.getIsDeleted())
                 .map(booking -> {
                     BookingResponse bookingResponse = new BookingResponse();
+                    bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
+                    updateBookingTotalAmount(booking);
                     BeanUtils.copyProperties(booking, bookingResponse);
                     return bookingResponse;
                 })
                 .sorted(Comparator.comparing(BookingResponse::getCreatedAt).reversed())
                 .collect(Collectors.toList());
         return createBookingResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
+    }
+
+    private void updateBookingTotalAmount(Booking booking) {
+        double totalAmount = booking.getBookingDetailList()
+                .stream()
+                .peek(this::updateBookingDetailAmount)
+                .mapToDouble(BookingDetail::getAmount)
+                .sum();
+
+        booking.setTotalAmount(totalAmount);
+    }
+
+    private void updateBookingDetailAmount(BookingDetail bookingDetail) {
+        double amount = bookingDetail.getTickets().stream()
+                .mapToDouble(ticket -> {
+                    TicketType ticketType = ticket.getTicketType();
+                    int quantityAvailable = countTicketTypeQuantity(bookingDetail, ticketType);
+                    return ticketType.getPrice() * quantityAvailable;
+                })
+                .sum();
+
+        bookingDetail.setAmount(amount);
+    }
+
+    private int countTicketTypeQuantity(BookingDetail bookingDetail, TicketType ticketType) {
+        int count = 0;
+        for (Ticket ticket : bookingDetail.getTickets()) {
+            if (ticket.getTicketType().equals(ticketType)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override
@@ -165,21 +218,6 @@ public class BookingService implements IBookingService {
         }
     }
 
-    @Override
-    public ResponsePayload findAllByEventId(UUID eventId, Pageable pageable) {
-        try {
-            Page<Booking> bookings = iBookingRepository.findAllByEventId(eventId, pageable);
-            if (bookings.isEmpty()) {
-                return createBookingResponsePayload("There is no bookings.", HttpStatus.OK, bookings);
-            }
-            return getBookingResponsePayload(bookings);
-        } catch (Exception e) {
-            log.log(Level.WARNING, e.getMessage(), e);
-            return createBookingResponsePayload("Fetch data failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
-        }
-    }
-
-    @Override
     public ResponsePayload findBookingByTimeId(UUID timeId) {
         Booking booking = iBookingRepository.findBookingByTimeId(timeId);
         if (booking == null) {
