@@ -16,4 +16,5 @@ public interface IBookingService {
     ResponsePayload remove(UUID id);
     ResponsePayload search(String keywords, String category, Pageable pageable);
     ResponsePayload findAllByEventId(UUID eventId, Pageable pageable);
+    ResponsePayload findBookingByTimeId(UUID timeId);
 }

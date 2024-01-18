@@ -43,7 +43,7 @@ public class BookingService implements IBookingService {
     public ResponsePayload findAllByIsDeletedFalse(Pageable pageable) {
         try {
             Page<Booking> bookings = iBookingRepository.findAllByIsDeletedFalse(pageable);
-            if(bookings.isEmpty()) {
+            if (bookings.isEmpty()) {
                 return createBookingResponsePayload("There is no bookings.", HttpStatus.OK, bookings);
             }
             return getBookingResponsePayload(bookings);
@@ -57,7 +57,7 @@ public class BookingService implements IBookingService {
     public ResponsePayload findAllByCustomerIdAndIsDeletedFalse(UUID customerId, Pageable pageable) {
         try {
             Page<Booking> bookings = iBookingRepository.findAllByCustomerIdAndIsDeletedFalse(customerId, pageable);
-            if(bookings.isEmpty()) {
+            if (bookings.isEmpty()) {
                 return createBookingResponsePayload("There is no bookings.", HttpStatus.OK, bookings);
             }
             return getBookingResponsePayload(bookings);
@@ -169,7 +169,7 @@ public class BookingService implements IBookingService {
     public ResponsePayload findAllByEventId(UUID eventId, Pageable pageable) {
         try {
             Page<Booking> bookings = iBookingRepository.findAllByEventId(eventId, pageable);
-            if(bookings.isEmpty()) {
+            if (bookings.isEmpty()) {
                 return createBookingResponsePayload("There is no bookings.", HttpStatus.OK, bookings);
             }
             return getBookingResponsePayload(bookings);
@@ -177,5 +177,14 @@ public class BookingService implements IBookingService {
             log.log(Level.WARNING, e.getMessage(), e);
             return createBookingResponsePayload("Fetch data failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
+    }
+
+    @Override
+    public ResponsePayload findBookingByTimeId(UUID timeId) {
+        Booking booking = iBookingRepository.findBookingByTimeId(timeId);
+        if (booking == null) {
+            return createBookingResponsePayload("Fail", HttpStatus.NO_CONTENT, null);
+        }
+        return createBookingResponsePayload("Success", HttpStatus.OK, booking);
     }
 }

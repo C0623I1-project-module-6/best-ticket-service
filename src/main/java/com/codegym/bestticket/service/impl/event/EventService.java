@@ -76,21 +76,6 @@ public class EventService implements IEventService {
         }
     }
 
-//    @Override
-//    public ResponsePayload findAllEvent(Pageable pageable) {
-//        Page<Event> events = eventRepository.findAllByIsDeletedFalse(pageable);
-//        Iterable<EventDetailDto> eventDetailDtos = StreamSupport.stream(events.spliterator(), true)
-//                .map(event -> {
-//                    EventDetailDto eventDetailDto = EventDetailDto
-//                            .builder()
-//
-//                            .build();
-//                    BeanUtils.copyProperties(event, eventDetailDto);
-//                    return eventDetailDto;
-//                })
-//                .toList();
-//        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.CREATED, eventDetailDtos);
-//    }
 
     @Override
     public EventResponse removeEvent(UUID event_id) {
