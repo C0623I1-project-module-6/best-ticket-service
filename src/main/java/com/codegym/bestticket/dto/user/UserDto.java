@@ -16,7 +16,7 @@ public class UserDto {
     private UUID id;
     @NotBlank(message = "Username is mandatory!")
     private String username;
-    @NotBlank(message = "Username is mandatory!")
+    @NotBlank(message = "Password is mandatory!")
     @Size(min = 6, message = "Password must be at least 6 characters long!")
     @Pattern(regexp = ".*[a-zA-z].*", message = "Password must contain at least one letter!")
     private String password;
@@ -25,7 +25,7 @@ public class UserDto {
     private String email;
     private String avatar;
     private Set<String> listRoles;
-    private Customer customer;
+    private String customerPhoneNumber;
     private Organizer organizer;
     private Boolean isDeleted;
 

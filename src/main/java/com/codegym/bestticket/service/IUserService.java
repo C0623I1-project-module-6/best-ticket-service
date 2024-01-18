@@ -18,7 +18,7 @@ public interface IUserService {
     ResponsePayload logout(HttpServletRequest request);
     ResponsePayload delete(UUID id);
     ResponsePayload getInfo(UUID id);
-    ResponsePayload findAll(Pageable pageable);
+    ResponsePayload showExistsUsers();
     Optional<User> findUserByRememberToken(String token);
     ResponsePayload filterUsers(Pageable pageable, String status, String filterType);
 
