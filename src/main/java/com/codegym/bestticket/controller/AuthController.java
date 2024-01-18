@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,7 +33,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponsePayload> login(HttpServletRequest request, @Valid @RequestBody(required = false) LoginRequest loginRequest) {
+    public ResponseEntity<ResponsePayload> login(HttpServletRequest request,
+                                                 @Valid @RequestBody(required = false) LoginRequest loginRequest) {
+        try {
             ResponsePayload responsePayload;
             if (loginRequest == null) {
                 responsePayload = userService.keepLogin(request);
@@ -42,7 +43,16 @@ public class AuthController {
                 responsePayload = userService.login(loginRequest);
             }
             return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    ResponsePayload.builder()
+                            .message(e.getMessage())
+                            .build(),
+                    HttpStatus.BAD_REQUEST);
+        }
     }
+
 
     @PostMapping("/logout")
     public ResponseEntity<ResponsePayload> logout(HttpServletRequest request) {

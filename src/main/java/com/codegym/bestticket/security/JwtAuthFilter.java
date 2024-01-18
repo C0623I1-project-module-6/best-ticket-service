@@ -4,7 +4,6 @@ import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.service.IUserService;
 import com.codegym.bestticket.service.impl.user.UserDetailsService;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +33,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private IUserService userService;
 
+
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
@@ -45,30 +45,36 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request,
                                     @NotNull HttpServletResponse response,
-                                    @NotNull FilterChain filterChain) {
-        String jwt = getJwtFromRequest(request);
+
+                                    @NotNull FilterChain filterChain)
+            throws ServletException, IOException {
+
         try {
-            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                String username = tokenProvider.getUsernameFromJWT(jwt);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = getJwtFromRequest(request);
+            try {
+                if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+                    String username = tokenProvider.getUsernameFromJWT(jwt);
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } catch (Exception ex) {
+                Optional<User> user = userService.findUserByRememberToken(jwt);
+                if (user.isPresent()) {
+                    LoginRequest loginRequest = new LoginRequest();
+                    loginRequest.setUsername(user.get().getUsername());
+                    loginRequest.setPassword(user.get().getOldPassword());
+                    userService.login(loginRequest);
+                } else logger.error("Could not set user authentication in security context", ex);
             }
-            filterChain.doFilter(request, response);
-        } catch (ExpiredJwtException e) {
-            Optional<User> user = userService.findUserByRememberToken(jwt);
-            if (user.isPresent()) {
-                LoginRequest loginRequest = new LoginRequest();
-                loginRequest.setUsername(user.get().getUsername());
-                loginRequest.setPassword(user.get().getPassword());
-                userService.login(loginRequest);
-            } else logger.error("Could not set user authentication in security context", e);
         } catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex);
         }
-
-//        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 }
+
+
+
