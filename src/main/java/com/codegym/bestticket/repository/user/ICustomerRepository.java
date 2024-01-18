@@ -20,4 +20,6 @@ public interface ICustomerRepository extends JpaRepository<Customer, UUID> {
     Customer findByPhoneNumber(String phoneNumber);
 
     boolean existsByPhoneNumber(String phoneNumber);
+
+
 }

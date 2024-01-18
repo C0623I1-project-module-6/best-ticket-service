@@ -103,7 +103,8 @@ public class SecurityConfiguration {
                         "/api/customers/**",
                         "/api/organizers/**",
                         "/api/users/**",
-                        "/api/ticket_types/**"
+                        "/api/ticket-types/**",
+                        "/api/times/**"
                 )
                 .permitAll();
 

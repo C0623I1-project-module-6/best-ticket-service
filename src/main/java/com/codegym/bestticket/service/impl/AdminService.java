@@ -8,7 +8,6 @@ import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.payload.ResponsePayload;
-import com.codegym.bestticket.payload.response.booking.BookingResponse;
 import com.codegym.bestticket.repository.booking.IBookingRepository;
 import com.codegym.bestticket.repository.event.IEventRepository;
 import com.codegym.bestticket.repository.event.IEventTypeRepository;
@@ -28,10 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 @AllArgsConstructor

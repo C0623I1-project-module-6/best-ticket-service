@@ -79,4 +79,10 @@ public class BookingController {
         ResponsePayload responsePayload = bookingService.findAllByEventId(eventId, pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
+
+    @GetMapping("/booking/{timeId}")
+    public ResponseEntity<ResponsePayload> findBookingByTimeId(@PathVariable UUID timeId) {
+        ResponsePayload responsePayload = bookingService.findBookingByTimeId(timeId);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
 }
