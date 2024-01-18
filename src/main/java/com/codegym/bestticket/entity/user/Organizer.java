@@ -33,7 +33,7 @@ public class Organizer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(nullable = false)
+    @Column(length = 50,nullable = false)
     private String name;
     @Column(length = 50, nullable = false, unique = true)
     private String phoneNumber;
