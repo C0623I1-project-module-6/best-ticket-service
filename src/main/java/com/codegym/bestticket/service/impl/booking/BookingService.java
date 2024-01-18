@@ -205,10 +205,7 @@ public class BookingService implements IBookingService {
             if (!searchedBookings.iterator().hasNext()) {
                 return createBookingResponsePayload("No bookings found!", HttpStatus.NOT_FOUND, null);
             }
-            Iterable<Booking> sortedBookings = StreamSupport.stream(searchedBookings.spliterator(), false)
-                    .sorted(Comparator.comparing(Booking::getCreatedAt).reversed())
-                    .collect(Collectors.toList());
-            return createBookingResponsePayload("Bookings found!", HttpStatus.OK, sortedBookings);
+            return getBookingResponsePayload(searchedBookings);
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);
             return createBookingResponsePayload("Searching failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
