@@ -2,6 +2,8 @@ package com.codegym.bestticket.service.impl.booking;
 
 import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.entity.booking.BookingDetail;
+import com.codegym.bestticket.entity.ticket.Ticket;
+import com.codegym.bestticket.entity.ticket.TicketType;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingDetailRequest;
 import com.codegym.bestticket.payload.response.booking.BookingDetailResponse;
@@ -45,6 +47,7 @@ public class BookingDetailService implements IBookingDetailService {
     public ResponsePayload findAllByBookingIdAndIsDeletedFalse(UUID bookingId, Pageable pageable) {
         try {
             if (iBookingRepository.findById(bookingId).isPresent()) {
+                updateBookingDetailAmount(bookingId);
                 updateBookingTotalAmount(bookingId);
                 Page<BookingDetail> bookingDetailList = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId, pageable);
                 Iterable<BookingDetailResponse> bookingDetailResponseList = StreamSupport.stream(bookingDetailList.spliterator(), false)
@@ -106,6 +109,7 @@ public class BookingDetailService implements IBookingDetailService {
                 existingBookingDetail.setTickets(bookingDetailRequest.getTickets());
                 iTicketRepository.saveAll(existingBookingDetail.getTickets());
                 iBookingDetailRepository.save(existingBookingDetail);
+                updateBookingDetailAmount(bookingId);
                 updateBookingTotalAmount(bookingId);
                 return createBookingDetailResponsePayload("Booking detail updated successfully!", HttpStatus.OK, existingBookingDetail);
             }
@@ -132,6 +136,37 @@ public class BookingDetailService implements IBookingDetailService {
             log.log(Level.WARNING, e.getMessage(), e);
             return createBookingDetailResponsePayload("Remove booking detail remove failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
+    }
+
+    //Developing function
+    private void updateBookingDetailAmount(UUID bookingId) {
+        Optional<Booking> optionalBooking = iBookingRepository.findById(bookingId);
+        if (optionalBooking.isPresent()) {
+            Booking booking = optionalBooking.get();
+            List<BookingDetail> bookingDetailList = booking.getBookingDetailList();
+            bookingDetailList.forEach(detail -> {
+                double amount = detail.getTickets().stream()
+                        .mapToDouble(ticket -> {
+                            TicketType ticketType = ticket.getTicketType();
+                            int quantityAvailable = countTicketTypeQuantity(detail, ticketType);
+                            return ticketType.getPrice() * quantityAvailable;
+                        })
+                        .sum();
+
+                detail.setAmount(amount);
+            });
+        }
+    }
+
+    //Developing function
+    private int countTicketTypeQuantity(BookingDetail bookingDetail, TicketType ticketType) {
+        int count = 0;
+        for (Ticket ticket : bookingDetail.getTickets()) {
+            if (ticket.getTicketType().equals(ticketType)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     //Developing function
