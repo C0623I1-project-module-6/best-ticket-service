@@ -50,6 +50,7 @@ public class User {
     private String avatar;
     private Boolean isDeleted;
     private Boolean isActivated;
+    private String oldPassword;
 
     @OneToOne(mappedBy = "user")
     private Customer customer;

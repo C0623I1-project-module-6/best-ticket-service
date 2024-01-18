@@ -94,9 +94,7 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeHttpRequests()
-                .requestMatchers("/api/auth/login",
-                        "/api/auth/register",
-                        "/api/auth/logout",
+                .requestMatchers("/api/auth/**",
                         "/api/tickets/**",
                         "/api/bookings/**",
                         "/api/events/**",
@@ -127,7 +125,8 @@ public class SecurityConfiguration {
 
 
         http.authorizeHttpRequests()
-                .and().rememberMe()
+                .and()
+                .rememberMe()
                 .tokenRepository(this.persistentTokenRepository())
                 .tokenValiditySeconds(24 * 60 * 60);//24 hours
 

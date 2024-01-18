@@ -1,7 +1,8 @@
 package com.codegym.bestticket.service;
 
 import com.codegym.bestticket.dto.event.EventDTO;
-import com.codegym.bestticket.payload.ResponsePayload;
+
+import com.codegym.bestticket.payload.request.event.CreateEventRequest;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import java.util.List;
 import java.util.UUID;
@@ -13,7 +14,8 @@ public interface IEventService {
 
     EventResponse removeEvent(UUID event_id);
 
-    EventResponse createEvent(EventDTO eventDTO);
+    EventResponse createEvent(CreateEventRequest eventRequest);
+
 
     EventResponse updateEvent(UUID event_id,EventDTO eventDTO);
 

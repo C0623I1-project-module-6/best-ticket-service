@@ -2,6 +2,7 @@ package com.codegym.bestticket.service.impl.user;
 
 import com.codegym.bestticket.security.JwtTokenProvider;
 import com.codegym.bestticket.service.ISecurityService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,6 +11,7 @@ import org.springframework.util.StringUtils;
 
 @Service
 public class SecurityService implements ISecurityService {
+    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
     public SecurityService(JwtTokenProvider jwtTokenProvider) {
@@ -27,10 +29,14 @@ public class SecurityService implements ISecurityService {
     }
 
     @Override
-    public boolean isValidToken(String authToken) {
+    public boolean isValidToken(String authToken)  {
         String jwt = jwtTokenProvider.getJwtFromBearerToken(authToken);
-        if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(authToken)) {
-            return true;
+        try {
+            if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(authToken)) {
+                return true;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return false;
     }
