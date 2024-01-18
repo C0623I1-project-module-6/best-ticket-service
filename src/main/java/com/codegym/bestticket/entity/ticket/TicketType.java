@@ -1,5 +1,6 @@
 package com.codegym.bestticket.entity.ticket;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,6 +37,7 @@ public class TicketType {
     private Double price;
 
     @OneToMany(mappedBy = "ticketType")
+    @JsonIgnore
     private Set<Ticket> tickets;
 
 }

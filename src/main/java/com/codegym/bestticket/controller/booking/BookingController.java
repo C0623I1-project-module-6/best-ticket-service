@@ -65,18 +65,24 @@ public class BookingController {
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
-    @GetMapping("/search")
+    @GetMapping("/event/{eventId}/search")
     public ResponseEntity<ResponsePayload> searchBooking(
-            @RequestParam("category") String category,
+            @PathVariable("eventId") UUID eventId,
             @RequestParam("keyword") String keyword,
             @PageableDefault Pageable pageable) {
-        ResponsePayload responsePayload = bookingService.search(category, keyword, pageable);
+        ResponsePayload responsePayload = bookingService.search(eventId, keyword, pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
     @GetMapping("/event/{eventId}")
     public ResponseEntity<ResponsePayload> findAllByEventId(@PathVariable UUID eventId, Pageable pageable) {
         ResponsePayload responsePayload = bookingService.findAllByEventId(eventId, pageable);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
+
+    @GetMapping("/booking/{timeId}")
+    public ResponseEntity<ResponsePayload> findBookingByTimeId(@PathVariable UUID timeId) {
+        ResponsePayload responsePayload = bookingService.findBookingByTimeId(timeId);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 }

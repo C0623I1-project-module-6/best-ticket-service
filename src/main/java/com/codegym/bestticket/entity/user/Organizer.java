@@ -53,6 +53,7 @@ public class Organizer {
     private String issuedBy;
     @ManyToOne
     @JoinColumn(name = "organizer_type_id")
+    @JsonIgnore
     private OrganizerType organizerType;
     private Boolean isDeleted;
     @OneToOne
