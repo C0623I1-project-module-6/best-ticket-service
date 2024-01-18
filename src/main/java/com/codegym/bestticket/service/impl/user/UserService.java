@@ -308,7 +308,7 @@ public class UserService implements IUserService {
                     result = userRepository.searchUserByIsDeletedFalseAndIsActivatedContaining(pageable, status);
                     break;
                 default:
-                    return findAll();
+                    return null;
             }
             if (!result.iterator().hasNext()) {
                 return ResponsePayload.builder()
