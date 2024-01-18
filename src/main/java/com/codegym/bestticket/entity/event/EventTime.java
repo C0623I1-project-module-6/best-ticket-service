@@ -41,5 +41,6 @@ public class EventTime {
     private Time time;
 
     @OneToMany(mappedBy = "eventTime")
+    @JsonIgnore
     private Set<Ticket> tickets;
 }

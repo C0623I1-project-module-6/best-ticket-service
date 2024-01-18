@@ -19,4 +19,7 @@ public interface IBookingRepository extends JpaRepository<Booking, UUID> {
 
     @Query("SELECT b FROM Booking b JOIN b.bookingDetailList bd JOIN bd.tickets t JOIN t.eventTime et JOIN et.event e WHERE e.id = :eventId")
     Page<Booking> findAllByEventId(UUID eventId, Pageable pageable);
+
+    @Query("SELECT b from Booking b JOIN b.bookingDetailList bd JOIN bd.tickets t JOIN t.eventTime et join et.time ti where ti.id = :timeId")
+    Booking findBookingByTimeId(UUID timeId);
 }

@@ -2,12 +2,16 @@ package com.codegym.bestticket.service.impl.event;
 
 import com.codegym.bestticket.converter.event.IEventConverter;
 import com.codegym.bestticket.converter.event.IEventTypeConverter;
+import com.codegym.bestticket.converter.user.impl.constant.ETicketMessage;
 import com.codegym.bestticket.dto.event.EventDTO;
+import com.codegym.bestticket.dto.event.EventDetailDto;
 import com.codegym.bestticket.dto.event.EventTypeDTO;
+import com.codegym.bestticket.dto.ticket.TicketDto;
 import com.codegym.bestticket.entity.event.Event;
 import com.codegym.bestticket.entity.event.EventType;
 import com.codegym.bestticket.entity.event.Time;
 import com.codegym.bestticket.entity.location.Location;
+import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.event.CreateEventRequest;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.repository.event.IEventRepository;
@@ -17,14 +21,20 @@ import com.codegym.bestticket.service.IEventService;
 import com.codegym.bestticket.service.IEventTypeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import org.springframework.data.domain.Pageable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.StreamSupport;
 
-import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -35,6 +45,15 @@ public class EventService implements IEventService {
     private final IEventTypeConverter eventTypeConverter;
     private final ILocationRepository locationRepository;
     private final ITimeRepository timeRepository;
+
+    public ResponsePayload createResponsePayload(String message, HttpStatus status, Object data) {
+        return ResponsePayload
+                .builder()
+                .status(status)
+                .message(message)
+                .data(data)
+                .build();
+    }
 
     @Override
     public EventResponse findAll(int page, int pageSize) {
@@ -56,7 +75,6 @@ public class EventService implements IEventService {
             return EventResponse.builder().httpStatus(HttpStatus.NOT_FOUND).message(ex.getMessage()).build();
         }
     }
-
 
 
     @Override
@@ -92,7 +110,7 @@ public class EventService implements IEventService {
                 .isDeleted(false)
                 .build();
         if (locationRepository.existsByProvinceAndDistrictAndAddress(province, district, address)) {
-            event.setLocation(locationRepository.findByProvinceAndDistrictAndAddress(province,district,address));
+            event.setLocation(locationRepository.findByProvinceAndDistrictAndAddress(province, district, address));
         } else {
             Location newLocation = Location.builder()
                     .province(province)
@@ -151,9 +169,9 @@ public class EventService implements IEventService {
     }
 
     @Override
-    public EventResponse findByNameContaining(String text,int page,int pageSize) {
-        Pageable pageable = PageRequest.of(page,pageSize);
-        Page<Event> eventPage = eventRepository.findByNameContainingAndIsDeletedFalse(text,pageable);
+    public EventResponse findByNameContaining(String text, int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Event> eventPage = eventRepository.findByNameContainingAndIsDeletedFalse(text, pageable);
         List<EventDTO> events = eventConverter.entitiesToDTOs(eventPage.getContent());
         return EventResponse.builder().data(events).totalPages(eventPage.getTotalPages()).httpStatus(HttpStatus.OK).message("Page Event By Search Term").build();
     }
@@ -161,7 +179,7 @@ public class EventService implements IEventService {
     @Override
     public EventResponse findByEventTypeNamesAndIsDeletedFalse(List<String> eventTypeNames, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Event> eventPage = eventRepository.findByEventTypeNamesAndIsDeletedFalse(eventTypeNames,pageable);
+        Page<Event> eventPage = eventRepository.findByEventTypeNamesAndIsDeletedFalse(eventTypeNames, pageable);
         List<EventDTO> eventDTOs = eventConverter.entitiesToDTOs(eventPage.getContent());
         return EventResponse.builder().data(eventDTOs).totalPages(eventPage.getTotalPages()).message("Page Event By List EventType").httpStatus(HttpStatus.OK).build();
     }
@@ -169,7 +187,7 @@ public class EventService implements IEventService {
     @Override
     public EventResponse findBySearchTermAndEventTypeNames(String searchTerm, List<String> eventTypeNames, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Event> eventPage = eventRepository.findByTextAndEventTypeNames(searchTerm,eventTypeNames,pageable);
+        Page<Event> eventPage = eventRepository.findByTextAndEventTypeNames(searchTerm, eventTypeNames, pageable);
         List<EventDTO> eventDTOs = eventConverter.entitiesToDTOs(eventPage.getContent());
         return EventResponse.builder().data(eventDTOs).totalPages(eventPage.getTotalPages()).message("Page Event By Search Term List EventType").httpStatus(HttpStatus.OK).build();
     }
