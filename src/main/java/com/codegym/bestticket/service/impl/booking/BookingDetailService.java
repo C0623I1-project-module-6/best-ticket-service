@@ -2,9 +2,12 @@ package com.codegym.bestticket.service.impl.booking;
 
 import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.entity.booking.BookingDetail;
+import com.codegym.bestticket.entity.ticket.Ticket;
+import com.codegym.bestticket.entity.ticket.TicketType;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingDetailRequest;
 import com.codegym.bestticket.payload.response.booking.BookingDetailResponse;
+import com.codegym.bestticket.payload.response.ticket.TicketInBookingDetailResponse;
 import com.codegym.bestticket.repository.booking.IBookingDetailRepository;
 import com.codegym.bestticket.repository.booking.IBookingRepository;
 import com.codegym.bestticket.repository.ticket.ITicketRepository;
@@ -17,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -42,20 +46,39 @@ public class BookingDetailService implements IBookingDetailService {
     @Override
     public ResponsePayload findAllByBookingIdAndIsDeletedFalse(UUID bookingId, Pageable pageable) {
         try {
-            updateBookingTotalAmount(bookingId);
-            Page<BookingDetail> bookingDetailList = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId, pageable);
-            Iterable<BookingDetailResponse> bookingDetailResponseList = StreamSupport.stream(bookingDetailList.spliterator(), false)
-                    .map(bookingDetail -> {
-                        BookingDetailResponse bookingDetailResponse = new BookingDetailResponse();
-                        BeanUtils.copyProperties(bookingDetail, bookingDetailResponse);
-                        return bookingDetailResponse;
-                    })
-                    .collect(Collectors.toList());
-            return createBookingDetailResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingDetailResponseList);
+            if (iBookingRepository.findById(bookingId).isPresent()) {
+                updateBookingDetailAmount(bookingId);
+                updateBookingTotalAmount(bookingId);
+                Page<BookingDetail> bookingDetailList = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId, pageable);
+                Iterable<BookingDetailResponse> bookingDetailResponseList = StreamSupport.stream(bookingDetailList.spliterator(), false)
+                        .map(bookingDetail -> {
+                            BookingDetailResponse bookingDetailResponse = new BookingDetailResponse();
+                            BeanUtils.copyProperties(bookingDetail, bookingDetailResponse);
+                            List<TicketInBookingDetailResponse> ticketInBookingDetailResponses = convertTicketsToTicketInBookingDetail(bookingDetail);
+                            bookingDetailResponse.setTicketInBookingDetailResponses(ticketInBookingDetailResponses);
+                            return bookingDetailResponse;
+                        })
+                        .collect(Collectors.toList());
+                return createBookingDetailResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingDetailResponseList);
+            } else {
+                return createBookingDetailResponsePayload("Booking is not valid!", HttpStatus.NOT_FOUND, null);
+            }
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);
             return createBookingDetailResponsePayload("Fetch data failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
+    }
+
+    private List<TicketInBookingDetailResponse> convertTicketsToTicketInBookingDetail(BookingDetail bookingDetail) {
+        return bookingDetail.getTickets().stream()
+                .map(ticket -> {
+                    TicketInBookingDetailResponse ticketInBookingDetailResponse = new TicketInBookingDetailResponse();
+                    BeanUtils.copyProperties(ticket, ticketInBookingDetailResponse);
+                    ticketInBookingDetailResponse.setTicketTypeName(ticket.getTicketType().getName());
+                    ticketInBookingDetailResponse.setTicketTypePrice(ticket.getTicketType().getPrice());
+                    return ticketInBookingDetailResponse;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -86,6 +109,7 @@ public class BookingDetailService implements IBookingDetailService {
                 existingBookingDetail.setTickets(bookingDetailRequest.getTickets());
                 iTicketRepository.saveAll(existingBookingDetail.getTickets());
                 iBookingDetailRepository.save(existingBookingDetail);
+                updateBookingDetailAmount(bookingId);
                 updateBookingTotalAmount(bookingId);
                 return createBookingDetailResponsePayload("Booking detail updated successfully!", HttpStatus.OK, existingBookingDetail);
             }
@@ -115,9 +139,40 @@ public class BookingDetailService implements IBookingDetailService {
     }
 
     //Developing function
+    private void updateBookingDetailAmount(UUID bookingId) {
+        Optional<Booking> optionalBooking = iBookingRepository.findById(bookingId);
+        if (optionalBooking.isPresent()) {
+            Booking booking = optionalBooking.get();
+            List<BookingDetail> bookingDetailList = booking.getBookingDetailList();
+            bookingDetailList.forEach(detail -> {
+                double amount = detail.getTickets().stream()
+                        .mapToDouble(ticket -> {
+                            TicketType ticketType = ticket.getTicketType();
+                            int quantityAvailable = countTicketTypeQuantity(detail, ticketType);
+                            return ticketType.getPrice() * quantityAvailable;
+                        })
+                        .sum();
+
+                detail.setAmount(amount);
+            });
+        }
+    }
+
+    //Developing function
+    private int countTicketTypeQuantity(BookingDetail bookingDetail, TicketType ticketType) {
+        int count = 0;
+        for (Ticket ticket : bookingDetail.getTickets()) {
+            if (ticket.getTicketType().equals(ticketType)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    //Developing function
     private void updateBookingTotalAmount(UUID bookingId) {
         Optional<Booking> optionalBooking = iBookingRepository.findById(bookingId);
-        Iterable<BookingDetail> bookingDetailList = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId,Pageable.unpaged());
+        Iterable<BookingDetail> bookingDetailList = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId, Pageable.unpaged());
         optionalBooking.ifPresent(booking -> {
             double totalAmount = StreamSupport.stream(bookingDetailList.spliterator(), false)
                     .filter(bookingDetail -> !bookingDetail.getIsDeleted())
