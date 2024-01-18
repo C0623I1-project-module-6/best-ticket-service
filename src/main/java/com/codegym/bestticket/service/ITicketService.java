@@ -20,5 +20,5 @@ public interface ITicketService {
     ResponsePayload findAllTicketFinishedByCustomerId(UUID customerId, Pageable pageable, String status);
     ResponsePayload findAllTicketUpcomingByCustomerId(UUID customerId, Pageable pageable, String status);
 
-
+    ResponsePayload findTicketByEventId(UUID eventId);
 }

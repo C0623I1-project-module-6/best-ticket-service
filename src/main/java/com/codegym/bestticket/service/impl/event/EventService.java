@@ -2,12 +2,16 @@ package com.codegym.bestticket.service.impl.event;
 
 import com.codegym.bestticket.converter.event.IEventConverter;
 import com.codegym.bestticket.converter.event.IEventTypeConverter;
+import com.codegym.bestticket.converter.user.impl.constant.ETicketMessage;
 import com.codegym.bestticket.dto.event.EventDTO;
+import com.codegym.bestticket.dto.event.EventDetailDto;
 import com.codegym.bestticket.dto.event.EventTypeDTO;
+import com.codegym.bestticket.dto.ticket.TicketDto;
 import com.codegym.bestticket.entity.event.Event;
 import com.codegym.bestticket.entity.event.EventType;
 import com.codegym.bestticket.entity.event.Time;
 import com.codegym.bestticket.entity.location.Location;
+import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.event.CreateEventRequest;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.repository.event.IEventRepository;
@@ -17,6 +21,7 @@ import com.codegym.bestticket.service.IEventService;
 import com.codegym.bestticket.service.IEventTypeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.StreamSupport;
 
 
 @Service
@@ -39,6 +45,15 @@ public class EventService implements IEventService {
     private final IEventTypeConverter eventTypeConverter;
     private final ILocationRepository locationRepository;
     private final ITimeRepository timeRepository;
+
+    public ResponsePayload createResponsePayload(String message, HttpStatus status, Object data) {
+        return ResponsePayload
+                .builder()
+                .status(status)
+                .message(message)
+                .data(data)
+                .build();
+    }
 
     @Override
     public EventResponse findAll(int page, int pageSize) {
@@ -60,6 +75,22 @@ public class EventService implements IEventService {
             return EventResponse.builder().httpStatus(HttpStatus.NOT_FOUND).message(ex.getMessage()).build();
         }
     }
+
+//    @Override
+//    public ResponsePayload findAllEvent(Pageable pageable) {
+//        Page<Event> events = eventRepository.findAllByIsDeletedFalse(pageable);
+//        Iterable<EventDetailDto> eventDetailDtos = StreamSupport.stream(events.spliterator(), true)
+//                .map(event -> {
+//                    EventDetailDto eventDetailDto = EventDetailDto
+//                            .builder()
+//
+//                            .build();
+//                    BeanUtils.copyProperties(event, eventDetailDto);
+//                    return eventDetailDto;
+//                })
+//                .toList();
+//        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.CREATED, eventDetailDtos);
+//    }
 
     @Override
     public EventResponse removeEvent(UUID event_id) {

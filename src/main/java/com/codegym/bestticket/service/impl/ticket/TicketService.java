@@ -47,7 +47,6 @@ public class TicketService implements ITicketService {
                             .customer(ticket.getBookingDetail().getBooking().getCustomer())
                             .event(ticket.getEventTime().getEvent())
                             .time(ticket.getEventTime().getTime())
-                            .slticket(ticket.getEventTime().getTickets())
                             .build();
                     BeanUtils.copyProperties(ticket, ticketDto);
                     return ticketDto;
@@ -173,6 +172,20 @@ public class TicketService implements ITicketService {
                     return ticketDto1;
                 })
                 .toList();
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
+    }
+
+    @Override
+    public ResponsePayload findTicketByEventId(UUID eventId) {
+        Ticket ticket = ticketRepository.findTicketByEventId(eventId);
+        assert ticket != null;
+        TicketDto ticketDto = TicketDto
+                .builder()
+                .event(ticket.getEventTime().getEvent())
+                .time(ticket.getEventTime().getTime())
+
+                .build();
+        BeanUtils.copyProperties(ticket, ticketDto);
         return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
     }
 }

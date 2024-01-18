@@ -78,14 +78,20 @@ public class TicketController {
     }
 
     @GetMapping("/show-ticket/upcoming/{customerId}")
-    public ResponseEntity<ResponsePayload> showTicketUpcoming(@PathVariable UUID customerId,@PageableDefault(page = 0, size = 200) Pageable pageable, @RequestParam String status) {
-        ResponsePayload responsePayload = ticketService.findAllTicketUpcomingByCustomerId(customerId,pageable, status);
+    public ResponseEntity<ResponsePayload> showTicketUpcoming(@PathVariable UUID customerId, @PageableDefault(page = 0, size = 200) Pageable pageable, @RequestParam String status) {
+        ResponsePayload responsePayload = ticketService.findAllTicketUpcomingByCustomerId(customerId, pageable, status);
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 
     @GetMapping("/show-ticket/finished/{customerId}")
     public ResponseEntity<ResponsePayload> showTicketFinished(@PathVariable UUID customerId, @PageableDefault(page = 0, size = 200) Pageable pageable, @RequestParam String status) {
         ResponsePayload responsePayload = ticketService.findAllTicketFinishedByCustomerId(customerId, pageable, status);
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
+    }
+
+    @GetMapping("/findTicketByEventId/{eventId}")
+    public ResponseEntity<ResponsePayload> showTicketByEventId(@PathVariable UUID eventId, @PageableDefault(page = 0, size = 200) Pageable pageable) {
+        ResponsePayload responsePayload = ticketService.findTicketByEventId(eventId);
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 }
