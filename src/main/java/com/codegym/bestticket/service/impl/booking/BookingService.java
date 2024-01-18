@@ -61,6 +61,10 @@ public class BookingService implements IBookingService {
         try {
             Page<Booking> bookings = iBookingRepository.findAllByCustomerIdAndIsDeletedFalse(customerId, pageable);
             if (bookings.isEmpty()) {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6cc88539fcdfc31c50e12031b8e78da0c0cbe223
                 return createBookingResponsePayload("There is no bookings.", HttpStatus.OK, bookings);
             }
             return getBookingResponsePayload(bookings);
@@ -217,7 +221,10 @@ public class BookingService implements IBookingService {
         }
     }
 
+<<<<<<< HEAD
     @Override
+=======
+>>>>>>> 6cc88539fcdfc31c50e12031b8e78da0c0cbe223
     public ResponsePayload findBookingByTimeId(UUID timeId) {
         Booking booking = iBookingRepository.findBookingByTimeId(timeId);
         if (booking == null) {
@@ -225,5 +232,8 @@ public class BookingService implements IBookingService {
         }
         return createBookingResponsePayload("Success", HttpStatus.OK, booking);
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6cc88539fcdfc31c50e12031b8e78da0c0cbe223
 }
