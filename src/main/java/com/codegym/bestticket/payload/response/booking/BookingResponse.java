@@ -2,7 +2,6 @@ package com.codegym.bestticket.payload.response.booking;
 
 
 import com.codegym.bestticket.entity.user.Customer;
-import com.codegym.bestticket.entity.user.Organizer;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -16,5 +15,6 @@ public class BookingResponse {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Customer customer;
+    private String userEmail;
     private Boolean isDeleted;
 }
