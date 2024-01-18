@@ -10,10 +10,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,8 +44,6 @@ public class EventService implements IEventService {
             return EventResponse.builder().httpStatus(HttpStatus.NOT_FOUND).message(ex.getMessage()).build();
         }
     }
-
-
 
     @Override
     public EventResponse removeEvent(UUID event_id) {
@@ -107,9 +105,9 @@ public class EventService implements IEventService {
     }
 
     @Override
-    public EventResponse findByNameContaining(String text,int page,int pageSize) {
-        Pageable pageable = PageRequest.of(page,pageSize);
-        Page<Event> eventPage = eventRepository.findByNameContainingAndIsDeletedFalse(text,pageable);
+    public EventResponse findByNameContaining(String text, int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Event> eventPage = eventRepository.findByNameContainingAndIsDeletedFalse(text, pageable);
         List<EventDTO> events = eventConverter.entitiesToDTOs(eventPage.getContent());
         return EventResponse.builder().data(events).totalPages(eventPage.getTotalPages()).httpStatus(HttpStatus.OK).message("Page Event By Search Term").build();
     }
@@ -117,7 +115,7 @@ public class EventService implements IEventService {
     @Override
     public EventResponse findByEventTypeNamesAndIsDeletedFalse(List<String> eventTypeNames, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Event> eventPage = eventRepository.findByEventTypeNamesAndIsDeletedFalse(eventTypeNames,pageable);
+        Page<Event> eventPage = eventRepository.findByEventTypeNamesAndIsDeletedFalse(eventTypeNames, pageable);
         List<EventDTO> eventDTOs = eventConverter.entitiesToDTOs(eventPage.getContent());
         return EventResponse.builder().data(eventDTOs).totalPages(eventPage.getTotalPages()).message("Page Event By List EventType").httpStatus(HttpStatus.OK).build();
     }
@@ -125,7 +123,7 @@ public class EventService implements IEventService {
     @Override
     public EventResponse findBySearchTermAndEventTypeNames(String searchTerm, List<String> eventTypeNames, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Event> eventPage = eventRepository.findByTextAndEventTypeNames(searchTerm,eventTypeNames,pageable);
+        Page<Event> eventPage = eventRepository.findByTextAndEventTypeNames(searchTerm, eventTypeNames, pageable);
         List<EventDTO> eventDTOs = eventConverter.entitiesToDTOs(eventPage.getContent());
         return EventResponse.builder().data(eventDTOs).totalPages(eventPage.getTotalPages()).message("Page Event By Search Term List EventType").httpStatus(HttpStatus.OK).build();
     }

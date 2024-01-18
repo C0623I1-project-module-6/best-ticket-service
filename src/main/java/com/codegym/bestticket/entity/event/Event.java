@@ -44,6 +44,7 @@ public class Event {
             name = "event_event_types",
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "event_type_id"))
+    @JsonIgnore
     private Set<EventType> eventTypes;
 
     @ManyToMany

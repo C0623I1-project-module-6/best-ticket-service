@@ -89,4 +89,6 @@ public class EventController {
         EventResponse eventResponse = eventService.findByNameContaining(text, page, pageSize);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
+
+
 }
