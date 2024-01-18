@@ -1,6 +1,7 @@
 package com.codegym.bestticket.entity.location;
 
 import com.codegym.bestticket.entity.event.Event;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,5 +26,6 @@ public class Location {
 
     private String address;
     @OneToMany(mappedBy = "location")
+    @JsonIgnore
     private List<Event> events;
 }
