@@ -198,12 +198,10 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public ResponsePayload search(String category, String keyword, Pageable pageable) {
+    public ResponsePayload search(UUID eventId, String keyword, Pageable pageable) {
         try {
             Iterable<Booking> searchedBookings;
-            if (category.equals("customers")) {
-                searchedBookings = iBookingRepository.searchBookingsByIsDeletedFalseAndCustomerFullNameContaining(keyword, pageable);
-            } else return createBookingResponsePayload("Invalid category!", HttpStatus.INTERNAL_SERVER_ERROR, null);
+            searchedBookings = iBookingRepository.searchBookingsByEventIdAndCustomerFullNameContainingOrCustomerPhoneNumberContainingOrCustomerUserEmailContaining(eventId, keyword, pageable);
             if (!searchedBookings.iterator().hasNext()) {
                 return createBookingResponsePayload("No bookings found!", HttpStatus.NOT_FOUND, null);
             }
