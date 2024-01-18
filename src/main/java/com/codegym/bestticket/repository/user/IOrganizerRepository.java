@@ -16,10 +16,18 @@ public interface IOrganizerRepository extends JpaRepository<Organizer, UUID> {
 
 
     Page<User> searchUserByIsDeletedFalseAndOrganizerTypeContaining(Pageable pageable,
-                                                                         @Param("status") String status);
+                                                                    @Param("status") String status);
 
 
     Optional<Organizer> findByIdAndIsDeletedFalse(UUID id);
 
     Optional<Organizer> findByUserIdAndIsDeletedFalse(UUID id);
+
+    boolean existsByPhoneNumber(String phoneNumber);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByTaxCode(String taxCode);
+
+    boolean existsByBusinessCode(String businessCode);
 }

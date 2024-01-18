@@ -32,7 +32,7 @@ public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(length = 50, nullable = false)
+    @Column(length = 50)
     private String fullName;
     @Column(length = 15)
     private String gender;
@@ -40,7 +40,9 @@ public class Customer {
     private String idCard;
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     @Temporal(TemporalType.DATE)
+    @Column(length = 20)
     private Date dateOfBirth;
+    @Column(length = 20,unique = true)
     private String phoneNumber;
     private Boolean isDeleted;
     @OneToOne
