@@ -75,7 +75,7 @@ public class BookingController {
     }
 
     @GetMapping("/event/{eventId}")
-    public ResponseEntity<ResponsePayload> findAllByEventId(@PathVariable UUID eventId, Pageable pageable) {
+    public ResponseEntity<ResponsePayload> findAllByEventId(@PathVariable UUID eventId, @PageableDefault Pageable pageable) {
         ResponsePayload responsePayload = bookingService.findAllByEventId(eventId, pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
