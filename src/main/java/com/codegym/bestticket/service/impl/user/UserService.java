@@ -1,8 +1,8 @@
 package com.codegym.bestticket.service.impl.user;
 
+import com.codegym.bestticket.converter.user.IExistsUserConverter;
 import com.codegym.bestticket.converter.user.ILoginConverter;
 import com.codegym.bestticket.converter.user.IRegisterConverter;
-import com.codegym.bestticket.converter.user.IUserConverter;
 import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.Role;
 import com.codegym.bestticket.entity.user.User;
@@ -26,7 +26,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -54,9 +53,9 @@ public class UserService implements IUserService {
     private final ICustomerRepository customerRepository;
     private final IRoleRepository roleRepository;
     private final IOrganizerRepository organizerRepository;
-    private final IUserConverter userConverter;
     private final IRegisterConverter registerConverter;
     private final ILoginConverter loginConverter;
+    private final IExistsUserConverter existsUserConverter;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
@@ -253,15 +252,8 @@ public class UserService implements IUserService {
             List<User> users = userRepository.findAllByIsDeletedFalse();
             List<ExistsUserResponse> existsUserResponses =
                     users.stream()
-                            .map(user -> {
-                                ExistsUserResponse existsUserResponse = new ExistsUserResponse();
-                                existsUserResponse.setUsername(user.getUsername());
-                                existsUserResponse.setEmail(user.getEmail());
-                                BeanUtils.copyProperties(user, existsUserResponse);
-                                Optional<Customer> customer = customerRepository.findByUserIdAndIsDeletedFalse(existsUserResponse.getId());
-                                customer.ifPresent(value -> existsUserResponse.setPhoneNumber(value.getPhoneNumber()));
-                                return existsUserResponse;
-                            }).toList();
+                            .map(existsUserConverter::mapToExistsUsers)
+                            .collect(Collectors.toList());
             return ResponsePayload.builder()
                     .message("User list!!!")
                     .status(HttpStatus.OK)
