@@ -35,6 +35,7 @@ public class BookingDetail {
     @JsonIgnore
     private Booking booking;
     @OneToMany(mappedBy = "bookingDetail")
+    @JsonIgnore
     private List<Ticket> tickets;
     private Double amount;
     private Boolean isDeleted;

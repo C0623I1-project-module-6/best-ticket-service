@@ -1,5 +1,6 @@
 package com.codegym.bestticket.entity.event;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,7 @@ public class EventType {
     private String name;
 
     @ManyToMany(mappedBy = "eventTypes")
+    @JsonIgnore
     private Set<Event> events;
 
 }

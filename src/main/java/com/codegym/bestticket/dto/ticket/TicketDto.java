@@ -1,10 +1,12 @@
 package com.codegym.bestticket.dto.ticket;
 
+import com.codegym.bestticket.entity.event.Event;
+import com.codegym.bestticket.entity.event.Time;
 import com.codegym.bestticket.entity.location.Location;
+import com.codegym.bestticket.entity.user.Customer;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -15,7 +17,10 @@ public class TicketDto {
     private String ticketCode;
     private String status;
     private String seat;
-    private LocalDateTime time;
+    private Time time;
+    private Event event;
     private Location location;
     private Integer ticketAmount;
+    private Customer customer;
+
 }

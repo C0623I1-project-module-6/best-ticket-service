@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/ticket_types")
+@RequestMapping("/api/ticket-types")
 public class TicketTypeController {
 
     private final ITicketTypeService ticketTypeService;

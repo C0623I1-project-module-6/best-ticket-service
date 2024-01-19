@@ -1,6 +1,7 @@
 package com.codegym.bestticket.entity.user;
 
 import com.codegym.bestticket.entity.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,6 +39,7 @@ public class BankAccount {
     private String branch;
     private Boolean isDeleted;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 }
