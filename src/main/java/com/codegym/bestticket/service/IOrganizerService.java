@@ -11,7 +11,6 @@ import java.util.UUID;
 public interface IOrganizerService {
     ResponsePayload create(OrganizerDto organizerDto);
 
-    ResponsePayload update(UUID id, OrganizerDto organizerDto);
+    ResponsePayload update(OrganizerDto organizerDto);
 
-    ResponsePayload findById(UUID id);
 }
