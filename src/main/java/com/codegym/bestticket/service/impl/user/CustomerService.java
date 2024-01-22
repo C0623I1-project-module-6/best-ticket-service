@@ -97,24 +97,6 @@ public class CustomerService implements ICustomerService {
         }
     }
 
-    @Override
-    public ResponsePayload findAll(Pageable pageable) {
-        try {
-            Page<CustomerDto> responses = customerRepository.findAllByIsDeletedFalse(pageable)
-                    .map(customerConverter::entityToDto);
-            return ResponsePayload.builder()
-                    .message("Customer list!!!")
-                    .status(HttpStatus.OK)
-                    .data(responses)
-                    .build();
-        } catch (RuntimeException e) {
-            return ResponsePayload.builder()
-                    .message("Customer list not found!")
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
-        }
-
-    }
 
     @Override
     public ResponsePayload findById(UUID id) {

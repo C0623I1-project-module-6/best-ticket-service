@@ -3,13 +3,18 @@ package com.codegym.bestticket.service.impl.user;
 import com.codegym.bestticket.converter.user.IExistsUserConverter;
 import com.codegym.bestticket.converter.user.ILoginConverter;
 import com.codegym.bestticket.converter.user.IRegisterConverter;
+import com.codegym.bestticket.converter.user.IUserConverter;
+import com.codegym.bestticket.dto.user.UserDto;
 import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.Role;
 import com.codegym.bestticket.entity.user.User;
-import com.codegym.bestticket.exception.EmailAlreadyExistsException;
-import com.codegym.bestticket.exception.PhoneNumberAlreadyExistsException;
-import com.codegym.bestticket.exception.UserNotFoundException;
-import com.codegym.bestticket.exception.UsernameAlreadyExistsException;
+import com.codegym.bestticket.exception.user.CustomerNotFoundException;
+import com.codegym.bestticket.exception.user.EmailAlreadyExistsException;
+import com.codegym.bestticket.exception.user.PasswordNotMatchException;
+import com.codegym.bestticket.exception.user.PhoneNumberAlreadyExistsException;
+import com.codegym.bestticket.exception.user.RoleNotFoundException;
+import com.codegym.bestticket.exception.user.UserNotFoundException;
+import com.codegym.bestticket.exception.user.UsernameAlreadyExistsException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
@@ -36,6 +41,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -55,6 +61,7 @@ public class UserService implements IUserService {
     private final IOrganizerRepository organizerRepository;
     private final IRegisterConverter registerConverter;
     private final ILoginConverter loginConverter;
+    private final IUserConverter userConverter;
     private final IExistsUserConverter existsUserConverter;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
@@ -85,10 +92,10 @@ public class UserService implements IUserService {
             Set<Role> roles = new HashSet<>();
             if (registerRequest.getPhoneNumber() != null) {
                 roles.add(roleRepository.findByName("CUSTOMER")
-                        .orElseThrow(() -> new RuntimeException("Role CUSTOMER not found!")));
+                        .orElseThrow(() -> new RoleNotFoundException("Role CUSTOMER not found!")));
             } else {
                 roles.add(roleRepository.findByName("USER")
-                        .orElseThrow(() -> new RuntimeException("Role USER not found!")));
+                        .orElseThrow(() -> new RoleNotFoundException("Role USER not found!")));
             }
             user.setRoles(roles);
             userRepository.save(user);
@@ -106,7 +113,7 @@ public class UserService implements IUserService {
                 customerRepository.save(customer);
             }
             if (!registerRequest.getConfirmPassword().equals(registerRequest.getPassword())) {
-                throw new RuntimeException("Password not match!");
+                throw new PasswordNotMatchException("Password not match!");
             }
             Set<String> listRole = user.getRoles()
                     .stream()
@@ -118,9 +125,14 @@ public class UserService implements IUserService {
                     .status(HttpStatus.CREATED)
                     .data(registerResponse)
                     .build();
+        } catch (UsernameAlreadyExistsException | EmailAlreadyExistsException | PhoneNumberAlreadyExistsException e) {
+            return ResponsePayload.builder()
+                    .message(e.getMessage())
+                    .status(HttpStatus.CONFLICT)
+                    .build();
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
-                    .message("Register failed")
+                    .message("Login failed!")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
@@ -135,7 +147,7 @@ public class UserService implements IUserService {
                             loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user = userRepository.findByUsername(authentication.getName())
-                    .orElseThrow(() -> new RuntimeException("User not found!"));
+                    .orElseThrow(() -> new UserNotFoundException("User not found!"));
             Set<Role> roles = user.getRoles();
             Set<String> listRoles = new HashSet<>();
             for (Role role : roles) {
@@ -170,7 +182,8 @@ public class UserService implements IUserService {
             if (jwtTokenProvider.validateToken(token)) {
                 Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                 String username = ((org.springframework.security.core.userdetails.User) object).getUsername();
-                User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+                User user = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new UserNotFoundException("User not found"));
                 Set<Role> roles = user.getRoles();
                 Set<String> listRoles = new HashSet<>();
                 for (Role role : roles) {
@@ -240,18 +253,39 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponsePayload getInfo(UUID id) {
-        UserDetails userDetails =
-                (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return null;
+    public ResponsePayload findById(UUID id) throws AccessDeniedException {
+        try {
+            UserDetails userDetails =
+                    (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new UserNotFoundException("User not found!"));
+            if (!user.getUsername().equals(userDetails.getUsername())) {
+                throw new AccessDeniedException("Unauthorized access!");
+            }
+            Customer customer = customerRepository.findByUserId(id).orElse(null);
+            UserDto userDto = new UserDto();
+            userDto.setId(user.getId());
+            userDto.setUsername(user.getUsername());
+            userDto.setCustomer(customer);
+            return ResponsePayload.builder()
+                    .message("User!")
+                    .status(HttpStatus.OK)
+                    .data(userDto)
+                    .build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .message("User not found!")
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
     }
 
     @Override
     public ResponsePayload showExistsUsers() {
         try {
-            List<User> users = userRepository.findAllByIsDeletedFalse();
+            List<User> user = userRepository.findAllByIsDeletedFalse();
             List<ExistsUserResponse> existsUserResponses =
-                    users.stream()
+                    user.stream()
                             .map(existsUserConverter::mapToExistsUsers)
                             .collect(Collectors.toList());
             return ResponsePayload.builder()

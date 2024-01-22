@@ -1,4 +1,4 @@
-package com.codegym.bestticket.exception;
+package com.codegym.bestticket.exception.user;
 
 import jakarta.persistence.EntityNotFoundException;
 

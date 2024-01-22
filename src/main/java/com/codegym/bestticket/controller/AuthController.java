@@ -29,7 +29,7 @@ public class AuthController {
         if (registerRequest == null) {
             new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(userService.register(registerRequest), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.register(registerRequest),HttpStatus.OK);
     }
 
     @PostMapping("/login")
