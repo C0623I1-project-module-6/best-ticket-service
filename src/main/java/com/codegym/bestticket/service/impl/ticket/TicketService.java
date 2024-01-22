@@ -65,7 +65,6 @@ public class TicketService implements ITicketService {
                 .customer(ticket.getBookingDetail().getBooking().getCustomer())
                 .event(ticket.getEventTime().getEvent())
                 .time(ticket.getEventTime().getTime())
-                .ticketAmount(ticket.getEventTime().getEvent().getTicketAmount())
                 .build();
 
         BeanUtils.copyProperties(ticket, ticketDto);
@@ -132,9 +131,7 @@ public class TicketService implements ITicketService {
                             .builder()
                             .eventName(ticket.getEventTime().getEvent().getName())
                             .event(ticket.getEventTime().getEvent())
-                            .location(ticket.getEventTime().getEvent().getLocation())
                             .customer(ticket.getBookingDetail().getBooking().getCustomer())
-                            .ticketAmount(ticket.getEventTime().getEvent().getTicketAmount())
                             .build();
                     BeanUtils.copyProperties(ticket, ticketDto1);
                     return ticketDto1;
@@ -164,9 +161,7 @@ public class TicketService implements ITicketService {
                     TicketDto ticketDto1 = TicketDto
                             .builder()
                             .eventName(ticket.getEventTime().getEvent().getName())
-                            .location(ticket.getEventTime().getEvent().getLocation())
                             .customer(ticket.getBookingDetail().getBooking().getCustomer())
-                            .ticketAmount(ticket.getEventTime().getEvent().getTicketAmount())
                             .build();
                     BeanUtils.copyProperties(ticket, ticketDto1);
                     return ticketDto1;
@@ -175,18 +170,19 @@ public class TicketService implements ITicketService {
         return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
     }
 
-    @Override
-    public ResponsePayload findTicketByEventId(UUID eventId) {
-        Ticket ticket = ticketRepository.findTicketByEventId(eventId);
-        assert ticket != null;
-        TicketDto ticketDto = TicketDto
-                .builder()
-                .event(ticket.getEventTime().getEvent())
-                .time(ticket.getEventTime().getTime())
 
-                .build();
-        BeanUtils.copyProperties(ticket, ticketDto);
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
+
+    @Override
+    public ResponsePayload findTicketByEventId(UUID eventId,Pageable pageable) {
+        Page<Ticket> tickets = ticketRepository.findTicketByEventId(eventId,pageable);
+
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, tickets);
+    }
+
+    @Override
+    public ResponsePayload findTicketByTimeId(UUID timeId, Pageable pageable) {
+        Page<Ticket> tickets = ticketRepository.findTicketByTimeId(timeId,pageable);
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, tickets);
     }
 }
 

@@ -192,4 +192,10 @@ public class EventService implements IEventService {
         return EventResponse.builder().data(eventDTOs).totalPages(eventPage.getTotalPages()).message("Page Event By Search Term List EventType").httpStatus(HttpStatus.OK).build();
     }
 
+//    @Override
+//    public ResponsePayload findEventByTimeId(UUID timeId) {
+//        Event event = eventRepository.findEventByTimeId(timeId);
+//        return createResponsePayload("Success",HttpStatus.OK,event);
+//    }
+
 }

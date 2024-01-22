@@ -14,11 +14,9 @@ public interface IEventService {
     EventResponse findAll(int page, int pageSize);
     EventResponse findEventById(UUID eventId);
 
-//    ResponsePayload findAllEvent(Pageable pageable);
     EventResponse removeEvent(UUID event_id);
 
     EventResponse createEvent(CreateEventRequest eventRequest);
-
 
     EventResponse updateEvent(UUID event_id,EventDTO eventDTO);
 
@@ -28,5 +26,6 @@ public interface IEventService {
 
     EventResponse findBySearchTermAndEventTypeNames(String searchTerm,List<String> eventTypeNames,int page,int pageSize);
 
+//    ResponsePayload findEventByTimeId(UUID timeId);
 
 }

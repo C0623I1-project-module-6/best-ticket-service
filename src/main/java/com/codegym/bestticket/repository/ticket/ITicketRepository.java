@@ -14,7 +14,10 @@ public interface ITicketRepository extends JpaRepository<Ticket, UUID> {
 
     Ticket findByIdAndIsDeletedFalse(UUID id);
     @Query("SELECT t FROM Ticket t JOIN t.eventTime et where et.event.id = :eventId")
-    Ticket findTicketByEventId(UUID eventId);
+    Page<Ticket> findTicketByEventId(UUID eventId,Pageable pageable);
+
+    @Query("SELECT t FROM Ticket t JOIN t.eventTime et where et.time.id = :timeId")
+    Page<Ticket> findTicketByTimeId(UUID timeId,Pageable pageable);
 
     @Query("SELECT t FROM Ticket t JOIN t.bookingDetail bd JOIN bd.booking b JOIN b.customer c WHERE c.id = :customerId")
     Page<Ticket> findAllTicketFinishedByCustomerId(UUID customerId, Pageable pageable);

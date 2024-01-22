@@ -1,0 +1,1 @@
+UPDATE tickets SET ticket_type_id = NULL
