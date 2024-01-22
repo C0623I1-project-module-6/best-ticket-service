@@ -111,24 +111,7 @@ public class OrganizerService implements IOrganizerService {
         }
     }
 
-    @Override
-    public ResponsePayload findAll(Pageable pageable) {
-        try {
-            Page<OrganizerDto> organizers = organizerRepository.findAllByIsDeletedFalse(pageable)
-                    .map(organizerConverter::entityToDto);
-            return ResponsePayload.builder()
-                    .message("Organizer list!!!")
-                    .status(HttpStatus.OK)
-                    .data(organizers)
-                    .build();
-        } catch (RuntimeException e) {
-            return ResponsePayload.builder()
-                    .message("Organizer list not found!")
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
-        }
 
-    }
 
     @Override
     public ResponsePayload findById(UUID id) {

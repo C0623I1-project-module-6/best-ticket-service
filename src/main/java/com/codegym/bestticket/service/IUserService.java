@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public interface IUserService {
     ResponsePayload keepLogin(HttpServletRequest request);
     ResponsePayload logout(HttpServletRequest request);
     ResponsePayload delete(UUID id);
-    ResponsePayload getInfo(UUID id);
+    ResponsePayload findById(UUID id) throws AccessDeniedException;
     ResponsePayload showExistsUsers();
     Optional<User> findUserByRememberToken(String token);
     ResponsePayload filterUsers(Pageable pageable, String status, String filterType);

@@ -12,8 +12,6 @@ public interface ICustomerService {
 
     ResponsePayload update(UUID id, CustomerDto customerDto);
 
-    ResponsePayload findAll(Pageable pageable);
-
     ResponsePayload findById(UUID id);
 
 }

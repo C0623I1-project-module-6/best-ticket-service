@@ -13,7 +13,5 @@ public interface IOrganizerService {
 
     ResponsePayload update(UUID id, OrganizerDto organizerDto);
 
-    ResponsePayload findAll(Pageable pageable);
-
     ResponsePayload findById(UUID id);
 }
