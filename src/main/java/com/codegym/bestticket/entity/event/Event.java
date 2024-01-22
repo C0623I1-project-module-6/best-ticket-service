@@ -1,6 +1,7 @@
 package com.codegym.bestticket.entity.event;
 
 import com.codegym.bestticket.entity.location.Location;
+import com.codegym.bestticket.entity.user.Organizer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -52,4 +53,8 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
+
+    @ManyToOne
+    @JoinColumn(name = "organizer_id")
+    private Organizer organizer;
 }

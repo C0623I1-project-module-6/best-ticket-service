@@ -9,11 +9,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 public interface IEventRepository extends JpaRepository<Event, UUID> {
     Page<Event> findAllByIsDeletedFalse(Pageable pageable);
 
-    Event findByIdAndIsDeletedFalse(UUID event_id);
+    Optional<Event> findByIdAndIsDeletedFalseAndStatus(UUID event_id,String status);
 
     Page<Event> findByNameContainingAndIsDeletedFalse(String text,Pageable pageable);
 

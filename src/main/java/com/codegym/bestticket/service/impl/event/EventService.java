@@ -46,18 +46,17 @@ public class EventService implements IEventService {
 
     @Override
     public EventResponse findEventById(UUID eventId) {
-        try {
-            Event event = eventRepository.findByIdAndIsDeletedFalse(eventId);
+        Optional<Event> event = eventRepository.findByIdAndIsDeletedFalseAndStatus(eventId, "ACTIVE");
 
-            return Optional.ofNullable(event)
-                    .map(e -> EventResponse.builder().data(eventConverter.entityToDTO(e)).httpStatus(HttpStatus.OK).build())
-                    .orElseThrow(() -> new EntityNotFoundException("Event is not found or is deleted"));
-        } catch (EntityNotFoundException ex) {
-            return EventResponse.builder().httpStatus(HttpStatus.NOT_FOUND).message(ex.getMessage()).build();
-        }
+        return event.map(e ->
+                        EventResponse.builder()
+                                .data(eventConverter.entityToDTO(e))
+                                .httpStatus(HttpStatus.OK)
+                                .build())
+                .orElse(EventResponse.builder()
+                        .httpStatus(HttpStatus.NOT_FOUND)
+                        .build());
     }
-
-
 
     @Override
     public EventResponse removeEvent(UUID event_id) {
