@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.file.AccessDeniedException;
 import java.util.UUID;
 
 @RestController
@@ -37,8 +38,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponsePayload> getInfo(@PathVariable UUID id) {
-        ResponsePayload responsePayload = userService.getInfo(null);
+    public ResponseEntity<ResponsePayload> getInfo(@PathVariable UUID id) throws AccessDeniedException {
+        ResponsePayload responsePayload = userService.findById(id);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
