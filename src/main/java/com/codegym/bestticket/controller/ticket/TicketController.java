@@ -91,7 +91,12 @@ public class TicketController {
 
     @GetMapping("/findTicketByEventId/{eventId}")
     public ResponseEntity<ResponsePayload> showTicketByEventId(@PathVariable UUID eventId, @PageableDefault(page = 0, size = 200) Pageable pageable) {
-        ResponsePayload responsePayload = ticketService.findTicketByEventId(eventId);
+        ResponsePayload responsePayload = ticketService.findTicketByEventId(eventId,pageable);
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
+    }
+    @GetMapping("/findTicketByTimeId/{timeId}")
+    public ResponseEntity<ResponsePayload> showTicketByTimeId(@PathVariable UUID timeId, @PageableDefault(page = 0, size = 200) Pageable pageable) {
+        ResponsePayload responsePayload = ticketService.findTicketByTimeId(timeId,pageable);
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 }

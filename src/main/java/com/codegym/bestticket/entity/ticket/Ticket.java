@@ -36,7 +36,7 @@ public class Ticket {
     private String seat;
     private String promotion;
     private Boolean isDeleted;
-    private String description = null;
+    private String description;
     private String status;
 
 

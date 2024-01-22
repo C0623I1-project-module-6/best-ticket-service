@@ -19,8 +19,6 @@ public class TicketDto {
     private String seat;
     private Time time;
     private Event event;
-    private Location location;
-    private Integer ticketAmount;
     private Customer customer;
 
 }
