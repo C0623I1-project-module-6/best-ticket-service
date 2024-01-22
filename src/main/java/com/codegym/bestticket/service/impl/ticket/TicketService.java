@@ -43,8 +43,10 @@ public class TicketService implements ITicketService {
                 .map(ticket -> {
                     TicketDto ticketDto = TicketDto
                             .builder()
-                            .ticketAmount(ticket.getEventTime().getEvent().getTicketAmount())
                             .eventName(ticket.getEventTime().getEvent().getName())
+                            .customer(ticket.getBookingDetail().getBooking().getCustomer())
+                            .event(ticket.getEventTime().getEvent())
+                            .time(ticket.getEventTime().getTime())
                             .build();
                     BeanUtils.copyProperties(ticket, ticketDto);
                     return ticketDto;
@@ -55,18 +57,19 @@ public class TicketService implements ITicketService {
 
     @Override
     public ResponsePayload getTicketById(UUID id) {
-        Ticket ticket = ticketRepository.findById(id).orElse(null);
+        Ticket ticket = ticketRepository.findByIdAndIsDeletedFalse(id);
         assert ticket != null;
-        if (Boolean.FALSE.equals(ticket.getIsDeleted())) {
-            TicketDto ticketDto = TicketDto
-                    .builder()
-                    .ticketAmount(ticket.getEventTime().getEvent().getTicketAmount())
-                    .build();
+        TicketDto ticketDto = TicketDto
+                .builder()
+                .eventName(ticket.getEventTime().getEvent().getName())
+                .customer(ticket.getBookingDetail().getBooking().getCustomer())
+                .event(ticket.getEventTime().getEvent())
+                .time(ticket.getEventTime().getTime())
+                .build();
 
-            BeanUtils.copyProperties(ticket, ticketDto);
-            return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
-        }
-        return createResponsePayload(String.valueOf(ETicketMessage.FAIL), HttpStatus.BAD_REQUEST, null);
+        BeanUtils.copyProperties(ticket, ticketDto);
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
+
     }
 
     @Override
@@ -110,8 +113,37 @@ public class TicketService implements ITicketService {
     }
 
     @Override
-    public ResponsePayload showAllTicketUpcoming(Pageable pageable, String status) {
-        Page<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
+    public ResponsePayload findAllTicketFinishedByCustomerId(UUID customerId, Pageable pageable, String status) {
+        Page<Ticket> tickets = ticketRepository.findAllTicketFinishedByCustomerId(customerId, pageable);
+        LocalDateTime currentDate = LocalDateTime.now();
+        Iterable<TicketDto> ticketDto = StreamSupport.stream(tickets.spliterator(), true)
+
+                .flatMap(ticket -> {
+                    if (StringUtils.isEmpty(status)) {
+                        return Stream.of(ticket);
+                    } else {
+                        return Stream.of(ticket).filter(t -> t.getStatus().equals(status));
+                    }
+                })
+                .filter(ticket -> ticket.getEventTime().getTime().getTime().isBefore(currentDate))
+                .map(ticket -> {
+                    TicketDto ticketDto1 = TicketDto
+                            .builder()
+                            .eventName(ticket.getEventTime().getEvent().getName())
+                            .event(ticket.getEventTime().getEvent())
+                            .customer(ticket.getBookingDetail().getBooking().getCustomer())
+                            .build();
+                    BeanUtils.copyProperties(ticket, ticketDto1);
+                    return ticketDto1;
+                })
+                .toList();
+
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
+    }
+
+    @Override
+    public ResponsePayload findAllTicketUpcomingByCustomerId(UUID customerId, Pageable pageable, String status) {
+        Page<Ticket> tickets = ticketRepository.findAllTicketUpcomingByCustomerId(customerId, pageable);
 
         LocalDateTime currentDate = LocalDateTime.now();
         Iterable<TicketDto> ticketDto = StreamSupport.stream(tickets.spliterator(), true)
@@ -129,45 +161,30 @@ public class TicketService implements ITicketService {
                     TicketDto ticketDto1 = TicketDto
                             .builder()
                             .eventName(ticket.getEventTime().getEvent().getName())
-                            .time(ticket.getEventTime().getTime().getTime())
-                            .location(ticket.getEventTime().getEvent().getLocation())
-
+                            .customer(ticket.getBookingDetail().getBooking().getCustomer())
                             .build();
                     BeanUtils.copyProperties(ticket, ticketDto1);
                     return ticketDto1;
                 })
                 .toList();
         return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
+    }
+
+
+
+    @Override
+    public ResponsePayload findTicketByEventId(UUID eventId,Pageable pageable) {
+        Page<Ticket> tickets = ticketRepository.findTicketByEventId(eventId,pageable);
+
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, tickets);
     }
 
     @Override
-    public ResponsePayload showAllTicketFinished(Pageable pageable, String status) {
-        Page<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
-        LocalDateTime currentDate = LocalDateTime.now();
-
-        Iterable<TicketDto> ticketDto = StreamSupport.stream(tickets.spliterator(), true)
-
-                .flatMap(ticket -> {
-                    if (StringUtils.isEmpty(status)) {
-                        return Stream.of(ticket);
-                    } else {
-                        return Stream.of(ticket).filter(t -> t.getStatus().equals(status));
-                    }
-                })
-                .filter(ticket -> ticket.getEventTime().getTime().getTime().isBefore(currentDate))
-                .map(ticket -> {
-                    TicketDto ticketDto1 = TicketDto
-                            .builder()
-                            .eventName(ticket.getEventTime().getEvent().getName())
-                            .time(ticket.getEventTime().getTime().getTime())
-                            .location(ticket.getEventTime().getEvent().getLocation())
-
-                            .build();
-                    BeanUtils.copyProperties(ticket, ticketDto1);
-                    return ticketDto1;
-                })
-                .toList();
-
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
+    public ResponsePayload findTicketByTimeId(UUID timeId, Pageable pageable) {
+        Page<Ticket> tickets = ticketRepository.findTicketByTimeId(timeId,pageable);
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, tickets);
     }
 }
+
+
+

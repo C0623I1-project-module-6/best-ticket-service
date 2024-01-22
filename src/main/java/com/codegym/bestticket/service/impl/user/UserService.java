@@ -3,9 +3,7 @@ package com.codegym.bestticket.service.impl.user;
 import com.codegym.bestticket.converter.user.ILoginConverter;
 import com.codegym.bestticket.converter.user.IRegisterConverter;
 import com.codegym.bestticket.converter.user.IUserConverter;
-import com.codegym.bestticket.dto.user.UserDto;
 import com.codegym.bestticket.entity.user.Customer;
-import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.entity.user.Role;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.exception.EmailAlreadyExistsException;
@@ -15,6 +13,7 @@ import com.codegym.bestticket.exception.UsernameAlreadyExistsException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
+import com.codegym.bestticket.payload.response.user.ExistsUserResponse;
 import com.codegym.bestticket.payload.response.user.LoginResponse;
 import com.codegym.bestticket.payload.response.user.RegisterResponse;
 import com.codegym.bestticket.repository.user.ICustomerRepository;
@@ -27,7 +26,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,6 +39,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -79,6 +79,7 @@ public class UserService implements IUserService {
                 }
             }
             User user = registerConverter.dtoToEntity(registerRequest);
+            user.setOldPassword(user.getPassword());
             user.setPassword(encoder.encode(user.getPassword()));
             user.setIsDeleted(false);
             user.setIsActivated(true);
@@ -160,50 +161,64 @@ public class UserService implements IUserService {
                     .status(HttpStatus.UNAUTHORIZED)
                     .build();
         }
-
     }
 
     @Override
     public ResponsePayload keepLogin(HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
-        Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(object);
-        String username = ((org.springframework.security.core.userdetails.User) object).getUsername();
-        User user = userRepository.findByUsername(username).orElseThrow(()->new RuntimeException("User not found"));
-        Set<Role> roles = user.getRoles();
-        Set<String> listRoles = new HashSet<>();
-        for (Role role : roles){
-            listRoles.add(role.getName());
-        }
-        LoginResponse loginResponse = loginConverter.entityToDto(user,token);
-        if (user.getCustomer()!=null){
-            loginResponse.setFullName(user.getCustomer().getFullName());
+
+        try {
+            String token = request.getHeader("Authorization").substring(7);
+            if (jwtTokenProvider.validateToken(token)) {
+                Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                String username = ((org.springframework.security.core.userdetails.User) object).getUsername();
+                User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+                Set<Role> roles = user.getRoles();
+                Set<String> listRoles = new HashSet<>();
+                for (Role role : roles) {
+                    listRoles.add(role.getName());
+                }
+                LoginResponse loginResponse = loginConverter.entityToDto(user, token);
+                loginResponse.setListRole(listRoles);
+                if (user.getCustomer() != null) {
+                    loginResponse.setFullName(user.getCustomer().getFullName());
+                }
+                return ResponsePayload.builder()
+                        .message("Login successfully")
+                        .status(HttpStatus.OK)
+                        .data(loginResponse)
+                        .build();
+            }
+        } catch (Exception ignored) {
         }
         return ResponsePayload.builder()
-                .message("Login successfully")
-                .status(HttpStatus.OK)
-                .data(loginResponse)
+                .message("Not accepted !")
+                .status(HttpStatus.UNAUTHORIZED)
+                .data(null)
                 .build();
     }
 
+
     @Override
     public ResponsePayload logout(HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
-
-        SecurityContextHolder.clearContext();
-        User user = userRepository.findUserByRememberToken(token).orElse(null);
-        if (user != null) {
-            user.setRememberToken(null);
-            userRepository.save(user);
+        try {
+            String token = request.getHeader("Authorization").substring(7);
+            SecurityContextHolder.clearContext();
+            User user = userRepository.findUserByRememberToken(token)
+                    .orElseThrow(() -> new UserNotFoundException("User not found!"));
+            if (user != null) {
+                user.setRememberToken(null);
+                userRepository.save(user);
+            }
             return ResponsePayload.builder()
                     .message("Logout successfully!!!")
                     .status(HttpStatus.OK)
                     .build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .message("User not found!")
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
         }
-        return ResponsePayload.builder()
-                .message("User not found!")
-                .status(HttpStatus.UNAUTHORIZED)
-                .build();
     }
 
     @Override
@@ -227,28 +242,30 @@ public class UserService implements IUserService {
 
     @Override
     public ResponsePayload getInfo(UUID id) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails =
+                (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return null;
     }
 
     @Override
-    public ResponsePayload findAll(Pageable pageable) {
+    public ResponsePayload showExistsUsers() {
         try {
-            Page<User> users = userRepository.findAllByIsDeletedFalse(pageable);
-            Page<UserDto> userDtos = users.map(user -> {
-                UserDto userDto = userConverter.entityToDto(user);
-                Customer customer = customerRepository.findByUserIdAndIsDeletedFalse(userDto.getId())
-                        .orElse(null);
-                userDto.setCustomer(customer);
-                Organizer organizer = organizerRepository.findByUserIdAndIsDeletedFalse(userDto.getId())
-                        .orElse(null);
-                userDto.setOrganizer(organizer);
-                return userDto;
-            });
+            List<User> users = userRepository.findAllByIsDeletedFalse();
+            List<ExistsUserResponse> existsUserResponses =
+                    users.stream()
+                            .map(user -> {
+                                ExistsUserResponse existsUserResponse = new ExistsUserResponse();
+                                existsUserResponse.setUsername(user.getUsername());
+                                existsUserResponse.setEmail(user.getEmail());
+                                BeanUtils.copyProperties(user, existsUserResponse);
+                                Optional<Customer> customer = customerRepository.findByUserIdAndIsDeletedFalse(existsUserResponse.getId());
+                                customer.ifPresent(value -> existsUserResponse.setPhoneNumber(value.getPhoneNumber()));
+                                return existsUserResponse;
+                            }).toList();
             return ResponsePayload.builder()
                     .message("User list!!!")
                     .status(HttpStatus.OK)
-                    .data(userDtos)
+                    .data(existsUserResponses)
                     .build();
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
@@ -291,7 +308,7 @@ public class UserService implements IUserService {
                     result = userRepository.searchUserByIsDeletedFalseAndIsActivatedContaining(pageable, status);
                     break;
                 default:
-                    return findAll(pageable);
+                    return null;
             }
             if (!result.iterator().hasNext()) {
                 return ResponsePayload.builder()

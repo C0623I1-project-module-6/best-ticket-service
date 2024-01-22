@@ -1,9 +1,11 @@
 package com.codegym.bestticket.controller.event;
 
 import com.codegym.bestticket.dto.event.EventDTO;
+import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.event.CreateEventRequest;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.service.IEventService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -91,4 +93,10 @@ public class EventController {
         EventResponse eventResponse = eventService.findByNameContaining(text, page, pageSize);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
+
+//    @GetMapping("/findEventByTimeId/{timeId}")
+//    public ResponseEntity<ResponsePayload> findEventByTimeId(@PathVariable UUID timeId){
+//        ResponsePayload responsePayload = eventService.findEventByTimeId(timeId);
+//        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
+//    }
 }

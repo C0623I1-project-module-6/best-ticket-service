@@ -25,7 +25,7 @@ public class Organizer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(nullable = false)
+    @Column(length = 50,nullable = false)
     private String name;
     @Column(length = 50, nullable = false, unique = true)
     private String phoneNumber;
@@ -39,12 +39,13 @@ public class Organizer {
     private String businessCode;
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     @Temporal(TemporalType.DATE)
-    @Column(nullable = false)
+    @Column(length = 20,nullable = false)
     private Date dateRange;
     @Column(length = 50, nullable = false)
     private String issuedBy;
     @ManyToOne
     @JoinColumn(name = "organizer_type_id")
+    @JsonIgnore
     private OrganizerType organizerType;
     private Boolean isDeleted;
     @OneToOne

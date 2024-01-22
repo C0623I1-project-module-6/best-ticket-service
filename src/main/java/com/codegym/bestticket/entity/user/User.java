@@ -37,7 +37,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(nullable = false, unique = true)
+    @Column(length = 50, nullable = false, unique = true)
     private String username;
     @Column(nullable = false)
     private String password;
@@ -50,7 +50,7 @@ public class User {
     private String avatar;
     private Boolean isDeleted;
     private Boolean isActivated;
-
+    private String oldPassword;
     @OneToOne(mappedBy = "user")
     private Customer customer;
     @OneToOne(mappedBy = "user")

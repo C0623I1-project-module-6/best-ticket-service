@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 public interface IEventRepository extends JpaRepository<Event, UUID> {
+
     Page<Event> findAllByIsDeletedFalse(Pageable pageable);
 
     Optional<Event> findByIdAndIsDeletedFalseAndStatus(UUID event_id,String status);
@@ -23,4 +24,8 @@ public interface IEventRepository extends JpaRepository<Event, UUID> {
 
     @Query("SELECT e FROM Event e JOIN e.eventTypes et WHERE e.name LIKE %:text% AND et.name IN :eventTypeNames AND e.isDeleted = false")
     Page<Event> findByTextAndEventTypeNames(@Param("text") String text, @Param("eventTypeNames") List<String> eventTypeNames, Pageable pageable);
+
+
+
+
 }
