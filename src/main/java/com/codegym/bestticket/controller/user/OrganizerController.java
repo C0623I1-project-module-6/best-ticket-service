@@ -7,14 +7,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.UUID;
 
 @RestController
 @CrossOrigin("*")
@@ -28,16 +25,15 @@ public class OrganizerController {
         if (organizerRequest == null) {
             new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(organizerService.create(organizerRequest), HttpStatus.CREATED);
+        return new ResponseEntity<>(organizerService.create(organizerRequest).getStatus());
     }
 
-    @PutMapping("/edit/{id}")
-    public ResponseEntity<ResponsePayload> edit(@PathVariable UUID id,
-                                                @RequestBody OrganizerDto organizerDto) {
+    @PutMapping("/edit/")
+    public ResponseEntity<ResponsePayload> edit(@RequestBody OrganizerDto organizerDto) {
         if (organizerDto == null) {
             new ResponseEntity<>("Request not found or id not found!", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(organizerService.update(id, organizerDto), HttpStatus.OK);
+        return new ResponseEntity<>(organizerService.update(organizerDto).getStatus());
 
     }
 }
