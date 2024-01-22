@@ -32,8 +32,6 @@ public class TicketType {
 
     private Boolean isDeleted;
 
-    private Integer quantity;
-
     private Double price;
 
     @OneToMany(mappedBy = "ticketType")
