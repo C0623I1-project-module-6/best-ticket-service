@@ -2,6 +2,7 @@ package com.codegym.bestticket.dto.event;
 
 import com.codegym.bestticket.entity.event.Time;
 import com.codegym.bestticket.entity.location.Location;
+import com.codegym.bestticket.entity.user.Organizer;
 import lombok.Data;
 
 import java.util.UUID;
@@ -18,4 +19,5 @@ public class EventDTO {
     private Integer ticketAmount;
     private Boolean isDeleted;
 
+    private Organizer organizer;
 }
