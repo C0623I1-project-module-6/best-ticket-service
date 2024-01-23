@@ -3,12 +3,10 @@ package com.codegym.bestticket.service.impl.user;
 import com.codegym.bestticket.converter.user.IExistsUserConverter;
 import com.codegym.bestticket.converter.user.ILoginConverter;
 import com.codegym.bestticket.converter.user.IRegisterConverter;
-import com.codegym.bestticket.converter.user.IUserConverter;
 import com.codegym.bestticket.dto.user.UserDto;
 import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.Role;
 import com.codegym.bestticket.entity.user.User;
-import com.codegym.bestticket.exception.user.CustomerNotFoundException;
 import com.codegym.bestticket.exception.user.EmailAlreadyExistsException;
 import com.codegym.bestticket.exception.user.PasswordNotMatchException;
 import com.codegym.bestticket.exception.user.PhoneNumberAlreadyExistsException;
@@ -61,7 +59,6 @@ public class UserService implements IUserService {
     private final IOrganizerRepository organizerRepository;
     private final IRegisterConverter registerConverter;
     private final ILoginConverter loginConverter;
-    private final IUserConverter userConverter;
     private final IExistsUserConverter existsUserConverter;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
@@ -266,6 +263,7 @@ public class UserService implements IUserService {
             UserDto userDto = new UserDto();
             userDto.setId(user.getId());
             userDto.setUsername(user.getUsername());
+            userDto.setEmail(user.getEmail());
             userDto.setCustomer(customer);
             return ResponsePayload.builder()
                     .message("User!")

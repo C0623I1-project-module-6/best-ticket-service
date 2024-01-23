@@ -11,11 +11,10 @@ import java.util.UUID;
 public class CustomerDto {
     private UUID id;
     private String fullName;
+    private String email;
     private String gender;
-    @UniqueCustomer
     private String idCard;
     private Date dateOfBirth;
-    @UniqueCustomer
     private String phoneNumber;
     private Map<String, Object> result;
 

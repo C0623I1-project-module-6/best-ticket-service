@@ -8,10 +8,9 @@ import java.util.UUID;
 
 
 public interface ICustomerService {
-    ResponsePayload addProfile(CustomerDto customerDto);
+    ResponsePayload create(CustomerDto customerDto);
 
-    ResponsePayload update(UUID id, CustomerDto customerDto);
+    ResponsePayload update(CustomerDto customerDto);
 
-    ResponsePayload findById(UUID id);
 
 }
