@@ -180,10 +180,9 @@ public class BookingService implements IBookingService {
     @Override
     public ResponsePayload search(UUID eventId, String keyword, Pageable pageable) {
         try {
-            Iterable<Booking> searchedBookings;
-            searchedBookings = iBookingRepository.searchBookingsByEventIdAndCustomerFullNameContainingOrCustomerPhoneNumberContainingOrCustomerUserEmailContaining(eventId, keyword, pageable);
+            Page<Booking> searchedBookings = iBookingRepository.searchBookingsByEventIdAndCustomerFullNameContainingOrCustomerPhoneNumberContainingOrCustomerUserEmailContaining(eventId, keyword, pageable);
             if (!searchedBookings.iterator().hasNext()) {
-                return createBookingResponsePayload("No bookings found!", HttpStatus.NO_CONTENT, null);
+                return createBookingResponsePayload("No bookings found!", HttpStatus.OK, searchedBookings);
             }
             return getBookingResponsePayload(searchedBookings);
         } catch (Exception e) {
