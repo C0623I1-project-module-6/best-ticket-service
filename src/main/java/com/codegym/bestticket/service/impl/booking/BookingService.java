@@ -3,8 +3,6 @@ package com.codegym.bestticket.service.impl.booking;
 import com.codegym.bestticket.converter.user.impl.constant.EBookingStatus;
 import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.entity.booking.BookingDetail;
-import com.codegym.bestticket.entity.ticket.Ticket;
-import com.codegym.bestticket.entity.ticket.TicketType;
 import com.codegym.bestticket.exception.BookingSaveException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
@@ -47,7 +45,7 @@ public class BookingService implements IBookingService {
         try {
             Page<Booking> bookings = iBookingRepository.findAllByIsDeletedFalse(pageable);
             if (bookings.isEmpty()) {
-                return createBookingResponsePayload("There is no bookings.", HttpStatus.OK, bookings);
+                return createBookingResponsePayload("There is no bookings.", HttpStatus.NO_CONTENT, bookings);
             }
             return getBookingResponsePayload(bookings);
         } catch (Exception e) {
@@ -61,7 +59,7 @@ public class BookingService implements IBookingService {
         try {
             Page<Booking> bookings = iBookingRepository.findAllByCustomerIdAndIsDeletedFalse(customerId, pageable);
             if (bookings.isEmpty()) {
-                return createBookingResponsePayload("There is no bookings.", HttpStatus.OK, bookings);
+                return createBookingResponsePayload("There is no bookings.", HttpStatus.NO_CONTENT, bookings);
             }
             return getBookingResponsePayload(bookings);
         } catch (Exception e) {
@@ -76,7 +74,7 @@ public class BookingService implements IBookingService {
         try {
             Page<Booking> bookings = iBookingRepository.findAllByEventId(eventId, pageable);
             if (bookings.isEmpty()) {
-                return createBookingResponsePayload("There is no bookings.", HttpStatus.OK, bookings);
+                return createBookingResponsePayload("There is no bookings.", HttpStatus.NO_CONTENT, bookings);
             }
             return getBookingResponsePayload(bookings);
         } catch (Exception e) {
@@ -92,6 +90,7 @@ public class BookingService implements IBookingService {
                     BookingResponse bookingResponse = new BookingResponse();
                     bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
                     updateBookingTotalAmount(booking);
+                    iBookingRepository.save(booking);
                     BeanUtils.copyProperties(booking, bookingResponse);
                     return bookingResponse;
                 })
@@ -101,35 +100,15 @@ public class BookingService implements IBookingService {
     }
 
     private void updateBookingTotalAmount(Booking booking) {
-        double totalAmount = booking.getBookingDetailList()
-                .stream()
-                .peek(this::updateBookingDetailAmount)
-                .mapToDouble(BookingDetail::getAmount)
-                .sum();
-
-        booking.setTotalAmount(totalAmount);
-    }
-
-    private void updateBookingDetailAmount(BookingDetail bookingDetail) {
-        double amount = bookingDetail.getTickets().stream()
-                .mapToDouble(ticket -> {
-                    TicketType ticketType = ticket.getTicketType();
-                    int quantityAvailable = countTicketTypeQuantity(bookingDetail, ticketType);
-                    return ticketType.getPrice() * quantityAvailable;
-                })
-                .sum();
-
-        bookingDetail.setAmount(amount);
-    }
-
-    private int countTicketTypeQuantity(BookingDetail bookingDetail, TicketType ticketType) {
-        int count = 0;
-        for (Ticket ticket : bookingDetail.getTickets()) {
-            if (ticket.getTicketType().equals(ticketType)) {
-                count++;
+        double totalAmount = 0.0;
+        if (!booking.getBookingDetailList().isEmpty()) {
+            for (BookingDetail bookingDetail : booking.getBookingDetailList()) {
+                double amount = bookingDetail.getAmount();
+                totalAmount += amount;
             }
+            booking.setTotalAmount(totalAmount);
+            iBookingRepository.save(booking);
         }
-        return count;
     }
 
     @Override
@@ -138,8 +117,9 @@ public class BookingService implements IBookingService {
         if (bookingOptional.isPresent() && !bookingOptional.get().getIsDeleted()) {
             Booking booking = bookingOptional.get();
             BookingResponse bookingResponse = new BookingResponse();
+            updateBookingTotalAmount(booking);
             BeanUtils.copyProperties(booking, bookingResponse);
-            return createBookingResponsePayload("Booking found!", HttpStatus.OK, booking);
+            return createBookingResponsePayload("Booking found!", HttpStatus.OK, bookingResponse);
         } else {
             return createBookingResponsePayload("Booking not found!", HttpStatus.NOT_FOUND, null);
         }
@@ -203,7 +183,7 @@ public class BookingService implements IBookingService {
             Iterable<Booking> searchedBookings;
             searchedBookings = iBookingRepository.searchBookingsByEventIdAndCustomerFullNameContainingOrCustomerPhoneNumberContainingOrCustomerUserEmailContaining(eventId, keyword, pageable);
             if (!searchedBookings.iterator().hasNext()) {
-                return createBookingResponsePayload("No bookings found!", HttpStatus.NOT_FOUND, null);
+                return createBookingResponsePayload("No bookings found!", HttpStatus.NO_CONTENT, null);
             }
             return getBookingResponsePayload(searchedBookings);
         } catch (Exception e) {

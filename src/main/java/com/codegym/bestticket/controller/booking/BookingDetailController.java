@@ -35,20 +35,20 @@ public class BookingDetailController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponsePayload> getBookingDetailByContractIdAndId(@PathVariable UUID ignoredBookingId, @PathVariable UUID id) {
-        ResponsePayload responsePayload = bookingDetailService.findByBookingIdAndId(ignoredBookingId, id);
+    public ResponseEntity<ResponsePayload> getBookingDetailId(@PathVariable UUID ignoredBookingId, @PathVariable UUID id) {
+        ResponsePayload responsePayload = bookingDetailService.findById(id);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
     @PostMapping
     public ResponseEntity<ResponsePayload> addBookingDetail(@PathVariable UUID ignoredBookingId, @RequestBody BookingDetailRequest bookingDetailRequest) {
-        ResponsePayload responsePayload = bookingDetailService.save(ignoredBookingId, null, bookingDetailRequest);
+        ResponsePayload responsePayload = bookingDetailService.save(null, bookingDetailRequest);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponsePayload> updateBookingDetail(@PathVariable UUID ignoredBookingId, @PathVariable UUID id, @RequestBody BookingDetailRequest bookingDetailRequest) {
-        ResponsePayload responsePayload = bookingDetailService.save(ignoredBookingId, id, bookingDetailRequest);
+        ResponsePayload responsePayload = bookingDetailService.save(id, bookingDetailRequest);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
