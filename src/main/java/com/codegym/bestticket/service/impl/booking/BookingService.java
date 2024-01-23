@@ -182,7 +182,7 @@ public class BookingService implements IBookingService {
         try {
             Page<Booking> searchedBookings = iBookingRepository.searchBookingsByEventIdAndCustomerFullNameContainingOrCustomerPhoneNumberContainingOrCustomerUserEmailContaining(eventId, keyword, pageable);
             if (!searchedBookings.iterator().hasNext()) {
-                return createBookingResponsePayload("No bookings found!", HttpStatus.OK, searchedBookings);
+                return createBookingResponsePayload("No bookings found!", HttpStatus.NO_CONTENT, searchedBookings);
             }
             return getBookingResponsePayload(searchedBookings);
         } catch (Exception e) {
