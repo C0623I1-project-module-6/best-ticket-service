@@ -16,8 +16,6 @@ public interface IEventRepository extends JpaRepository<Event, UUID> {
 
     Event findByIdAndIsDeletedFalse(UUID eventId);
 
-//    @Query("SELECT ev FROM EventTime ev JOIN ev.time t where t.id = :timeId")
-//    Event findEventByTimeId(UUID timeId);
     Page<Event> findByNameContainingAndIsDeletedFalse(String text,Pageable pageable);
 
     @Query("SELECT e FROM Event e JOIN e.eventTypes et WHERE et.name IN :eventTypeNames AND e.isDeleted = false")
@@ -26,7 +24,8 @@ public interface IEventRepository extends JpaRepository<Event, UUID> {
     @Query("SELECT e FROM Event e JOIN e.eventTypes et WHERE e.name LIKE %:text% AND et.name IN :eventTypeNames AND e.isDeleted = false")
     Page<Event> findByTextAndEventTypeNames(@Param("text") String text, @Param("eventTypeNames") List<String> eventTypeNames, Pageable pageable);
 
-
-
+//    @Query("SELECT e FROM Event e JOIN e.location l WHERE e.name LIKE %:text% AND l.province = :province AND e.status = 'ACTIVE' AND e.isDeleted = false")
+    @Query("SELECT e FROM Event e JOIN e.location l WHERE e.name LIKE %:text% AND l.province = :province AND e.isDeleted = false")
+    Page<Event> findByTextAndLocationProvince(@Param("text") String text, @Param("province") String province, Pageable pageable);
 
 }

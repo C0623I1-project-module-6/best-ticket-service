@@ -26,6 +26,5 @@ public interface IEventService {
 
     EventResponse findBySearchTermAndEventTypeNames(String searchTerm,List<String> eventTypeNames,int page,int pageSize);
 
-//    ResponsePayload findEventByTimeId(UUID timeId);
-
+    EventResponse findBySearchTermAndLocationProvince(String searchTerm,String province, int page, int pageSize);
 }
