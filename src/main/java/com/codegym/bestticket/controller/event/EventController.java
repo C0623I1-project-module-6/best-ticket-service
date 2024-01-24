@@ -1,7 +1,6 @@
 package com.codegym.bestticket.controller.event;
 
 import com.codegym.bestticket.dto.event.EventDTO;
-import com.codegym.bestticket.entity.event.Event;
 import com.codegym.bestticket.payload.request.event.CreateEventRequest;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.service.IEventService;

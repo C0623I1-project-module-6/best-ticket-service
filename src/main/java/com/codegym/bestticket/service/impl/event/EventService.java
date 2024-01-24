@@ -8,12 +8,14 @@ import com.codegym.bestticket.entity.event.Event;
 import com.codegym.bestticket.entity.event.EventType;
 import com.codegym.bestticket.entity.event.Time;
 import com.codegym.bestticket.entity.location.Location;
+import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.event.CreateEventRequest;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.repository.event.IEventRepository;
 import com.codegym.bestticket.repository.event.ITimeRepository;
 import com.codegym.bestticket.repository.location.ILocationRepository;
+import com.codegym.bestticket.repository.user.IOrganizerRepository;
 import com.codegym.bestticket.service.IEventService;
 import com.codegym.bestticket.service.IEventTypeService;
 import jakarta.persistence.EntityNotFoundException;
@@ -41,7 +43,7 @@ public class EventService implements IEventService {
     private final IEventTypeConverter eventTypeConverter;
     private final ILocationRepository locationRepository;
     private final ITimeRepository timeRepository;
-
+    private final IOrganizerRepository organizerRepository;
     public ResponsePayload createResponsePayload(String message, HttpStatus status, Object data) {
         return ResponsePayload
                 .builder()
@@ -93,6 +95,7 @@ public class EventService implements IEventService {
         String province = eventRequest.getProvince();
         String district = eventRequest.getDistrict();
         String address = eventRequest.getAddress();
+        Optional<Organizer> organizerOptional = organizerRepository.findById(eventRequest.getOrganizerId());
         Time existingTime = timeRepository.findByTime(eventRequest.getStartDateTime());
         List<EventTypeDTO> eventTypeDTOs = eventRequest.getEventTypeNames().stream().map(eventTypeService::findByName).toList();
         List<EventType> eventTypes = eventTypeDTOs.stream().map(eventTypeConverter::dtoToEntity).toList();
@@ -129,6 +132,8 @@ public class EventService implements IEventService {
             }
             event.getTimes().add(newTime);
         }
+        organizerOptional.ifPresent(event::setOrganizer);
+        System.out.println(event.getOrganizer().getId());
         event.setEventTypes(eventTypeSet);
         Event savedEvent = eventRepository.save(event);
         EventDTO savedEventDTO = eventConverter.entityToDTO(savedEvent);
