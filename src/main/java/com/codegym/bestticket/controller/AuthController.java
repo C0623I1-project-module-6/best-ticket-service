@@ -1,9 +1,9 @@
 package com.codegym.bestticket.controller;
 
 import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.request.user.LoginGoogleRequest;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
-import com.codegym.bestticket.payload.response.user.RegisterResponse;
 import com.codegym.bestticket.security.JwtTokenProvider;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,8 +30,18 @@ public class AuthController {
         if (registerRequest == null) {
             new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }
-        ResponsePayload responsePayload =userService.register(registerRequest);
-        return new ResponseEntity<>(responsePayload,responsePayload.getStatus());
+        ResponsePayload responsePayload = userService.register(registerRequest);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
+
+    @PostMapping("/google-login")
+    public ResponseEntity<ResponsePayload> loginGoogle(@Valid @RequestBody LoginGoogleRequest loginGoogleRequest) {
+        if (loginGoogleRequest == null) {
+            new ResponseEntity<>("Request not found", HttpStatus.BAD_REQUEST);
+        }
+        assert loginGoogleRequest != null;
+        ResponsePayload responsePayload = userService.loginGoogle(loginGoogleRequest);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
     @PostMapping("/login")

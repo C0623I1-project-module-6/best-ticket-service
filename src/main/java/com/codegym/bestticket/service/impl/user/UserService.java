@@ -37,7 +37,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -51,6 +50,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -164,31 +164,52 @@ public class UserService implements IUserService {
         if (googleIdToken != null) {
             GoogleIdToken.Payload payload = googleIdToken.getPayload();
             String userEmail = payload.getEmail();
-            Optional<User> oldUser = userRepository.findByUsername(userEmail);
-            String userId = payload.getSubject();
-            System.out.println("User ID: " + userId);
-            String email = payload.getEmail();
-            boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-            String name = (String) payload.get("name");
-            String pictureUrl = (String) payload.get("picture");
-            String locale = (String) payload.get("locale");
-            User user = User.builder()
-                    .username(String.valueOf(oldUser))
-                    .email(email)
-                    .name(name)
-                    .address(locale)
-                    .isActivated(emailVerified)
-                    .avatar(pictureUrl)
-                    .build();
-            return ResponsePayload.builder()
-                    .status(HttpStatus.OK)
-                    .data(user)
-                    .build();
+            String[] username = userEmail.split("@");
+            Optional<User> oldUser = userRepository.findByUsername(username[0]);
+            if (oldUser.isPresent()) {
+                LoginRequest loginRequest = LoginRequest.builder()
+                        .username(oldUser.get().getUsername())
+                        .password(oldUser.get().getOldPassword())
+                        .build();
+                return login(loginRequest);
+            } else {
+                String email = payload.getEmail();
+                boolean emailVerified = payload.getEmailVerified();
+                String pictureUrl = (String) payload.get("picture");
+                String fullName = (String) payload.get("name");
+                String password = ("a119904");
+                Set<Role> roleSet = new HashSet<>();
+                roleSet.add(roleRepository.findByName("CUSTOMER")
+                        .orElseThrow(() -> new RoleNotFoundException("Role CUSTOMER not found!")));
+                User user = User.builder()
+                        .username(username[0])
+                        .password(encoder.encode(password))
+                        .email(email)
+                        .isActivated(emailVerified)
+                        .avatar(pictureUrl)
+                        .roles(roleSet)
+                        .oldPassword(password)
+                        .isDeleted(false)
+                        .build();
+                userRepository.save(user);
+                Customer customer = Customer.builder()
+                        .fullName(fullName)
+                        .user(user)
+                        .isDeleted(false)
+                        .build();
+                customerRepository.save(customer);
+                LoginRequest loginRequest = LoginRequest.builder()
+                        .username(user.getUsername())
+                        .password(user.getOldPassword())
+                        .build();
+                return login(loginRequest);
+            }
         } else {
             System.out.println("Invalid ID token!");
             return ResponsePayload.builder().status(HttpStatus.BAD_REQUEST).build();
         }
     }
+
 
     @Override
     public ResponsePayload login(LoginRequest loginRequest) {
