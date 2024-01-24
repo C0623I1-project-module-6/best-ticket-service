@@ -15,7 +15,6 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -33,12 +32,13 @@ public class CustomerService implements ICustomerService {
     private final IUserRepository userRepository;
     private final IRoleRepository roleRepository;
 
-
     @Override
     public ResponsePayload create(CustomerDto customerDto) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            UserDetails userDetails = (UserDetails) SecurityContextHolder
+                    .getContext()
+                    .getAuthentication()
+                    .getPrincipal();
             String username = userDetails.getUsername();
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found"));
@@ -80,8 +80,8 @@ public class CustomerService implements ICustomerService {
             Customer customer = customerRepository.findByUserId(user.getId())
                     .orElseThrow(() -> new CustomerNotFoundException("Customer not found!"));
             customerConverter.dtoToEntity(customerDto);
-            String oldFullName=customer.getFullName();
-            customer.setFullName(ObjectUtils.defaultIfNull(customerDto.getFullName(),oldFullName));
+            String oldFullName = customer.getFullName();
+            customer.setFullName(ObjectUtils.defaultIfNull(customerDto.getFullName(), oldFullName));
             String oldPhoneNumber = customer.getPhoneNumber();
             customer.setPhoneNumber(ObjectUtils.defaultIfNull(customerDto.getPhoneNumber(), oldPhoneNumber));
             String oldIdCard = customer.getIdCard();

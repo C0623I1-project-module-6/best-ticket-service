@@ -44,7 +44,7 @@ public class TicketTypeService implements ITicketTypeService {
                     return ticketTypeRequest;
                 })
                 .toList();
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.CREATED, ticketTypeRequests);
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketTypeRequests);
 
     }
 

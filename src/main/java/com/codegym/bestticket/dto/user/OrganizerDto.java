@@ -21,13 +21,9 @@ public class OrganizerDto {
     private String phoneNumber;
     @NotBlank(message = "Email is mandatory!")
     @Email(message = "Invalid email format!")
-    @UniqueOrganizer
     private String email;
-    @UniqueOrganizer
     private String idCard;
-    @UniqueOrganizer
     private String taxCode;
-    @UniqueOrganizer
     private String businessCode;
     @NotBlank(message = "Date range is mandatory!")
     private Date dateRange;
