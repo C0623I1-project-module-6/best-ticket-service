@@ -15,6 +15,7 @@ import com.codegym.bestticket.exception.user.RoleNotFoundException;
 import com.codegym.bestticket.exception.user.UserNotFoundException;
 import com.codegym.bestticket.exception.user.UsernameAlreadyExistsException;
 import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.request.user.LoginGoogleRequest;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
 import com.codegym.bestticket.payload.response.user.ExistsUserResponse;
@@ -26,10 +27,17 @@ import com.codegym.bestticket.repository.user.IRoleRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.security.JwtTokenProvider;
 import com.codegym.bestticket.service.IUserService;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,7 +48,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -64,6 +75,9 @@ public class UserService implements IUserService {
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+    private static final JsonFactory JSON_FACTORY = new GsonFactory();
+
 
     @Override
     public ResponsePayload register(RegisterRequest registerRequest) {
@@ -133,6 +147,46 @@ public class UserService implements IUserService {
                     .message("Login failed!")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
+        }
+    }
+
+    @Override
+    public ResponsePayload loginGoogle(LoginGoogleRequest loginGoogleRequest) {
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(HTTP_TRANSPORT, JSON_FACTORY)
+                .setAudience(Collections.singletonList(loginGoogleRequest.getClientId()))
+                .build();
+        GoogleIdToken googleIdToken;
+        try {
+            googleIdToken = verifier.verify(loginGoogleRequest.getCredential());
+        } catch (GeneralSecurityException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (googleIdToken != null) {
+            GoogleIdToken.Payload payload = googleIdToken.getPayload();
+            String userEmail = payload.getEmail();
+            Optional<User> oldUser = userRepository.findByUsername(userEmail);
+            String userId = payload.getSubject();
+            System.out.println("User ID: " + userId);
+            String email = payload.getEmail();
+            boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+            String name = (String) payload.get("name");
+            String pictureUrl = (String) payload.get("picture");
+            String locale = (String) payload.get("locale");
+            User user = User.builder()
+                    .username(String.valueOf(oldUser))
+                    .email(email)
+                    .name(name)
+                    .address(locale)
+                    .isActivated(emailVerified)
+                    .avatar(pictureUrl)
+                    .build();
+            return ResponsePayload.builder()
+                    .status(HttpStatus.OK)
+                    .data(user)
+                    .build();
+        } else {
+            System.out.println("Invalid ID token!");
+            return ResponsePayload.builder().status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
