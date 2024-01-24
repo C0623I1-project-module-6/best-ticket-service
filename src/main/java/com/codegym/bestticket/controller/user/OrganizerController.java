@@ -6,12 +6,9 @@ import com.codegym.bestticket.service.IOrganizerService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @CrossOrigin("*")
@@ -35,6 +32,11 @@ public class OrganizerController {
         }
         return new ResponseEntity<>(organizerService.update(organizerDto).getStatus());
 
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponsePayload> findByUserId(@PathVariable UUID id) {
+        return new ResponseEntity<>(organizerService.findByUserId(id), HttpStatus.OK);
     }
 }
 
