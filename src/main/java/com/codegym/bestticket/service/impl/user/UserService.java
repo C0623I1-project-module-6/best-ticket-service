@@ -5,6 +5,7 @@ import com.codegym.bestticket.converter.user.ILoginConverter;
 import com.codegym.bestticket.converter.user.IRegisterConverter;
 import com.codegym.bestticket.dto.user.UserDto;
 import com.codegym.bestticket.entity.user.Customer;
+import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.entity.user.Role;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.exception.user.EmailAlreadyExistsException;
@@ -260,11 +261,13 @@ public class UserService implements IUserService {
                 throw new AccessDeniedException("Unauthorized access!");
             }
             Customer customer = customerRepository.findByUserId(id).orElse(null);
+            Organizer organizer = organizerRepository.findByUserId(id).orElse(null);
             UserDto userDto = new UserDto();
             userDto.setId(user.getId());
             userDto.setUsername(user.getUsername());
             userDto.setEmail(user.getEmail());
             userDto.setCustomer(customer);
+            userDto.setOrganizer(organizer);
             return ResponsePayload.builder()
                     .message("User!")
                     .status(HttpStatus.OK)
