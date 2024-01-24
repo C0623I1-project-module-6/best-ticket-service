@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -120,5 +122,20 @@ public class OrganizerService implements IOrganizerService {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
+    }
+
+    public ResponsePayload findByUserId(UUID userId) {
+        Optional<Organizer> organizer= organizerRepository.findByUserIdAndIsDeletedFalse(userId);
+        return organizer.map(o->
+                ResponsePayload.builder()
+                        .message("Organizer by UserId" + userId)
+                        .status(HttpStatus.OK)
+                        .data(organizerConverter.entityToDto(o))
+                        .build()
+        ).orElse(
+                ResponsePayload.builder().message("Organizer by userId" + userId + "not found or is deleted!")
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .build()
+        );
     }
 }
