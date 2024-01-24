@@ -12,7 +12,5 @@ public class TicketTypeRequest {
 
     private Boolean isDeleted;
 
-    private Integer quantity;
-
     private Double price;
 }
