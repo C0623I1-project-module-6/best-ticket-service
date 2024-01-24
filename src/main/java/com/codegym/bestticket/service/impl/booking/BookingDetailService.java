@@ -53,6 +53,7 @@ public class BookingDetailService implements IBookingDetailService {
                             updateBookingDetailsAmount(bookingDetail.getBooking().getId());
                             BookingDetailResponse bookingDetailResponse = new BookingDetailResponse();
                             BeanUtils.copyProperties(bookingDetail, bookingDetailResponse);
+                            bookingDetailResponse.setBookingId(bookingDetail.getBooking().getId());
                             List<TicketInBookingDetailResponse> ticketInBookingDetailResponses = convertTicketsToTicketInBookingDetail(bookingDetail);
                             bookingDetailResponse.setTicketInBookingDetailResponses(ticketInBookingDetailResponses);
                             return bookingDetailResponse;
@@ -73,6 +74,7 @@ public class BookingDetailService implements IBookingDetailService {
                 .map(ticket -> {
                     TicketInBookingDetailResponse ticketInBookingDetailResponse = new TicketInBookingDetailResponse();
                     BeanUtils.copyProperties(ticket, ticketInBookingDetailResponse);
+                    ticketInBookingDetailResponse.setBookingDetailId(bookingDetail.getId());
                     ticketInBookingDetailResponse.setTicketTypeName(ticket.getTicketType().getName());
                     ticketInBookingDetailResponse.setTicketTypePrice(ticket.getTicketType().getPrice());
                     return ticketInBookingDetailResponse;
@@ -94,6 +96,7 @@ public class BookingDetailService implements IBookingDetailService {
                 bookingDetailResponse.setTicketInBookingDetailResponses(convertTicketsToTicketInBookingDetail(bookingDetail));
             }
             BeanUtils.copyProperties(bookingDetail, bookingDetailResponse);
+            bookingDetailResponse.setBookingId(bookingDetail.getBooking().getId());
             return createBookingDetailResponsePayload("Booking detail found!", HttpStatus.OK, bookingDetailResponse);
         } else {
             return createBookingDetailResponsePayload("Booking detail not found!", HttpStatus.NOT_FOUND, null);
