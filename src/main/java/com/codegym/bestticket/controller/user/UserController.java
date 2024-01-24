@@ -89,5 +89,8 @@ public class UserController {
         ResponsePayload responsePayload = userService.findById(id);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
-
+    @GetMapping("/organizer/{id}")
+    public ResponseEntity<ResponsePayload> findByUserId(@PathVariable UUID id) {
+        return new ResponseEntity<>(organizerService.findByUserId(id), HttpStatus.OK);
+    }
 }

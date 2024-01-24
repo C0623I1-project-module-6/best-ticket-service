@@ -13,4 +13,5 @@ public interface IOrganizerService {
 
     ResponsePayload update(OrganizerDto organizerDto);
 
+    ResponsePayload findByUserId(UUID userId);
 }

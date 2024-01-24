@@ -1,6 +1,7 @@
 package com.codegym.bestticket.entity.event;
 
 import com.codegym.bestticket.entity.location.Location;
+import com.codegym.bestticket.entity.user.Organizer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -62,4 +63,8 @@ public class Event {
     @JsonIgnore
     @JoinColumn(name = "location_id")
     private Location location;
+
+    @ManyToOne
+    @JoinColumn(name = "organizer_id")
+    private Organizer organizer;
 }
