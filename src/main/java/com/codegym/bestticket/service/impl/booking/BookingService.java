@@ -6,6 +6,7 @@ import com.codegym.bestticket.entity.booking.BookingDetail;
 import com.codegym.bestticket.exception.BookingSaveException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
+import com.codegym.bestticket.payload.response.booking.BookingDetailResponse;
 import com.codegym.bestticket.payload.response.booking.BookingResponse;
 import com.codegym.bestticket.repository.booking.IBookingRepository;
 import com.codegym.bestticket.service.IBookingService;
@@ -19,12 +20,10 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Log
@@ -68,7 +67,6 @@ public class BookingService implements IBookingService {
         }
     }
 
-
     @Override
     public ResponsePayload findAllByEventId(UUID eventId, Pageable pageable) {
         try {
@@ -83,29 +81,22 @@ public class BookingService implements IBookingService {
         }
     }
 
-    private ResponsePayload getBookingResponsePayload(Iterable<Booking> bookings) {
-        Iterable<BookingResponse> bookingResponses = StreamSupport.stream(bookings.spliterator(), false)
-                .filter(booking -> !booking.getIsDeleted())
-                .map(booking -> {
-                    BookingResponse bookingResponse = new BookingResponse();
-                    bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
-                    updateBookingTotalAmount(booking);
-                    iBookingRepository.save(booking);
-                    BeanUtils.copyProperties(booking, bookingResponse);
-                    return bookingResponse;
-                })
-//                .sorted(Comparator.comparing(BookingResponse::getCreatedAt).reversed())
-                .collect(Collectors.toList());
+    private ResponsePayload getBookingResponsePayload(Page<Booking> bookings) {
+        Page<BookingResponse> bookingResponses = bookings.map(booking -> {
+            BookingResponse bookingResponse = new BookingResponse();
+            bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
+            updateBookingTotalAmount(booking);
+            iBookingRepository.save(booking);
+            BeanUtils.copyProperties(booking, bookingResponse);
+            return bookingResponse;
+        });
         return createBookingResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
     }
 
     private void updateBookingTotalAmount(Booking booking) {
-        double totalAmount = 0.0;
+        double totalAmount;
         if (!booking.getBookingDetailList().isEmpty()) {
-            for (BookingDetail bookingDetail : booking.getBookingDetailList()) {
-                double amount = bookingDetail.getAmount();
-                totalAmount += amount;
-            }
+            totalAmount = booking.getBookingDetailList().stream().mapToDouble(BookingDetail::getAmount).sum();
             booking.setTotalAmount(totalAmount);
             iBookingRepository.save(booking);
         }
