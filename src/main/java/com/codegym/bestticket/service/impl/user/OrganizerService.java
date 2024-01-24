@@ -6,6 +6,7 @@ import com.codegym.bestticket.dto.user.OrganizerDto;
 import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.entity.user.OrganizerType;
 import com.codegym.bestticket.entity.user.User;
+import com.codegym.bestticket.exception.user.OrganizerNotFoundException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.repository.user.IOrganizerRepository;
 import com.codegym.bestticket.repository.user.IOrganizerTypeRepository;
@@ -15,14 +16,14 @@ import com.codegym.bestticket.service.IOrganizerService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -80,22 +81,34 @@ public class OrganizerService implements IOrganizerService {
 
 
     @Override
-    public ResponsePayload update(UUID id, OrganizerDto organizerDto) {
+    public ResponsePayload update(OrganizerDto organizerDto) {
         try {
-            Optional<Organizer> optionalOrganizer = organizerRepository.findById(id);
-            if (optionalOrganizer.isEmpty()) {
-                throw new EntityNotFoundException("Organizer not found!" + id);
-            }
-            Organizer organizer = optionalOrganizer.get();
-            String oldPhoneNumber = organizer.getPhoneNumber();
-            String oldEmail = organizer.getEmail();
-            String oldIdCard = organizer.getIdCard();
-            String oldTaxCode = organizer.getTaxCode();
+            UserDetails userDetails = (UserDetails) SecurityContextHolder
+                    .getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+            String username = userDetails.getUsername();
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found!"));
+            Organizer organizer = organizerRepository.findByUserId(user.getId())
+                    .orElseThrow(() -> new OrganizerNotFoundException("Organizer not found!"));
             organizerConverter.dtoToEntity(organizerDto);
-            organizer.setPhoneNumber(oldPhoneNumber);
-            organizer.setEmail(oldEmail);
-            organizer.setIdCard(oldIdCard);
-            organizer.setTaxCode(oldTaxCode);
+            String oldName = organizer.getName();
+            organizer.setName(ObjectUtils.defaultIfNull(organizerDto.getName(), oldName));
+            String oldPhoneNumber = organizer.getPhoneNumber();
+            organizer.setPhoneNumber(ObjectUtils.defaultIfNull(organizerDto.getPhoneNumber(), oldPhoneNumber));
+            String oldEmail = organizer.getEmail();
+            organizer.setEmail(ObjectUtils.defaultIfNull(organizerDto.getEmail(), oldEmail));
+            String oldIdCard = organizer.getIdCard();
+            organizer.setIdCard(ObjectUtils.defaultIfNull(organizerDto.getIdCard(), oldIdCard));
+            String oldTaxCode = organizer.getTaxCode();
+            organizer.setTaxCode(ObjectUtils.defaultIfNull(organizerDto.getTaxCode(), oldTaxCode));
+            String oldBusinessCode = organizer.getBusinessCode();
+            organizer.setBusinessCode(ObjectUtils.defaultIfNull(organizerDto.getBusinessCode(), oldBusinessCode));
+            Date oldDateRange = organizer.getDateRange();
+            organizer.setDateRange(ObjectUtils.defaultIfNull(organizerDto.getDateRange(), oldDateRange));
+            String oldIssuedBy = organizer.getIssuedBy();
+            organizer.setIssuedBy(ObjectUtils.defaultIfNull(organizerDto.getIssuedBy(), oldIssuedBy));
             organizerRepository.save(organizer);
             OrganizerDto response = organizerConverter.entityToDto(organizer);
             return ResponsePayload.builder()
@@ -111,42 +124,18 @@ public class OrganizerService implements IOrganizerService {
         }
     }
 
-    @Override
-    public ResponsePayload findAll(Pageable pageable) {
-        try {
-            Page<OrganizerDto> organizers = organizerRepository.findAllByIsDeletedFalse(pageable)
-                    .map(organizerConverter::entityToDto);
-            return ResponsePayload.builder()
-                    .message("Organizer list!!!")
-                    .status(HttpStatus.OK)
-                    .data(organizers)
-                    .build();
-        } catch (RuntimeException e) {
-            return ResponsePayload.builder()
-                    .message("Organizer list not found!")
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
-        }
-
-    }
-
-    @Override
-    public ResponsePayload findById(UUID id) {
-        try {
-            Organizer organizer = organizerRepository.findByIdAndIsDeletedFalse(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Id not found!"));
-            OrganizerDto response = organizerConverter.entityToDto(organizer);
-            return ResponsePayload.builder()
-                    .message("Organizer by" + id)
-                    .status(HttpStatus.OK)
-                    .data(response)
-                    .build();
-        } catch (RuntimeException e) {
-            return ResponsePayload.builder()
-                    .message("Organizer by" + id + "not found or is deleted!")
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
-        }
-
+    public ResponsePayload findByUserId(UUID userId) {
+        Optional<Organizer> organizer= organizerRepository.findByUserIdAndIsDeletedFalse(userId);
+        return organizer.map(o->
+                ResponsePayload.builder()
+                        .message("Organizer by UserId" + userId)
+                        .status(HttpStatus.OK)
+                        .data(organizerConverter.entityToDto(o))
+                        .build()
+        ).orElse(
+                ResponsePayload.builder().message("Organizer by userId" + userId + "not found or is deleted!")
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .build()
+        );
     }
 }

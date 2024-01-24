@@ -15,9 +15,8 @@ public interface ICustomerRepository extends JpaRepository<Customer, UUID> {
 
     Optional<Customer> findByUserIdAndIsDeletedFalse(UUID id);
 
-    Optional<Customer> findByIdAndIsDeletedFalse(UUID id);
-
     Customer findByPhoneNumber(String phoneNumber);
+    Optional<Customer> findByUserId(UUID id);
 
     boolean existsByPhoneNumber(String phoneNumber);
 

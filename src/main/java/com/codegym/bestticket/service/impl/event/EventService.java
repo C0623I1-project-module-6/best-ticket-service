@@ -157,7 +157,7 @@ public class EventService implements IEventService {
         Optional.ofNullable(eventDTO.getDescription()).ifPresent(event::setDescription);
         Optional.ofNullable(eventDTO.getImage()).ifPresent(event::setImage);
         Optional.ofNullable(eventDTO.getDuration()).ifPresent(event::setDuration);
-//        Optional.ofNullable(eventDTO.getOrganizer()).ifPresent(event::setOrganizer);
+        Optional.ofNullable(eventDTO.getOrganizer()).ifPresent(event::setOrganizer);
         Optional.ofNullable(eventDTO.getIsDeleted()).ifPresent(event::setIsDeleted);
         eventRepository.save(event);
         EventDTO updatedEventDTO = eventConverter.entityToDTO(event);
@@ -192,10 +192,15 @@ public class EventService implements IEventService {
         return EventResponse.builder().data(eventDTOs).totalPages(eventPage.getTotalPages()).message("Page Event By Search Term List EventType").httpStatus(HttpStatus.OK).build();
     }
 
-//    @Override
-//    public ResponsePayload findEventByTimeId(UUID timeId) {
-//        Event event = eventRepository.findEventByTimeId(timeId);
-//        return createResponsePayload("Success",HttpStatus.OK,event);
-//    }
-
+    @Override
+    public EventResponse findBySearchTermAndLocationProvince(String searchTerm,String province, int page, int pageSize) {
+        try {
+            Pageable pageable = PageRequest.of(page, pageSize);
+            Page<Event> eventPage = eventRepository.findByTextAndLocationProvince(searchTerm,province, pageable);
+            List<EventDTO> eventDTOs = eventConverter.entitiesToDTOs(eventPage.getContent());
+            return EventResponse.builder().data(eventDTOs).totalPages(eventPage.getTotalPages()).httpStatus(HttpStatus.OK).build();
+        } catch (Exception ex) {
+            return EventResponse.builder().httpStatus(HttpStatus.INTERNAL_SERVER_ERROR).message("Error"+ex).build();
+        }
+    }
 }

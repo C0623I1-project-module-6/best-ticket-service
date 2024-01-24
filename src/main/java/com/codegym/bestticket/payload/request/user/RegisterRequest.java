@@ -14,7 +14,6 @@ import java.util.Set;
 @Data
 public class RegisterRequest {
     @NotBlank(message = "Username is mandatory!")
-    @UniqueUser
     private String username;
     @NotBlank(message = "Password is mandatory!")
     @Size(min =6, message = "Password must be at least 6 characters long!")
@@ -22,9 +21,7 @@ public class RegisterRequest {
     private String password;
     @NotBlank(message = "Email is mandatory!")
     @Email(message = "Invalid email format!")
-    @UniqueUser
     private String email;
-    @UniqueCustomer
     private String phoneNumber;
     private String avatar;
     private Set<String> listRole;

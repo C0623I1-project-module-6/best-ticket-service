@@ -26,7 +26,4 @@ public class TicketInBookingDetailResponse {
 
     private Double ticketTypePrice;
 
-    private BookingDetail bookingDetail;
-
-    private EventTime eventTime;
 }

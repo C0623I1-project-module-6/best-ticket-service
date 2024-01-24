@@ -3,6 +3,7 @@ package com.codegym.bestticket.controller;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
+import com.codegym.bestticket.payload.response.user.RegisterResponse;
 import com.codegym.bestticket.security.JwtTokenProvider;
 import com.codegym.bestticket.service.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +30,8 @@ public class AuthController {
         if (registerRequest == null) {
             new ResponseEntity<>("Request not found!", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(userService.register(registerRequest), HttpStatus.CREATED);
+        ResponsePayload responsePayload =userService.register(registerRequest);
+        return new ResponseEntity<>(responsePayload,responsePayload.getStatus());
     }
 
     @PostMapping("/login")

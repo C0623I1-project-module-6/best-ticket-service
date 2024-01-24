@@ -2,10 +2,10 @@ package com.codegym.bestticket.entity.booking;
 
 
 import com.codegym.bestticket.entity.user.Customer;
-import com.codegym.bestticket.entity.user.Organizer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -48,6 +48,6 @@ public class Booking {
     @Column(name = "is_deleted", columnDefinition = "DEFAULT 0")
     private Boolean isDeleted;
     @JsonIgnore
-    @OneToMany(mappedBy = "booking")
+    @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
     private List<BookingDetail> bookingDetailList;
 }

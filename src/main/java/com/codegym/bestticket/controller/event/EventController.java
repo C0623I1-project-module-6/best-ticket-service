@@ -1,11 +1,9 @@
 package com.codegym.bestticket.controller.event;
 
 import com.codegym.bestticket.dto.event.EventDTO;
-import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.event.CreateEventRequest;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.service.IEventService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,7 +58,7 @@ public class EventController {
 
 
     @PostMapping
-    public ResponseEntity<EventResponse> createEventt(@RequestBody CreateEventRequest eventRequest) {
+    public ResponseEntity<EventResponse> createEvent(@RequestBody CreateEventRequest eventRequest) {
         EventResponse eventResponse = eventService.createEvent(eventRequest);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
@@ -94,9 +92,13 @@ public class EventController {
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 
-//    @GetMapping("/findEventByTimeId/{timeId}")
-//    public ResponseEntity<ResponsePayload> findEventByTimeId(@PathVariable UUID timeId){
-//        ResponsePayload responsePayload = eventService.findEventByTimeId(timeId);
-//        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
-//    }
+    @GetMapping("/location")
+    public ResponseEntity<EventResponse> getEventsByLocationProvince(
+            @RequestParam(name = "searchTerm", required = false) String searchTerm,
+            @RequestParam(name = "province") String province,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "pageSize",defaultValue = "20") int pageSize) {
+        EventResponse response = eventService.findBySearchTermAndLocationProvince(searchTerm, province, page, pageSize);
+        return new ResponseEntity<>(response, response.getHttpStatus());
+    }
 }

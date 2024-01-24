@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface IBookingDetailService {
     ResponsePayload findAllByBookingIdAndIsDeletedFalse(UUID bookingId, Pageable pageable);
-    ResponsePayload findByBookingIdAndId(UUID bookingId, UUID id);
-    ResponsePayload save(UUID bookingId, UUID id, BookingDetailRequest bookingDetailRequest);
+    ResponsePayload findById(UUID id);
+    ResponsePayload save(UUID id, BookingDetailRequest bookingDetailRequest);
     ResponsePayload remove(UUID id);
 }
