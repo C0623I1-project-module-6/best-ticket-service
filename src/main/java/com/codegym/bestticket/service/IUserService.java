@@ -2,6 +2,7 @@ package com.codegym.bestticket.service;
 
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.request.user.LoginGoogleRequest;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 public interface IUserService {
     ResponsePayload register(RegisterRequest registerRequest);
+    ResponsePayload loginGoogle(LoginGoogleRequest loginGoogleRequest);
     ResponsePayload login(LoginRequest loginRequest);
     ResponsePayload keepLogin(HttpServletRequest request);
     ResponsePayload logout(HttpServletRequest request);

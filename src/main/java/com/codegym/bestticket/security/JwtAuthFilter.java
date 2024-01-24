@@ -63,9 +63,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             } catch (Exception ex) {
                 Optional<User> user = userService.findUserByRememberToken(jwt);
                 if (user.isPresent()) {
-                    LoginRequest loginRequest = new LoginRequest();
-                    loginRequest.setUsername(user.get().getUsername());
-                    loginRequest.setPassword(user.get().getOldPassword());
+                    LoginRequest loginRequest = LoginRequest.builder()
+                            .username(user.get().getUsername())
+                            .password(user.get().getOldPassword()).build();
                     userService.login(loginRequest);
                 } else logger.error("Could not set user authentication in security context", ex);
             }
