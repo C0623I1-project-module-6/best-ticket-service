@@ -1,5 +1,6 @@
 package com.codegym.bestticket.controller.ticket;
 
+import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.response.ticket.TicketResponse;
 import com.codegym.bestticket.service.ITicketService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -91,12 +93,19 @@ public class TicketController {
 
     @GetMapping("/findTicketByEventId/{eventId}")
     public ResponseEntity<ResponsePayload> showTicketByEventId(@PathVariable UUID eventId, @PageableDefault(page = 0, size = 200) Pageable pageable) {
-        ResponsePayload responsePayload = ticketService.findTicketByEventId(eventId,pageable);
+        ResponsePayload responsePayload = ticketService.findTicketByEventId(eventId, pageable);
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
+
     @GetMapping("/findTicketByTimeId/{timeId}")
     public ResponseEntity<ResponsePayload> showTicketByTimeId(@PathVariable UUID timeId, @PageableDefault(page = 0, size = 200) Pageable pageable) {
-        ResponsePayload responsePayload = ticketService.findTicketByTimeId(timeId,pageable);
+        ResponsePayload responsePayload = ticketService.findTicketByTimeId(timeId, pageable);
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
+    }
+
+    @PutMapping("/updateStatus")
+    public ResponseEntity<ResponsePayload> updateTicketStatus(@RequestBody List<String> selectedSeats,@PageableDefault(size = 200, page = 0) Pageable pageable) {
+        ResponsePayload responsePayload = ticketService.updateStatus(selectedSeats,pageable);
+        return new ResponseEntity<>(responsePayload,HttpStatus.OK);
     }
 }

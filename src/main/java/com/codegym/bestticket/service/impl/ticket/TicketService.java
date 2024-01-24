@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -171,18 +172,45 @@ public class TicketService implements ITicketService {
     }
 
 
-
     @Override
-    public ResponsePayload findTicketByEventId(UUID eventId,Pageable pageable) {
-        Page<Ticket> tickets = ticketRepository.findTicketByEventId(eventId,pageable);
-
+    public ResponsePayload findTicketByEventId(UUID eventId, Pageable pageable) {
+        Page<Ticket> tickets = ticketRepository.findTicketByEventId(eventId, pageable);
         return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, tickets);
     }
 
     @Override
     public ResponsePayload findTicketByTimeId(UUID timeId, Pageable pageable) {
-        Page<Ticket> tickets = ticketRepository.findTicketByTimeId(timeId,pageable);
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, tickets);
+        Page<Ticket> tickets = ticketRepository.findTicketByTimeId(timeId, pageable);
+        Iterable<TicketDto> ticketDto = StreamSupport.stream(tickets.spliterator(), true)
+                .map(ticket -> {
+                    TicketDto ticketDto1 = TicketDto
+                            .builder()
+                            .seat(ticket.getSeat())
+                            .ticketCode(ticket.getTicketCode())
+                            .isDeleted(ticket.getIsDeleted())
+                            .description(ticket.getDescription())
+                            .status(ticket.getStatus())
+                            .ticketType(ticket.getTicketType())
+                            .build();
+                    BeanUtils.copyProperties(ticket, ticketDto1);
+                    return ticketDto1;
+                })
+                .toList();
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
+    }
+
+    @Override
+    public ResponsePayload updateStatus(List<String> selectedSeats, Pageable pageable) {
+        Page<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
+        tickets.forEach(ticket -> selectedSeats.forEach(seat -> {
+            // So sánh ticket với seat
+            if (ticket.getSeat().equals(seat)) {
+                ticket.setStatus("Pending");
+                ticketRepository.save(ticket);
+            }
+        }));
+
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.CREATED,tickets);
     }
 }
 

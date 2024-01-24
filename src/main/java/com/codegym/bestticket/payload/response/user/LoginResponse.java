@@ -1,6 +1,5 @@
 package com.codegym.bestticket.payload.response.user;
 
-import com.codegym.bestticket.entity.user.Role;
 import lombok.Data;
 
 import java.util.Set;
@@ -14,5 +13,6 @@ public class LoginResponse {
     private String fullName;
     private String token;
     private Set<String> listRole;
+    private String email;
 
 }
