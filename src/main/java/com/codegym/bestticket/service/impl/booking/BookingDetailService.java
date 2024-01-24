@@ -157,7 +157,7 @@ public class BookingDetailService implements IBookingDetailService {
                 double amount = detail.getTickets().stream()
                         .mapToDouble(ticket -> {
                             TicketType ticketType = ticket.getTicketType();
-                            int quantityAvailable = countTicketTypeQuantity(detail, ticketType);
+                            int quantityAvailable = countTicketTypeQuantity(ticket, ticketType);
                             return ticketType.getPrice() * quantityAvailable;
                         })
                         .sum();
@@ -168,12 +168,10 @@ public class BookingDetailService implements IBookingDetailService {
         }
     }
 
-    private int countTicketTypeQuantity(BookingDetail bookingDetail, TicketType ticketType) {
+    private int countTicketTypeQuantity(Ticket ticket, TicketType ticketType) {
         int count = 0;
-        for (Ticket ticket : bookingDetail.getTickets()) {
-            if (ticket.getTicketType().equals(ticketType)) {
-                count++;
-            }
+        if (ticket.getTicketType().equals(ticketType)) {
+            count++;
         }
         return count;
     }
