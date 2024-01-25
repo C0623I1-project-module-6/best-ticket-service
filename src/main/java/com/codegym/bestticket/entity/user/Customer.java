@@ -34,6 +34,7 @@ public class Customer {
     private UUID id;
     @Column(length = 50)
     private String fullName;
+    private String receiptEmail;
     @Column(length = 15)
     private String gender;
     @Column(length = 50, unique = true)
