@@ -18,6 +18,6 @@ public class EventDTO {
     private String duration;
     private Integer ticketAmount;
     private Boolean isDeleted;
-
+    private String status;
     private Organizer organizer;
 }

@@ -12,6 +12,8 @@ import java.util.UUID;
 public class TicketInBookingDetailResponse {
     private UUID id;
 
+    private UUID bookingDetailId;
+
     private String ticketCode;
 
     private String seat;
