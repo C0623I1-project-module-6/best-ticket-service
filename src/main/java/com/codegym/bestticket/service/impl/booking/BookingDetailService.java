@@ -7,7 +7,6 @@ import com.codegym.bestticket.entity.ticket.TicketType;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingDetailRequest;
 import com.codegym.bestticket.payload.response.booking.BookingDetailResponse;
-import com.codegym.bestticket.payload.response.booking.BookingResponse;
 import com.codegym.bestticket.payload.response.ticket.TicketInBookingDetailResponse;
 import com.codegym.bestticket.repository.booking.IBookingDetailRepository;
 import com.codegym.bestticket.repository.booking.IBookingRepository;
@@ -15,6 +14,7 @@ import com.codegym.bestticket.repository.ticket.ITicketRepository;
 import com.codegym.bestticket.service.IBookingDetailService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +26,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Log
@@ -49,17 +48,6 @@ public class BookingDetailService implements IBookingDetailService {
         try {
             if (iBookingRepository.findById(bookingId).isPresent()) {
                 Page<BookingDetail> bookingDetailList = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId, pageable);
-//                Iterable<BookingDetailResponse> bookingDetailResponseList = StreamSupport.stream(bookingDetailList.spliterator(), false)
-//                        .map(bookingDetail -> {
-//                            updateBookingDetailsAmount(bookingDetail.getBooking().getId());
-//                            BookingDetailResponse bookingDetailResponse = new BookingDetailResponse();
-//                            BeanUtils.copyProperties(bookingDetail, bookingDetailResponse);
-//                            bookingDetailResponse.setBookingId(bookingDetail.getBooking().getId());
-//                            List<TicketInBookingDetailResponse> ticketInBookingDetailResponses = convertTicketsToTicketInBookingDetail(bookingDetail);
-//                            bookingDetailResponse.setTicketInBookingDetailResponses(ticketInBookingDetailResponses);
-//                            return bookingDetailResponse;
-//                        })
-//                        .collect(Collectors.toList());
                 Page<BookingDetailResponse> bookingDetailResponseList = bookingDetailList.map(bookingDetail -> {
                     updateBookingDetailsAmount(bookingDetail.getBooking().getId());
                     BookingDetailResponse bookingDetailResponse = new BookingDetailResponse();
@@ -80,6 +68,11 @@ public class BookingDetailService implements IBookingDetailService {
     }
 
     private List<TicketInBookingDetailResponse> convertTicketsToTicketInBookingDetail(BookingDetail bookingDetail) {
+        return getTicketInBookingDetailResponses(bookingDetail);
+    }
+
+    @NotNull
+    static List<TicketInBookingDetailResponse> getTicketInBookingDetailResponses(BookingDetail bookingDetail) {
         return bookingDetail.getTickets().stream()
                 .map(ticket -> {
                     TicketInBookingDetailResponse ticketInBookingDetailResponse = new TicketInBookingDetailResponse();

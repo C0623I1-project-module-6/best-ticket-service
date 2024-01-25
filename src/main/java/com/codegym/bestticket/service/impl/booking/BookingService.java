@@ -8,6 +8,7 @@ import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
 import com.codegym.bestticket.payload.response.booking.BookingDetailResponse;
 import com.codegym.bestticket.payload.response.booking.BookingResponse;
+import com.codegym.bestticket.payload.response.ticket.TicketInBookingDetailResponse;
 import com.codegym.bestticket.repository.booking.IBookingRepository;
 import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;
@@ -88,6 +89,8 @@ public class BookingService implements IBookingService {
             updateBookingTotalAmount(booking);
             iBookingRepository.save(booking);
             BeanUtils.copyProperties(booking, bookingResponse);
+            List<BookingDetail> bookingDetailList = booking.getBookingDetailList();
+            bookingResponse.setBookingDetailResponseList(convertBookingDetailsToBookingDetailResponses(bookingDetailList));
             return bookingResponse;
         });
         return createBookingResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
@@ -100,6 +103,23 @@ public class BookingService implements IBookingService {
             booking.setTotalAmount(totalAmount);
             iBookingRepository.save(booking);
         }
+    }
+
+    private List<BookingDetailResponse> convertBookingDetailsToBookingDetailResponses(List<BookingDetail> bookingDetails) {
+        return bookingDetails.stream()
+                .map(bookingDetail -> {
+                    BookingDetailResponse bookingDetailResponse = new BookingDetailResponse();
+                    BeanUtils.copyProperties(bookingDetail, bookingDetailResponse);
+                    bookingDetailResponse.setBookingId(bookingDetail.getBooking().getId());
+                    List<TicketInBookingDetailResponse> ticketInBookingDetailResponses = convertTicketsToTicketInBookingDetail(bookingDetail);
+                    bookingDetailResponse.setTicketInBookingDetailResponses(ticketInBookingDetailResponses);
+                    return bookingDetailResponse;
+                })
+                .toList();
+    }
+
+    private List<TicketInBookingDetailResponse> convertTicketsToTicketInBookingDetail(BookingDetail bookingDetail) {
+        return BookingDetailService.getTicketInBookingDetailResponses(bookingDetail);
     }
 
     @Override
