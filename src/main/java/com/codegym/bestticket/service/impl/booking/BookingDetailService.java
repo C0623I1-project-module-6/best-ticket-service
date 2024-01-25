@@ -14,6 +14,7 @@ import com.codegym.bestticket.repository.ticket.ITicketRepository;
 import com.codegym.bestticket.service.IBookingDetailService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +26,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 @Log
@@ -48,16 +48,15 @@ public class BookingDetailService implements IBookingDetailService {
         try {
             if (iBookingRepository.findById(bookingId).isPresent()) {
                 Page<BookingDetail> bookingDetailList = iBookingDetailRepository.findAllByBookingIdAndIsDeletedFalse(bookingId, pageable);
-                Iterable<BookingDetailResponse> bookingDetailResponseList = StreamSupport.stream(bookingDetailList.spliterator(), false)
-                        .map(bookingDetail -> {
-                            updateBookingDetailsAmount(bookingDetail.getBooking().getId());
-                            BookingDetailResponse bookingDetailResponse = new BookingDetailResponse();
-                            BeanUtils.copyProperties(bookingDetail, bookingDetailResponse);
-                            List<TicketInBookingDetailResponse> ticketInBookingDetailResponses = convertTicketsToTicketInBookingDetail(bookingDetail);
-                            bookingDetailResponse.setTicketInBookingDetailResponses(ticketInBookingDetailResponses);
-                            return bookingDetailResponse;
-                        })
-                        .collect(Collectors.toList());
+                Page<BookingDetailResponse> bookingDetailResponseList = bookingDetailList.map(bookingDetail -> {
+                    updateBookingDetailsAmount(bookingDetail.getBooking().getId());
+                    BookingDetailResponse bookingDetailResponse = new BookingDetailResponse();
+                    BeanUtils.copyProperties(bookingDetail, bookingDetailResponse);
+                    bookingDetailResponse.setBookingId(bookingDetail.getBooking().getId());
+                    List<TicketInBookingDetailResponse> ticketInBookingDetailResponses = convertTicketsToTicketInBookingDetail(bookingDetail);
+                    bookingDetailResponse.setTicketInBookingDetailResponses(ticketInBookingDetailResponses);
+                    return bookingDetailResponse;
+                });
                 return createBookingDetailResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingDetailResponseList);
             } else {
                 return createBookingDetailResponsePayload("Booking is not valid!", HttpStatus.NOT_FOUND, null);
@@ -69,10 +68,16 @@ public class BookingDetailService implements IBookingDetailService {
     }
 
     private List<TicketInBookingDetailResponse> convertTicketsToTicketInBookingDetail(BookingDetail bookingDetail) {
+        return getTicketInBookingDetailResponses(bookingDetail);
+    }
+
+    @NotNull
+    static List<TicketInBookingDetailResponse> getTicketInBookingDetailResponses(BookingDetail bookingDetail) {
         return bookingDetail.getTickets().stream()
                 .map(ticket -> {
                     TicketInBookingDetailResponse ticketInBookingDetailResponse = new TicketInBookingDetailResponse();
                     BeanUtils.copyProperties(ticket, ticketInBookingDetailResponse);
+                    ticketInBookingDetailResponse.setBookingDetailId(bookingDetail.getId());
                     ticketInBookingDetailResponse.setTicketTypeName(ticket.getTicketType().getName());
                     ticketInBookingDetailResponse.setTicketTypePrice(ticket.getTicketType().getPrice());
                     return ticketInBookingDetailResponse;
@@ -94,6 +99,7 @@ public class BookingDetailService implements IBookingDetailService {
                 bookingDetailResponse.setTicketInBookingDetailResponses(convertTicketsToTicketInBookingDetail(bookingDetail));
             }
             BeanUtils.copyProperties(bookingDetail, bookingDetailResponse);
+            bookingDetailResponse.setBookingId(bookingDetail.getBooking().getId());
             return createBookingDetailResponsePayload("Booking detail found!", HttpStatus.OK, bookingDetailResponse);
         } else {
             return createBookingDetailResponsePayload("Booking detail not found!", HttpStatus.NOT_FOUND, null);
@@ -154,7 +160,7 @@ public class BookingDetailService implements IBookingDetailService {
                 double amount = detail.getTickets().stream()
                         .mapToDouble(ticket -> {
                             TicketType ticketType = ticket.getTicketType();
-                            int quantityAvailable = countTicketTypeQuantity(detail, ticketType);
+                            int quantityAvailable = countTicketTypeQuantity(ticket, ticketType);
                             return ticketType.getPrice() * quantityAvailable;
                         })
                         .sum();
@@ -165,12 +171,10 @@ public class BookingDetailService implements IBookingDetailService {
         }
     }
 
-    private int countTicketTypeQuantity(BookingDetail bookingDetail, TicketType ticketType) {
+    private int countTicketTypeQuantity(Ticket ticket, TicketType ticketType) {
         int count = 0;
-        for (Ticket ticket : bookingDetail.getTickets()) {
-            if (ticket.getTicketType().equals(ticketType)) {
-                count++;
-            }
+        if (ticket.getTicketType().equals(ticketType)) {
+            count++;
         }
         return count;
     }
