@@ -29,7 +29,7 @@ public class BookingDetailController {
     private final IBookingDetailService bookingDetailService;
 
     @GetMapping
-    public ResponseEntity<ResponsePayload> getBookingDetailsByContractIdAndIsDeletedFalse(@PathVariable UUID ignoredBookingId, @PageableDefault Pageable pageable) {
+    public ResponseEntity<ResponsePayload> getBookingDetailsByBookingIdAndIsDeletedFalse(@PathVariable UUID ignoredBookingId, @PageableDefault Pageable pageable) {
         ResponsePayload responsePayload = bookingDetailService.findAllByBookingIdAndIsDeletedFalse(ignoredBookingId, pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }

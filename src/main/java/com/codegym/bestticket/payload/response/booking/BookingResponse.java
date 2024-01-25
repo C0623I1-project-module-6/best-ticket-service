@@ -5,6 +5,7 @@ import com.codegym.bestticket.entity.user.Customer;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -16,5 +17,6 @@ public class BookingResponse {
     private Timestamp updatedAt;
     private Customer customer;
     private String userEmail;
+    private List<BookingDetailResponse> bookingDetailResponseList;
     private Boolean isDeleted;
 }
