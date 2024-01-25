@@ -38,4 +38,5 @@ public interface IEventService {
             int page,
             int pageSize);
 
+    EventResponse findByOrganizerId(UUID id,int page, int pageSize);
 }

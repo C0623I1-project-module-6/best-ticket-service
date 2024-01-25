@@ -224,4 +224,12 @@ public class EventService implements IEventService {
                 .message("Page Event By Search Criteria")
                 .build();
     }
+
+    @Override
+    public EventResponse findByOrganizerId(UUID id, int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Event> eventsPage = eventRepository.findByOrganizer_IdAndIsDeletedFalse(id,pageable);
+        List<EventDTO> eventDTOs = eventConverter.entitiesToDTOs(eventsPage.getContent());
+        return EventResponse.builder().data(eventDTOs).totalPages(eventsPage.getTotalPages()).httpStatus(HttpStatus.OK).build();
+    }
 }

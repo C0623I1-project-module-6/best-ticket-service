@@ -46,4 +46,5 @@ public interface IEventRepository extends JpaRepository<Event, UUID> {
             @Param("time") LocalDateTime time,
             Pageable pageable);
 
+    Page<Event> findByOrganizer_IdAndIsDeletedFalse(UUID id,Pageable pageable);
 }

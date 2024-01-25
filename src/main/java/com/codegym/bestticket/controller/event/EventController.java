@@ -4,6 +4,7 @@ import com.codegym.bestticket.dto.event.EventDTO;
 import com.codegym.bestticket.payload.request.event.CreateEventRequest;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.service.IEventService;
+import org.apache.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -122,4 +123,12 @@ public class EventController {
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
+    @GetMapping("/organizer/{organizerId}")
+    public ResponseEntity<EventResponse> findEventByOrganizerId(
+            @PathVariable("organizerId") UUID organizerId,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "pageSize", defaultValue = "20") int pageSize){
+        EventResponse eventResponse= eventService.findByOrganizerId(organizerId,page,pageSize);
+        return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
+    }
 }
