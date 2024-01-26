@@ -37,6 +37,7 @@ public class AdminController {
 
     @GetMapping("/users")
     public ResponseEntity<ResponsePayload> shows(@PageableDefault(size = 8) Pageable pageable) {
+        System.out.println("Check git commit choi choi");
         ResponsePayload responsePayload = adminService.showUsers(pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
