@@ -103,9 +103,15 @@ public class TicketController {
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 
-    @PutMapping("/updateStatus")
-    public ResponseEntity<ResponsePayload> updateTicketStatus(@RequestBody List<String> selectedSeats,@PageableDefault(size = 200, page = 0) Pageable pageable) {
-        ResponsePayload responsePayload = ticketService.updateStatus(selectedSeats,pageable);
+    @PutMapping("/updateStatusSuccess")
+    public ResponseEntity<ResponsePayload> updateTicketStatusSuccess(@RequestBody List<String> selectedSeats,@PageableDefault(size = 200, page = 0) Pageable pageable) {
+        ResponsePayload responsePayload = ticketService.updateStatusSuccess(selectedSeats,pageable);
+        return new ResponseEntity<>(responsePayload,HttpStatus.OK);
+    }
+
+    @PutMapping("/updateStatusFail")
+    public ResponseEntity<ResponsePayload> updateTicketStatusFail(@RequestBody List<String> selectedSeats,@PageableDefault(size = 200, page = 0) Pageable pageable) {
+        ResponsePayload responsePayload = ticketService.updateStatusFail(selectedSeats,pageable);
         return new ResponseEntity<>(responsePayload,HttpStatus.OK);
     }
 }

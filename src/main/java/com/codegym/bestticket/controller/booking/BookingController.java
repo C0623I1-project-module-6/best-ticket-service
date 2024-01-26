@@ -1,5 +1,6 @@
 package com.codegym.bestticket.controller.booking;
 
+import com.codegym.bestticket.dto.booking.BookingDto;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
 import com.codegym.bestticket.service.IBookingService;
@@ -80,9 +81,15 @@ public class BookingController {
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
-    @GetMapping("/booking/{timeId}")
+    @GetMapping("/event/time/{timeId}")
     public ResponseEntity<ResponsePayload> findBookingByTimeId(@PathVariable UUID timeId) {
         ResponsePayload responsePayload = bookingService.findBookingByTimeId(timeId);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<ResponsePayload> createBooking(@RequestBody BookingDto bookingDto) {
+        ResponsePayload responsePayload = bookingService.createBooking(bookingDto);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 }
