@@ -1,9 +1,11 @@
 package com.codegym.bestticket.controller.event;
 
 import com.codegym.bestticket.dto.event.EventDTO;
+import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.event.CreateEventRequest;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.service.IEventService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -101,4 +103,5 @@ public class EventController {
         EventResponse response = eventService.findBySearchTermAndLocationProvince(searchTerm, province, page, pageSize);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
+
 }

@@ -27,4 +27,5 @@ public interface IEventService {
     EventResponse findBySearchTermAndEventTypeNames(String searchTerm,List<String> eventTypeNames,int page,int pageSize);
 
     EventResponse findBySearchTermAndLocationProvince(String searchTerm,String province, int page, int pageSize);
+
 }

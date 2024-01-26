@@ -203,4 +203,5 @@ public class EventService implements IEventService {
             return EventResponse.builder().httpStatus(HttpStatus.INTERNAL_SERVER_ERROR).message("Error"+ex).build();
         }
     }
+
 }

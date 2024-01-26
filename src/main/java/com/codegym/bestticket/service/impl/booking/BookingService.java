@@ -1,6 +1,7 @@
 package com.codegym.bestticket.service.impl.booking;
 
 import com.codegym.bestticket.converter.user.impl.constant.EBookingStatus;
+import com.codegym.bestticket.dto.booking.BookingDto;
 import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.entity.booking.BookingDetail;
 import com.codegym.bestticket.exception.BookingSaveException;
@@ -12,11 +13,16 @@ import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Comparator;
@@ -31,13 +37,11 @@ import java.util.stream.StreamSupport;
 @Service
 public class BookingService implements IBookingService {
     private final IBookingRepository iBookingRepository;
+    @Autowired
+    private JavaMailSender emailSender;
 
     public ResponsePayload createBookingResponsePayload(String message, HttpStatus status, Object data) {
-        return ResponsePayload.builder()
-                .message(message)
-                .status(status)
-                .data(data)
-                .build();
+        return ResponsePayload.builder().message(message).status(status).data(data).build();
     }
 
     @Override
@@ -84,18 +88,14 @@ public class BookingService implements IBookingService {
     }
 
     private ResponsePayload getBookingResponsePayload(Iterable<Booking> bookings) {
-        Iterable<BookingResponse> bookingResponses = StreamSupport.stream(bookings.spliterator(), false)
-                .filter(booking -> !booking.getIsDeleted())
-                .map(booking -> {
-                    BookingResponse bookingResponse = new BookingResponse();
-                    bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
-                    updateBookingTotalAmount(booking);
-                    iBookingRepository.save(booking);
-                    BeanUtils.copyProperties(booking, bookingResponse);
-                    return bookingResponse;
-                })
-                .sorted(Comparator.comparing(BookingResponse::getCreatedAt).reversed())
-                .collect(Collectors.toList());
+        Iterable<BookingResponse> bookingResponses = StreamSupport.stream(bookings.spliterator(), false).filter(booking -> !booking.getIsDeleted()).map(booking -> {
+            BookingResponse bookingResponse = new BookingResponse();
+            bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
+            updateBookingTotalAmount(booking);
+            iBookingRepository.save(booking);
+            BeanUtils.copyProperties(booking, bookingResponse);
+            return bookingResponse;
+        }).sorted(Comparator.comparing(BookingResponse::getCreatedAt).reversed()).collect(Collectors.toList());
         return createBookingResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
     }
 
@@ -197,6 +197,47 @@ public class BookingService implements IBookingService {
             return createBookingResponsePayload("Fail", HttpStatus.NO_CONTENT, null);
         }
         return createBookingResponsePayload("Success", HttpStatus.OK, booking);
+    }
+
+    public String creatHTMLMail(){
+        return "<div>Đá chết cha giờ</div>";
+    }
+
+    @Override
+    public ResponsePayload createBooking(BookingDto bookingDto) {
+        Booking booking = new Booking();
+        if (bookingDto != null) {
+            booking.setCreatedAt(Timestamp.from(Instant.now()));
+            booking.setTotalAmount(bookingDto.getSeatTickets().getTotalPrice());
+            booking.setStatus("ACTIVE");
+            booking.setIsDeleted(false);
+            booking.setCustomer(bookingDto.getUserEdit().getCustomer());
+            iBookingRepository.save(booking);
+
+            String from = "mfdat2015@gmail.com";
+
+            MimeMessage message = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message);
+
+            try {
+                helper.setSubject("This is an HTML email");
+                helper.setFrom(from);
+                helper.setTo(bookingDto.getInfoUser().getEmail());
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+
+
+            boolean html = true;
+            try {
+                helper.setText(creatHTMLMail(), html);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+
+            emailSender.send(message);
+        }
+        return createBookingResponsePayload("Success", HttpStatus.CREATED, booking);
     }
 
 }
