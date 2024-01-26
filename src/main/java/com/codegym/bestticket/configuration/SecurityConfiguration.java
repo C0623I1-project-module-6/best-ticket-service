@@ -103,7 +103,7 @@ public class SecurityConfiguration {
                         "/api/users/**",
                         "/api/ticket-types/**",
                         "/api/times/**",
-                        "/api/test-fire-base/**"
+                        "/api/files/**"
                 )
                 .permitAll();
 

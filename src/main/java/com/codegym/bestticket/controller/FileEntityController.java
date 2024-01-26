@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/test-fire-base")
+@RequestMapping("/api/files")
 public class FileEntityController {
     private final IFileEntityService fileEntityService;
 
