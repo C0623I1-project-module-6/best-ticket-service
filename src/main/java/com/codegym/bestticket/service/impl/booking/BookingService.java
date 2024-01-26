@@ -4,10 +4,15 @@ import com.codegym.bestticket.converter.user.impl.constant.EBookingStatus;
 import com.codegym.bestticket.dto.booking.BookingDto;
 import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.entity.booking.BookingDetail;
+import com.codegym.bestticket.entity.ticket.Ticket;
+import com.codegym.bestticket.entity.ticket.TicketType;
 import com.codegym.bestticket.exception.BookingSaveException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
+import com.codegym.bestticket.payload.response.booking.BookingDetailResponse;
 import com.codegym.bestticket.payload.response.booking.BookingResponse;
+import com.codegym.bestticket.payload.response.ticket.TicketInBookingDetailResponse;
+import com.codegym.bestticket.repository.booking.IBookingDetailRepository;
 import com.codegym.bestticket.repository.booking.IBookingRepository;
 import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;
@@ -26,6 +31,7 @@ import javax.mail.internet.MimeMessage;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -39,6 +45,7 @@ public class BookingService implements IBookingService {
     private final IBookingRepository iBookingRepository;
     @Autowired
     private JavaMailSender emailSender;
+    private final IBookingDetailRepository iBookingDetailRepository;
 
     public ResponsePayload createBookingResponsePayload(String message, HttpStatus status, Object data) {
         return ResponsePayload.builder().message(message).status(status).data(data).build();
@@ -72,7 +79,6 @@ public class BookingService implements IBookingService {
         }
     }
 
-
     @Override
     public ResponsePayload findAllByEventId(UUID eventId, Pageable pageable) {
         try {
@@ -87,28 +93,84 @@ public class BookingService implements IBookingService {
         }
     }
 
-    private ResponsePayload getBookingResponsePayload(Iterable<Booking> bookings) {
-        Iterable<BookingResponse> bookingResponses = StreamSupport.stream(bookings.spliterator(), false).filter(booking -> !booking.getIsDeleted()).map(booking -> {
-            BookingResponse bookingResponse = new BookingResponse();
-            bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
-            updateBookingTotalAmount(booking);
-            iBookingRepository.save(booking);
-            BeanUtils.copyProperties(booking, bookingResponse);
-            return bookingResponse;
-        }).sorted(Comparator.comparing(BookingResponse::getCreatedAt).reversed()).collect(Collectors.toList());
-        return createBookingResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
+//    private ResponsePayload getBookingResponsePayload(Iterable<Booking> bookings) {
+//        Iterable<BookingResponse> bookingResponses = StreamSupport.stream(bookings.spliterator(), false).filter(booking -> !booking.getIsDeleted()).map(booking -> {
+//            BookingResponse bookingResponse = new BookingResponse();
+//            bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
+//            updateBookingTotalAmount(booking);
+//            iBookingRepository.save(booking);
+//            BeanUtils.copyProperties(booking, bookingResponse);
+//            return bookingResponse;
+//        }).sorted(Comparator.comparing(BookingResponse::getCreatedAt).reversed()).collect(Collectors.toList());
+//}
+        private ResponsePayload getBookingResponsePayload(Page<Booking> bookings) {
+            Page<BookingResponse> bookingResponses = bookings.map(this::createNewBookingResponse);
+            return createBookingResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
+        }
+
+    private BookingResponse createNewBookingResponse(Booking booking) {
+        BookingResponse bookingResponse = new BookingResponse();
+        bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
+        updateBookingTotalAmount(booking);
+        iBookingRepository.save(booking);
+        BeanUtils.copyProperties(booking, bookingResponse);
+        List<BookingDetail> bookingDetailList = booking.getBookingDetailList();
+        bookingResponse.setBookingDetailResponseList(convertBookingDetailsToBookingDetailResponses(bookingDetailList));
+        return bookingResponse;
     }
 
     private void updateBookingTotalAmount(Booking booking) {
-        double totalAmount = 0.0;
+        double totalAmount;
         if (!booking.getBookingDetailList().isEmpty()) {
+            double sum = 0.0;
             for (BookingDetail bookingDetail : booking.getBookingDetailList()) {
+                updateBookingDetailsAmount(booking);
                 double amount = bookingDetail.getAmount();
-                totalAmount += amount;
+                sum += amount;
             }
+            totalAmount = sum;
             booking.setTotalAmount(totalAmount);
             iBookingRepository.save(booking);
         }
+    }
+
+    private void updateBookingDetailsAmount(Booking booking) {
+        for (BookingDetail detail : booking.getBookingDetailList()) {
+            double amount = 0.0;
+            for (Ticket ticket1 : detail.getTickets()) {
+                TicketType ticketType = ticket1.getTicketType();
+                int quantityAvailable = countTicketTypeQuantity(ticket1, ticketType);
+                double v = ticketType.getPrice() * quantityAvailable;
+                amount += v;
+            }
+            detail.setAmount(amount);
+            iBookingDetailRepository.save(detail);
+        }
+    }
+
+    private int countTicketTypeQuantity(Ticket ticket, TicketType ticketType) {
+        int count = 0;
+        if (ticket.getTicketType().equals(ticketType)) {
+            count++;
+        }
+        return count;
+    }
+
+    private List<BookingDetailResponse> convertBookingDetailsToBookingDetailResponses(List<BookingDetail> bookingDetails) {
+        return bookingDetails.stream()
+                .map(bookingDetail -> {
+                    BookingDetailResponse bookingDetailResponse = new BookingDetailResponse();
+                    BeanUtils.copyProperties(bookingDetail, bookingDetailResponse);
+                    bookingDetailResponse.setBookingId(bookingDetail.getBooking().getId());
+                    List<TicketInBookingDetailResponse> ticketInBookingDetailResponses = convertTicketsToTicketInBookingDetail(bookingDetail);
+                    bookingDetailResponse.setTicketInBookingDetailResponses(ticketInBookingDetailResponses);
+                    return bookingDetailResponse;
+                })
+                .toList();
+    }
+
+    private List<TicketInBookingDetailResponse> convertTicketsToTicketInBookingDetail(BookingDetail bookingDetail) {
+        return BookingDetailService.getTicketInBookingDetailResponses(bookingDetail);
     }
 
     @Override
@@ -116,9 +178,7 @@ public class BookingService implements IBookingService {
         Optional<Booking> bookingOptional = iBookingRepository.findById(id);
         if (bookingOptional.isPresent() && !bookingOptional.get().getIsDeleted()) {
             Booking booking = bookingOptional.get();
-            BookingResponse bookingResponse = new BookingResponse();
-            updateBookingTotalAmount(booking);
-            BeanUtils.copyProperties(booking, bookingResponse);
+            BookingResponse bookingResponse = createNewBookingResponse(booking);
             return createBookingResponsePayload("Booking found!", HttpStatus.OK, bookingResponse);
         } else {
             return createBookingResponsePayload("Booking not found!", HttpStatus.NOT_FOUND, null);
