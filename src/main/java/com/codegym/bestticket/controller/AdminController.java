@@ -34,13 +34,13 @@ import java.util.UUID;
 public class AdminController {
     private final IAdminService adminService;
 
-
     @GetMapping("/users")
-    public ResponseEntity<ResponsePayload> shows(@PageableDefault(size = 8) Pageable pageable) {
+    public ResponseEntity<ResponsePayload> showsUsers(@PageableDefault(size = 8) Pageable pageable) {
         System.out.println("Check git commit choi choi");
         ResponsePayload responsePayload = adminService.showUsers(pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
+
     @GetMapping("/bookings")
     public ResponseEntity<ResponsePayload> showBookings(@PageableDefault(size = 8) Pageable pageable) {
         ResponsePayload responsePayload = adminService.showBookings(pageable);
@@ -49,7 +49,6 @@ public class AdminController {
 
     @GetMapping("/tickets")
     public ResponseEntity<ResponsePayload> showTicket(@PageableDefault(size = 5) Pageable pageable) {
-
         return new ResponseEntity<>(
                 ResponsePayload
                         .builder()
@@ -57,6 +56,11 @@ public class AdminController {
                         .data(null)
                         .build(),
                 HttpStatus.OK);
-
+    }
+    @GetMapping()
+    public ResponseEntity<ResponsePayload> shows(@PageableDefault(size = 8) Pageable pageable) {
+        System.out.println("Check git commit choi choi");
+        ResponsePayload responsePayload = adminService.showUsers(pageable);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 }
