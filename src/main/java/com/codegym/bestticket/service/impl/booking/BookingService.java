@@ -108,7 +108,7 @@ public class BookingService implements IBookingService {
         if (!booking.getBookingDetailList().isEmpty()) {
             double sum = 0.0;
             for (BookingDetail bookingDetail : booking.getBookingDetailList()) {
-                updateBookingDetailsAmount(booking);
+                updateBookingDetailAmount(bookingDetail);
                 double amount = bookingDetail.getAmount();
                 sum += amount;
             }
@@ -118,18 +118,16 @@ public class BookingService implements IBookingService {
         iBookingRepository.save(booking);
     }
 
-    private void updateBookingDetailsAmount(Booking booking) {
-        for (BookingDetail detail : booking.getBookingDetailList()) {
+    private void updateBookingDetailAmount(BookingDetail bookingDetail) {
             double amount = 0.0;
-            for (Ticket ticket1 : detail.getTickets()) {
+            for (Ticket ticket1 : bookingDetail.getTickets()) {
                 TicketType ticketType = ticket1.getTicketType();
                 int quantityAvailable = countTicketTypeQuantity(ticket1, ticketType);
-                double v = ticketType.getPrice() * quantityAvailable;
-                amount += v;
-            }
-            detail.setAmount(amount);
-            iBookingDetailRepository.save(detail);
+                double totalPrice = ticketType.getPrice() * quantityAvailable;
+                amount += totalPrice;
+            bookingDetail.setAmount(amount);
         }
+        iBookingDetailRepository.save(bookingDetail);
     }
 
     private int countTicketTypeQuantity(Ticket ticket, TicketType ticketType) {
