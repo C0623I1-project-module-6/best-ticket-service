@@ -35,7 +35,7 @@ public class BookingDetail {
     @JoinColumn(name = "booking_id", nullable = false)
     @JsonIgnore
     private Booking booking;
-    @OneToMany(mappedBy = "bookingDetail", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "bookingDetail", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Ticket> tickets;
     private Double amount;

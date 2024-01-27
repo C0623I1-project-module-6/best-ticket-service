@@ -1,6 +1,7 @@
 package com.codegym.bestticket.payload.response.booking;
 
 
+import com.codegym.bestticket.entity.ticket.TicketType;
 import com.codegym.bestticket.entity.user.Customer;
 import lombok.Data;
 
