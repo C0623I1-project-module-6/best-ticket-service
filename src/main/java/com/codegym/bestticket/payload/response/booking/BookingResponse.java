@@ -19,6 +19,5 @@ public class BookingResponse {
     private Customer customer;
     private String userEmail;
     private List<BookingDetailResponse> bookingDetailResponseList;
-    private List<TicketType> ticketTypeList;
     private Boolean isDeleted;
 }
