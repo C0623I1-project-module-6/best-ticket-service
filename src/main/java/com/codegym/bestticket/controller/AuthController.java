@@ -1,6 +1,8 @@
 package com.codegym.bestticket.controller;
 
 import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.request.SendEmailRequest;
+import com.codegym.bestticket.payload.request.VerifyOtpRequest;
 import com.codegym.bestticket.payload.request.user.LoginGoogleRequest;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
@@ -65,9 +67,26 @@ public class AuthController {
         }
     }
 
-
     @PostMapping("/logout")
     public ResponseEntity<ResponsePayload> logout(HttpServletRequest request) {
         return new ResponseEntity<>(userService.logout(request), HttpStatus.OK);
+    }
+
+    @PostMapping("/send-otp")
+    public ResponseEntity<ResponsePayload> sendOtp(@RequestBody SendEmailRequest sendEmailRequest) {
+        if (sendEmailRequest == null) {
+            new ResponseEntity<>("Request not found", HttpStatus.BAD_REQUEST);
+        }
+        ResponsePayload responsePayload = userService.sendOtpAndSaveToDatabase(sendEmailRequest);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ResponsePayload> forgotPassword(@RequestBody VerifyOtpRequest verifyOtpRequest) {
+        if (verifyOtpRequest == null) {
+            new ResponseEntity<>("Request not found", HttpStatus.BAD_REQUEST);
+        }
+        ResponsePayload responsePayload = userService.verifyOtpAndResetPassword(verifyOtpRequest);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 }
