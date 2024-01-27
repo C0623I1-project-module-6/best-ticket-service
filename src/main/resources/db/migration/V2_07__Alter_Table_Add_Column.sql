@@ -1,5 +1,5 @@
 ALTER TABLE customers
-    ADD COLUMN receipt_email VARCHAR(255) NOT NULL UNIQUE;
+    ADD COLUMN receipt_email VARCHAR(255) UNIQUE;
 
 ALTER TABLE organizers
     ADD COLUMN date_range_tax_code VARCHAR(20);
