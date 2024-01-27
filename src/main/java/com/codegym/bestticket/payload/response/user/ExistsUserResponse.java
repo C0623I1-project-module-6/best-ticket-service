@@ -7,13 +7,20 @@ import java.util.UUID;
 
 @Data
 public class ExistsUserResponse {
-    private List<String> usernames;
-    private List<String> userEmails;
-    private List<String> customerPhoneNumbers;
-    private List<String> customerIdCards;
-    private List<String> organizerPhoneNumbers;
-    private List<String> organizerEmails;
-    private List<String> organizerIdCards;
-    private List<String> organizerTaxCodes;
-    private List<String> organizerBusinessCodes;
+    private String username;
+    private String userEmail;
+
+    private String customerPhoneNumber;
+    private String customerIdCard;
+    private String customerReceiptEmail;
+
+    private String personPhoneNumber;
+    private String personEmail;
+    private String personIdCard;
+    private String personTaxCode;
+
+    private String companyBusinessCode;
+    private String companyName;
+    private String companyEmail;
+    private String companyPhone;
 }

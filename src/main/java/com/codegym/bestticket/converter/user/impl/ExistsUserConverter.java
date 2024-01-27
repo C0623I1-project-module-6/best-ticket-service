@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.Optional;
 
 @Component
@@ -25,21 +24,25 @@ public class ExistsUserConverter implements IExistsUserConverter {
     @Override
     public ExistsUserResponse mapToExistsUsers(User user) {
         ExistsUserResponse existsUserResponse = new ExistsUserResponse();
-        existsUserResponse.setUsernames(Collections.singletonList(user.getUsername()));
-        existsUserResponse.setUserEmails(Collections.singletonList(user.getEmail()));
+        existsUserResponse.setUsername(user.getUsername());
+        existsUserResponse.setUserEmail(user.getEmail());
         BeanUtils.copyProperties(user, existsUserResponse);
         Optional<Customer> customer = customerRepository.findByUserIdAndIsDeletedFalse(user.getId());
         if (customer.isPresent()) {
-            existsUserResponse.setCustomerPhoneNumbers(Collections.singletonList(customer.get().getPhoneNumber()));
-            existsUserResponse.setCustomerIdCards(Collections.singletonList(customer.get().getIdCard()));
+            existsUserResponse.setCustomerPhoneNumber(customer.get().getPhoneNumber());
+            existsUserResponse.setCustomerIdCard(customer.get().getIdCard());
+            existsUserResponse.setCustomerReceiptEmail(customer.get().getReceiptEmail());
         }
         Optional<Organizer> organizer = organizerRepository.findByUserIdAndIsDeletedFalse(user.getId());
         if (organizer.isPresent()) {
-            existsUserResponse.setOrganizerEmails(Collections.singletonList(organizer.get().getEmail()));
-            existsUserResponse.setOrganizerPhoneNumbers(Collections.singletonList(organizer.get().getPhoneNumber()));
-            existsUserResponse.setOrganizerIdCards(Collections.singletonList(organizer.get().getIdCard()));
-            existsUserResponse.setOrganizerTaxCodes(Collections.singletonList(organizer.get().getTaxCode()));
-            existsUserResponse.setOrganizerBusinessCodes(Collections.singletonList(organizer.get().getBusinessCode()));
+            existsUserResponse.setPersonEmail(organizer.get().getEmail());
+            existsUserResponse.setPersonPhoneNumber(organizer.get().getPhoneNumber());
+            existsUserResponse.setPersonIdCard(organizer.get().getIdCard());
+            existsUserResponse.setPersonTaxCode(organizer.get().getTaxCode());
+            existsUserResponse.setCompanyBusinessCode(organizer.get().getBusinessCode());
+            existsUserResponse.setCompanyName(organizer.get().getCompanyName());
+            existsUserResponse.setCompanyEmail(organizer.get().getCompanyEmail());
+            existsUserResponse.setCompanyPhone(organizer.get().getCompanyPhone());
         }
         return existsUserResponse;
     }

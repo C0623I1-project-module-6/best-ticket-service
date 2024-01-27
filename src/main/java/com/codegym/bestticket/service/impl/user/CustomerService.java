@@ -74,9 +74,6 @@ public class CustomerService implements ICustomerService {
             String username = userDetails.getUsername();
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found!"));
-            String oldEmail = user.getEmail();
-            user.setEmail(ObjectUtils.defaultIfNull(customerDto.getEmail(), oldEmail));
-            userRepository.save(user);
             Customer customer = customerRepository.findByUserId(user.getId())
                     .orElseThrow(() -> new CustomerNotFoundException("Customer not found!"));
             customerConverter.dtoToEntity(customerDto);
@@ -88,6 +85,8 @@ public class CustomerService implements ICustomerService {
             customer.setIdCard(oldIdCard);
             Date oldDateOfBirth = customer.getDateOfBirth();
             customer.setDateOfBirth(ObjectUtils.defaultIfNull(customerDto.getDateOfBirth(), oldDateOfBirth));
+            String oldReceiptEmail = customer.getReceiptEmail();
+            customer.setReceiptEmail(ObjectUtils.defaultIfNull(customerDto.getReceiptEmail(), oldReceiptEmail));
             customerRepository.save(customer);
             CustomerDto response = customerConverter.entityToDto(customer);
             return ResponsePayload.builder()
