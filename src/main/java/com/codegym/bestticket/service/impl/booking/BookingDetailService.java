@@ -75,12 +75,15 @@ public class BookingDetailService implements IBookingDetailService {
     static List<TicketInBookingDetailResponse> getTicketInBookingDetailResponses(BookingDetail bookingDetail) {
         return bookingDetail.getTickets().stream()
                 .map(ticket -> {
-                    TicketInBookingDetailResponse ticketInBookingDetailResponse = new TicketInBookingDetailResponse();
-                    BeanUtils.copyProperties(ticket, ticketInBookingDetailResponse);
-                    ticketInBookingDetailResponse.setBookingDetailId(bookingDetail.getId());
-                    ticketInBookingDetailResponse.setTicketTypeName(ticket.getTicketType().getName());
-                    ticketInBookingDetailResponse.setTicketTypePrice(ticket.getTicketType().getPrice());
-                    return ticketInBookingDetailResponse;
+                    if (!ticket.getIsDeleted()) {
+                        TicketInBookingDetailResponse ticketInBookingDetailResponse = new TicketInBookingDetailResponse();
+                        BeanUtils.copyProperties(ticket, ticketInBookingDetailResponse);
+                        ticketInBookingDetailResponse.setBookingDetailId(bookingDetail.getId());
+                        ticketInBookingDetailResponse.setTicketTypeName(ticket.getTicketType().getName());
+                        ticketInBookingDetailResponse.setTicketTypePrice(ticket.getTicketType().getPrice());
+                        return ticketInBookingDetailResponse;
+                    }
+                    return null;
                 })
                 .collect(Collectors.toList());
     }
@@ -157,16 +160,17 @@ public class BookingDetailService implements IBookingDetailService {
             Booking booking = optionalBooking.get();
             List<BookingDetail> bookingDetailList = booking.getBookingDetailList();
             bookingDetailList.forEach(detail -> {
-                double amount = detail.getTickets().stream()
-                        .mapToDouble(ticket -> {
-                            TicketType ticketType = ticket.getTicketType();
-                            int quantityAvailable = countTicketTypeQuantity(ticket, ticketType);
-                            return ticketType.getPrice() * quantityAvailable;
-                        })
-                        .sum();
-
-                detail.setAmount(amount);
-                iBookingDetailRepository.save(detail);
+                if (!detail.getIsDeleted()) {
+                    double amount = detail.getTickets().stream()
+                            .mapToDouble(ticket -> {
+                                TicketType ticketType = ticket.getTicketType();
+                                int quantityAvailable = countTicketTypeQuantity(ticket, ticketType);
+                                return ticketType.getPrice() * quantityAvailable;
+                            })
+                            .sum();
+                    detail.setAmount(amount);
+                    iBookingDetailRepository.save(detail);
+                }
             });
         }
     }
