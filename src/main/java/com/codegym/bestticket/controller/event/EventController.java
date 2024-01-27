@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,7 +74,7 @@ public class EventController {
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 
-    @GetMapping("/TextAndEventTypeNames")
+    @GetMapping("/textAndEventTypeNames")
     public ResponseEntity<EventResponse> findBySearchTermAndEventTypeNames(
             @RequestParam(name = "searchTerm") String searchTerm,
             @RequestParam(name = "eventTypeNames") List<String> eventTypeNames,
@@ -97,8 +98,37 @@ public class EventController {
             @RequestParam(name = "searchTerm", required = false) String searchTerm,
             @RequestParam(name = "province") String province,
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "pageSize",defaultValue = "20") int pageSize) {
+            @RequestParam(name = "pageSize", defaultValue = "20") int pageSize) {
         EventResponse response = eventService.findBySearchTermAndLocationProvince(searchTerm, province, page, pageSize);
         return new ResponseEntity<>(response, response.getHttpStatus());
+    }
+
+
+    @GetMapping("/searchCriteria")
+    public ResponseEntity<EventResponse> findEventsBySearchCriteria(
+            @RequestParam(name = "searchTerm", required = false) String searchTerm,
+            @RequestParam(name = "province", required = false) String province,
+            @RequestParam(name = "eventTypeNames", required = false) List<String> eventTypeNames,
+            @RequestParam(name = "time", required = false) String timeString,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "pageSize", defaultValue = "20") int pageSize) {
+
+        LocalDateTime time = null;
+        if (timeString != null && !timeString.isEmpty()) {
+            time = LocalDateTime.parse(timeString);
+        }
+
+        EventResponse response = eventService.findBySearchCriteria(
+                searchTerm, province, eventTypeNames, time, page, pageSize);
+        return new ResponseEntity<>(response, response.getHttpStatus());
+    }
+
+    @GetMapping("/organizer/{organizerId}")
+    public ResponseEntity<EventResponse> findEventByOrganizerId(
+            @PathVariable("organizerId") UUID organizerId,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "pageSize", defaultValue = "20") int pageSize) {
+        EventResponse eventResponse = eventService.findByOrganizerId(organizerId, page, pageSize);
+        return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 }

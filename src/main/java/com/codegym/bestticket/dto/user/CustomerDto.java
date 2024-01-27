@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 public class CustomerDto {
     private String fullName;
-    private String email;
+    private String receiptEmail;
     private String gender;
     private String idCard;
     private Date dateOfBirth;

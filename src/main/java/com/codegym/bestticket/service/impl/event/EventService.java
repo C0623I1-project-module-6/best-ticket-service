@@ -2,38 +2,36 @@ package com.codegym.bestticket.service.impl.event;
 
 import com.codegym.bestticket.converter.event.IEventConverter;
 import com.codegym.bestticket.converter.event.IEventTypeConverter;
-import com.codegym.bestticket.converter.user.impl.constant.ETicketMessage;
 import com.codegym.bestticket.dto.event.EventDTO;
-import com.codegym.bestticket.dto.event.EventDetailDto;
 import com.codegym.bestticket.dto.event.EventTypeDTO;
-import com.codegym.bestticket.dto.ticket.TicketDto;
 import com.codegym.bestticket.entity.event.Event;
 import com.codegym.bestticket.entity.event.EventType;
 import com.codegym.bestticket.entity.event.Time;
 import com.codegym.bestticket.entity.location.Location;
+import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.event.CreateEventRequest;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.repository.event.IEventRepository;
 import com.codegym.bestticket.repository.event.ITimeRepository;
 import com.codegym.bestticket.repository.location.ILocationRepository;
+import com.codegym.bestticket.repository.user.IOrganizerRepository;
 import com.codegym.bestticket.service.IEventService;
 import com.codegym.bestticket.service.IEventTypeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.StreamSupport;
 
 
 @Service
@@ -45,7 +43,7 @@ public class EventService implements IEventService {
     private final IEventTypeConverter eventTypeConverter;
     private final ILocationRepository locationRepository;
     private final ITimeRepository timeRepository;
-
+    private final IOrganizerRepository organizerRepository;
     public ResponsePayload createResponsePayload(String message, HttpStatus status, Object data) {
         return ResponsePayload
                 .builder()
@@ -97,6 +95,7 @@ public class EventService implements IEventService {
         String province = eventRequest.getProvince();
         String district = eventRequest.getDistrict();
         String address = eventRequest.getAddress();
+        Optional<Organizer> organizerOptional = organizerRepository.findById(eventRequest.getOrganizerId());
         Time existingTime = timeRepository.findByTime(eventRequest.getStartDateTime());
         List<EventTypeDTO> eventTypeDTOs = eventRequest.getEventTypeNames().stream().map(eventTypeService::findByName).toList();
         List<EventType> eventTypes = eventTypeDTOs.stream().map(eventTypeConverter::dtoToEntity).toList();
@@ -133,6 +132,8 @@ public class EventService implements IEventService {
             }
             event.getTimes().add(newTime);
         }
+        organizerOptional.ifPresent(event::setOrganizer);
+        System.out.println(event.getOrganizer().getId());
         event.setEventTypes(eventTypeSet);
         Event savedEvent = eventRepository.save(event);
         EventDTO savedEventDTO = eventConverter.entityToDTO(savedEvent);
@@ -202,5 +203,34 @@ public class EventService implements IEventService {
         } catch (Exception ex) {
             return EventResponse.builder().httpStatus(HttpStatus.INTERNAL_SERVER_ERROR).message("Error"+ex).build();
         }
+    }
+
+
+    @Override
+    public EventResponse findBySearchCriteria(
+            String searchTerm,
+            String province,
+            List<String> eventTypeNames,
+            LocalDateTime time,
+            int page,
+            int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Event> eventPage = eventRepository.findBySearchCriteria(
+                searchTerm, province, eventTypeNames, time, pageable);
+        List<EventDTO> events = eventConverter.entitiesToDTOs(eventPage.getContent());
+        return EventResponse.builder()
+                .data(events)
+                .totalPages(eventPage.getTotalPages())
+                .httpStatus(HttpStatus.OK)
+                .message("Page Event By Search Criteria")
+                .build();
+    }
+
+    @Override
+    public EventResponse findByOrganizerId(UUID id, int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Event> eventsPage = eventRepository.findByOrganizer_IdAndIsDeletedFalse(id,pageable);
+        List<EventDTO> eventDTOs = eventConverter.entitiesToDTOs(eventsPage.getContent());
+        return EventResponse.builder().data(eventDTOs).totalPages(eventsPage.getTotalPages()).httpStatus(HttpStatus.OK).build();
     }
 }

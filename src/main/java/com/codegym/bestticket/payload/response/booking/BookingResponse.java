@@ -1,6 +1,7 @@
 package com.codegym.bestticket.payload.response.booking;
 
 
+import com.codegym.bestticket.entity.ticket.TicketType;
 import com.codegym.bestticket.entity.user.Customer;
 import lombok.Data;
 
@@ -18,5 +19,6 @@ public class BookingResponse {
     private Customer customer;
     private String userEmail;
     private List<BookingDetailResponse> bookingDetailResponseList;
+    private List<TicketType> ticketTypeList;
     private Boolean isDeleted;
 }

@@ -23,6 +23,12 @@ repositories {
 }
 
 dependencies {
+// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.5.6'
+// https://mvnrepository.com/artifact/org.springframework/spring-context-support
+    implementation group: 'org.springframework', name: 'spring-context-support', version: '5.3.23'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -42,6 +48,7 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.14.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
+
 //    Firebase admin sdk
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 //    Google cloud storage
@@ -49,6 +56,7 @@ dependencies {
     implementation 'com.google.cloud:google-cloud-storage'
 //    Spring Boot mail
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-mysql'
