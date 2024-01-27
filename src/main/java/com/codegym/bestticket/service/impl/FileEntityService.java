@@ -40,6 +40,7 @@ public class FileEntityService implements IFileEntityService {
             Bucket bucket = StorageClient.getInstance().bucket();
             byte[] fileBytes = file.getBytes();
             Blob blob = bucket.create(file.getOriginalFilename(), fileBytes, file.getContentType());
+            System.out.println(blob);
             String url = "https://firebasestorage.googleapis.com/v0/b/" + bucket.getName() + "/o/" + file.getOriginalFilename();
 
             FileEntity fileEntity = new FileEntity();

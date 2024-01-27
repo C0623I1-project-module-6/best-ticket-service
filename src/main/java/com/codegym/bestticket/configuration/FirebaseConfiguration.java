@@ -1,4 +1,4 @@
-package com.codegym.bestticket.storage;
+package com.codegym.bestticket.configuration;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Storage;
@@ -13,7 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 @Configuration
-public class FirebaseConfig {
+public class FirebaseConfiguration {
     @Value("${app.firebase-bucket}")
     private String bucket;
 

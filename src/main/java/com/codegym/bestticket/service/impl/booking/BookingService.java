@@ -16,6 +16,7 @@ import com.codegym.bestticket.repository.booking.IBookingRepository;
 import com.codegym.bestticket.service.IBookingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -86,16 +87,16 @@ public class BookingService implements IBookingService {
         }
     }
 
-    private ResponsePayload getBookingResponsePayload(Page<Booking> bookings) {
+    private ResponsePayload getBookingResponsePayload(@NotNull Page<Booking> bookings) {
         Page<BookingResponse> bookingResponses = bookings.map(this::createNewBookingResponse);
         return createBookingResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
     }
 
     private BookingResponse createNewBookingResponse(Booking booking) {
-        BookingResponse bookingResponse = new BookingResponse();
-        bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
         updateBookingTotalAmount(booking);
         iBookingRepository.save(booking);
+        BookingResponse bookingResponse = new BookingResponse();
+        bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
         BeanUtils.copyProperties(booking, bookingResponse);
         List<BookingDetail> bookingDetailList = booking.getBookingDetailList();
         bookingResponse.setBookingDetailResponseList(convertBookingDetailsToBookingDetailResponses(bookingDetailList));
@@ -103,7 +104,7 @@ public class BookingService implements IBookingService {
     }
 
     private void updateBookingTotalAmount(Booking booking) {
-        double totalAmount;
+        double totalAmount = 0.0;
         if (!booking.getBookingDetailList().isEmpty()) {
             double sum = 0.0;
             for (BookingDetail bookingDetail : booking.getBookingDetailList()) {
@@ -112,9 +113,9 @@ public class BookingService implements IBookingService {
                 sum += amount;
             }
             totalAmount = sum;
-            booking.setTotalAmount(totalAmount);
-            iBookingRepository.save(booking);
         }
+        booking.setTotalAmount(totalAmount);
+        iBookingRepository.save(booking);
     }
 
     private void updateBookingDetailsAmount(Booking booking) {
