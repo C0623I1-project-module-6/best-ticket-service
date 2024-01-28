@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.UUID;
 public interface IEventRepository extends JpaRepository<Event, UUID> {
 
-    Page<Event> findAllByIsDeletedFalse(Pageable pageable);
+    @Query("SELECT e FROM Event e WHERE e.status = 'ACTIVE' AND e.isDeleted = false")
+    Page<Event> findAllByIsDeletedFalse( Pageable pageable);
+//    Page<Event> findAllByIsDeletedFalse(Pageable pageable);
 
     Event findByIdAndIsDeletedFalse(UUID eventId);
 
@@ -47,4 +49,7 @@ public interface IEventRepository extends JpaRepository<Event, UUID> {
             Pageable pageable);
 
     Page<Event> findByOrganizer_IdAndIsDeletedFalse(UUID id,Pageable pageable);
+
+    @Query("SELECT e FROM Event e WHERE e.status = 'PENDING_APPROVAL'")
+    Page<Event> findAllPendingApproval(Pageable pageable);
 }
