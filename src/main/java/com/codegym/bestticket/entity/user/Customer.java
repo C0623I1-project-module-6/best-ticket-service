@@ -49,4 +49,5 @@ public class Customer {
     @JoinColumn(name = "user_id", unique = true)
     @JsonIgnore
     private User user;
+    private String receiptEmail;
 }

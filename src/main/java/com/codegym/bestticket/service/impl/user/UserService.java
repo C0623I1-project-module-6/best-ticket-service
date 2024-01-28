@@ -15,6 +15,9 @@ import com.codegym.bestticket.exception.user.RoleNotFoundException;
 import com.codegym.bestticket.exception.user.UserNotFoundException;
 import com.codegym.bestticket.exception.user.UsernameAlreadyExistsException;
 import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.request.SendEmailRequest;
+import com.codegym.bestticket.payload.request.SendOtpRequest;
+import com.codegym.bestticket.payload.request.VerifyOtpRequest;
 import com.codegym.bestticket.payload.request.user.LoginGoogleRequest;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
@@ -26,6 +29,8 @@ import com.codegym.bestticket.repository.user.IOrganizerRepository;
 import com.codegym.bestticket.repository.user.IRoleRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.security.JwtTokenProvider;
+import com.codegym.bestticket.security.OtpGenerate;
+import com.codegym.bestticket.service.IEmailService;
 import com.codegym.bestticket.service.IUserService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -37,7 +42,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -50,16 +54,14 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 @AllArgsConstructor
@@ -75,6 +77,8 @@ public class UserService implements IUserService {
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final IEmailService emailService;
+    private final OtpGenerate otpGenerate;
     private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     private static final JsonFactory JSON_FACTORY = new GsonFactory();
 
@@ -382,57 +386,64 @@ public class UserService implements IUserService {
         return userRepository.findUserByRememberToken(token);
     }
 
+
     @Override
-    public ResponsePayload filterUsers(Pageable pageable, String status, String filterType) {
+    public ResponsePayload sendOtpAndSaveToDatabase(SendEmailRequest sendEmailRequest) {
         try {
-            Iterable<User> result;
-            switch (filterType) {
-                case "username":
-                    result = userRepository.searchUserByIsDeletedFalseAndUsernameContaining(pageable, status);
-                    break;
-                case "role":
-                    Role role = new Role(status);
-                    result = userRepository.searchUserByIsDeletedFalseAndRolesContaining(pageable, status, String.valueOf(role));
-                    break;
-                case "customer":
-                    result = userRepository.searchUserByIsDeletedFalseAndCustomerFullNameContaining(pageable, status);
-                    break;
-                case "organizer":
-                    result = userRepository.searchUserByIsDeletedFalseAndOrganizerNameContaining(pageable, status);
-                    break;
-                case "organizerType":
-                    result = organizerRepository.searchUserByIsDeletedFalseAndOrganizerTypeContaining(pageable, status);
-                    break;
-                case "created":
-                    result = userRepository.searchUserByIsDeletedFalseAndCreatedContaining(pageable, status);
-                    break;
-                case "active":
-                    result = userRepository.searchUserByIsDeletedFalseAndIsActivatedContaining(pageable, status);
-                    break;
-                default:
-                    return null;
-            }
-            if (!result.iterator().hasNext()) {
-                return ResponsePayload.builder()
-                        .message("List user not found!")
-                        .status(HttpStatus.NOT_FOUND)
-                        .build();
-            }
-            Iterable<User> sortedUser = StreamSupport.stream(result.spliterator(), false)
-                    .sorted(Comparator.comparing(User::getCreated).reversed())
-                    .collect(Collectors.toList());
+            SendOtpRequest sendOtpRequest = new SendOtpRequest();
+            sendOtpRequest.setTo(sendEmailRequest.getEmail());
+            sendOtpRequest.setOtp(otpGenerate.generateOtp());
+            emailService.sendOtp(sendOtpRequest);
+            saveToDatabase(sendOtpRequest.getTo(), sendOtpRequest.getOtp());
             return ResponsePayload.builder()
-                    .message("List users")
                     .status(HttpStatus.OK)
-                    .data(sortedUser)
                     .build();
-        } catch (EntityNotFoundException e) {
+        } catch (RuntimeException e) {
             return ResponsePayload.builder()
-                    .message("FAILED")
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @Override
+    public ResponsePayload verifyOtpAndResetPassword(VerifyOtpRequest verifyOtpRequest) {
+        try {
+            Optional<User> optionalUser =
+                    userRepository.findUserByEmailAndOtpCodeAndOtpCodeExpirationAfter(
+                            verifyOtpRequest.getEmail(),
+                            verifyOtpRequest.getOtp(),
+                            LocalDateTime.now()
+                    );
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                user.setPassword(encoder.encode(verifyOtpRequest.getNewPassword()));
+                user.setOldPassword(verifyOtpRequest.getNewPassword());
+                user.setOtpCode(null);
+                user.setOtpCodeExpiration(null);
+                userRepository.save(user);
+            }
+        if (!verifyOtpRequest.getConfirmNewPassword().equals(verifyOtpRequest.getNewPassword())) {
+                throw new PasswordNotMatchException("Password not match!");
+            }
+            return ResponsePayload.builder()
+                    .message("For got password successfully!!!")
+                    .status(HttpStatus.OK).build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @Override
+    public void saveToDatabase(String email, String otp) {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            user.setOtpCode(otp);
+            user.setOtpCodeExpiration(LocalDateTime.now().plusMinutes(2));
+            userRepository.save(user);
+        }
+    }
+
 }
 
 

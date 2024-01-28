@@ -48,11 +48,15 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.14.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
+
 //    Firebase admin sdk
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 //    Google cloud storage
     implementation platform('com.google.cloud:libraries-bom:26.30.0')
     implementation 'com.google.cloud:google-cloud-storage'
+//    Spring Boot mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-mysql'

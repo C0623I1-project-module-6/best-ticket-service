@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,7 +38,6 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
 
     User findByEmail(String email);
 
-
     Optional<User> findUserByRememberToken(String token);
 
     Page<User> findAllByIsDeletedFalse(Pageable pageable);
@@ -48,22 +48,8 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
 
     boolean existsByEmail(String email);
 
-    Page<User> searchUserByIsDeletedFalseAndCreatedContaining(Pageable pageable,
-                                                              @Param("status") String status);
-
-    Page<User> searchUserByIsDeletedFalseAndUsernameContaining(Pageable pageable,
-                                                               @Param("status") String status);
-
-    Page<User> searchUserByIsDeletedFalseAndIsActivatedContaining(Pageable pageable,
-                                                                  @Param("status") String status);
-
-    Page<User> searchUserByIsDeletedFalseAndRolesContaining(Pageable pageable,
-                                                            @Param("status") String status, String role);
-
-    Page<User> searchUserByIsDeletedFalseAndCustomerFullNameContaining(Pageable pageable,
-                                                                       @Param("status") String status);
-
-    Page<User> searchUserByIsDeletedFalseAndOrganizerNameContaining(Pageable pageable,
-                                                                    @Param("status") String status);
+    Optional<User> findUserByEmailAndOtpCodeAndOtpCodeExpirationAfter(String email,
+                                                                  String otp,
+                                                                  LocalDateTime otpExpiration);
 }
 

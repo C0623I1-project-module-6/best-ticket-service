@@ -60,6 +60,16 @@ public class Organizer {
     @JoinColumn(name = "user_id", unique = true)
     @JsonIgnore
     private User user;
+    @Column(length = 100, unique = true)
+    private String companyName;
+    @Column(length = 20, unique = true)
+    private String companyPhone;
+    @Column(unique = true)
+    private String companyEmail;
+    @Column(length = 20)
+    private String dateRangeTaxCode;
+    @Column(length = 50)
+    private String issuedByTaxCode;
 
 
 }

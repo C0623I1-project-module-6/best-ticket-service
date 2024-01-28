@@ -21,9 +21,9 @@ CREATE INDEX index_organizer_type_id ON organizer_types (id);
 CREATE TABLE IF NOT EXISTS organizers
 (
     id                BINARY(16),
-    name              VARCHAR(50)  NOT NULL,
-    phone_number      VARCHAR(50)  NOT NULL UNIQUE,
-    email             VARCHAR(255) NOT NULL UNIQUE,
+    name              VARCHAR(50) ,
+    phone_number      VARCHAR(50) UNIQUE,
+    email             VARCHAR(255) UNIQUE,
     id_card           VARCHAR(50) UNIQUE,
     tax_code          VARCHAR(50) UNIQUE,
     organizer_type_id BINARY(16),
