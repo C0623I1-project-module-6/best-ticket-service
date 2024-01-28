@@ -22,7 +22,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+
 import org.springframework.mail.javamail.JavaMailSender;
+
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -38,7 +40,6 @@ import java.util.logging.Level;
 public class BookingService implements IBookingService {
     private final IBookingRepository iBookingRepository;
     private final IBookingDetailRepository iBookingDetailRepository;
-    private final JavaMailSender emailSender;
 
     public ResponsePayload createBookingResponsePayload(String message, HttpStatus status, Object data) {
         return ResponsePayload.builder().message(message).status(status).data(data).build();
@@ -119,6 +120,7 @@ public class BookingService implements IBookingService {
 
     private void updateBookingDetailAmount(BookingDetail bookingDetail) {
         double amount = 0.0;
+        bookingDetail.setAmount(amount);
         for (Ticket ticket1 : bookingDetail.getTickets()) {
             TicketType ticketType = ticket1.getTicketType();
             int quantityAvailable = countTicketTypeQuantity(ticket1, ticketType);
@@ -253,5 +255,4 @@ public class BookingService implements IBookingService {
         }
         return createBookingResponsePayload("Success", HttpStatus.CREATED, booking);
     }
-
 }

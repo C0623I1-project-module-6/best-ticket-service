@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -21,11 +22,7 @@ public class FileEntityService implements IFileEntityService {
     private final IFileEntityRepository iFileEntityRepository;
 
     public ResponsePayload createFileEntityPayload(String message, HttpStatus status, Object data) {
-        return ResponsePayload.builder()
-                .message(message)
-                .status(status)
-                .data(data)
-                .build();
+        return ResponsePayload.builder().message(message).status(status).data(data).build();
     }
 
     @Override
@@ -41,17 +38,29 @@ public class FileEntityService implements IFileEntityService {
             byte[] fileBytes = file.getBytes();
             Blob blob = bucket.create(file.getOriginalFilename(), fileBytes, file.getContentType());
             System.out.println(blob);
-            String url = "https://firebasestorage.googleapis.com/v0/b/" + bucket.getName() + "/o/" + file.getOriginalFilename();
+
+            String downloadToken = generateDownloadToken();
+            String downloadUrl = generateDownloadUrl(bucket.getName(), file.getOriginalFilename(), downloadToken);
 
             FileEntity fileEntity = new FileEntity();
             fileEntity.setFileName(file.getOriginalFilename());
             fileEntity.setFileType(file.getContentType());
-            fileEntity.setUrl(url);
+            fileEntity.setUrl(downloadUrl);
             iFileEntityRepository.save(fileEntity);
-            return createFileEntityPayload("Success", HttpStatus.OK, fileEntity);
+            return createFileEntityPayload("Upload successfully.", HttpStatus.OK, fileEntity);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String generateDownloadToken() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
+    }
+
+    private String generateDownloadUrl(String bucketName, String fileName, String downloadToken) {
+        String downloadUrlFormat = "https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media&token=%s";
+        return String.format(downloadUrlFormat, bucketName, fileName, downloadToken);
     }
 
     @Override
