@@ -422,6 +422,9 @@ public class UserService implements IUserService {
                 user.setOtpCodeExpiration(null);
                 userRepository.save(user);
             }
+        if (!verifyOtpRequest.getConfirmNewPassword().equals(verifyOtpRequest.getNewPassword())) {
+                throw new PasswordNotMatchException("Password not match!");
+            }
             return ResponsePayload.builder()
                     .message("For got password successfully!!!")
                     .status(HttpStatus.OK).build();
