@@ -4,7 +4,7 @@ import com.codegym.bestticket.dto.event.EventDTO;
 import com.codegym.bestticket.payload.request.event.CreateEventRequest;
 import com.codegym.bestticket.payload.response.event.EventResponse;
 import com.codegym.bestticket.service.IEventService;
-import org.apache.http.HttpStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -130,5 +130,25 @@ public class EventController {
             @RequestParam(name = "pageSize", defaultValue = "20") int pageSize){
         EventResponse eventResponse= eventService.findByOrganizerId(organizerId,page,pageSize);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<EventResponse> getAll(@RequestParam(defaultValue = "0") int page,
+                                                     @RequestParam(defaultValue = "10") int pageSize) {
+        EventResponse eventResponse = eventService.getAll(page, pageSize);
+        return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
+    }
+
+    @GetMapping("/status/pending")
+    public ResponseEntity<EventResponse> findByStatusIsPending(@RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "10") int pageSize) {
+        EventResponse eventResponse = eventService.findByStatusIsPendingApproval(page, pageSize);
+        return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
+    }
+
+    @PostMapping("/setActive/{eventId}")
+    public ResponseEntity<String> setEventActive (@PathVariable UUID eventId){
+        eventService.setEventActive(eventId);
+        return new ResponseEntity<>("set Active success", HttpStatus.OK);
     }
 }
