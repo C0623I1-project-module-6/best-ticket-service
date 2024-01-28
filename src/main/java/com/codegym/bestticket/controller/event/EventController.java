@@ -99,10 +99,11 @@ public class EventController {
             @RequestParam(name = "searchTerm", required = false) String searchTerm,
             @RequestParam(name = "province") String province,
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "pageSize",defaultValue = "20") int pageSize) {
+            @RequestParam(name = "pageSize", defaultValue = "20") int pageSize) {
         EventResponse response = eventService.findBySearchTermAndLocationProvince(searchTerm, province, page, pageSize);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
+
 
     @GetMapping("/searchCriteria")
     public ResponseEntity<EventResponse> findEventsBySearchCriteria(
@@ -127,8 +128,8 @@ public class EventController {
     public ResponseEntity<EventResponse> findEventByOrganizerId(
             @PathVariable("organizerId") UUID organizerId,
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "pageSize", defaultValue = "20") int pageSize){
-        EventResponse eventResponse= eventService.findByOrganizerId(organizerId,page,pageSize);
+            @RequestParam(name = "pageSize", defaultValue = "20") int pageSize) {
+        EventResponse eventResponse = eventService.findByOrganizerId(organizerId, page, pageSize);
         return new ResponseEntity<>(eventResponse, eventResponse.getHttpStatus());
     }
 

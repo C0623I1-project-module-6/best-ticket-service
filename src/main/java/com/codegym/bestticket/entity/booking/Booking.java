@@ -48,6 +48,6 @@ public class Booking {
     @Column(name = "is_deleted", columnDefinition = "DEFAULT 0")
     private Boolean isDeleted;
     @JsonIgnore
-    @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "booking", fetch = FetchType.EAGER)
     private List<BookingDetail> bookingDetailList;
 }

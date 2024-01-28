@@ -31,4 +31,9 @@ public class OrganizerDto {
     private String issuedBy;
     private String organizerType;
     private Map<String, Object> result;
+    private String companyName;
+    private String companyPhone;
+    private String companyEmail;
+    private String dateRangeTaxCode;
+    private String issuedByTaxCode;
 }

@@ -200,7 +200,21 @@ public class TicketService implements ITicketService {
     }
 
     @Override
-    public ResponsePayload updateStatus(List<String> selectedSeats, Pageable pageable) {
+    public ResponsePayload updateStatusSuccess(List<String> selectedSeats, Pageable pageable) {
+        Page<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
+        tickets.forEach(ticket -> selectedSeats.forEach(seat -> {
+            // So sánh ticket với seat
+            if (ticket.getSeat().equals(seat)) {
+                ticket.setStatus("Success");
+                ticketRepository.save(ticket);
+            }
+        }));
+
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK,tickets);
+    }
+
+    @Override
+    public ResponsePayload updateStatusFail(List<String> selectedSeats, Pageable pageable) {
         Page<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
         tickets.forEach(ticket -> selectedSeats.forEach(seat -> {
             // So sánh ticket với seat
@@ -210,7 +224,8 @@ public class TicketService implements ITicketService {
             }
         }));
 
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.CREATED,tickets);
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK,tickets);
+
     }
 }
 

@@ -205,6 +205,7 @@ public class EventService implements IEventService {
         }
     }
 
+
     @Override
     public EventResponse findBySearchCriteria(
             String searchTerm,
