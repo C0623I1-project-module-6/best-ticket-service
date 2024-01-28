@@ -22,12 +22,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -41,7 +37,6 @@ import java.util.logging.Level;
 public class BookingService implements IBookingService {
     private final IBookingRepository iBookingRepository;
     private final IBookingDetailRepository iBookingDetailRepository;
-    private final JavaMailSender emailSender;
 
     public ResponsePayload createBookingResponsePayload(String message, HttpStatus status, Object data) {
         return ResponsePayload.builder().message(message).status(status).data(data).build();
@@ -122,6 +117,7 @@ public class BookingService implements IBookingService {
 
     private void updateBookingDetailAmount(BookingDetail bookingDetail) {
         double amount = 0.0;
+        bookingDetail.setAmount(amount);
         for (Ticket ticket1 : bookingDetail.getTickets()) {
             TicketType ticketType = ticket1.getTicketType();
             int quantityAvailable = countTicketTypeQuantity(ticket1, ticketType);
@@ -241,10 +237,6 @@ public class BookingService implements IBookingService {
         return createBookingResponsePayload("Success", HttpStatus.OK, booking);
     }
 
-    public String creatHTMLMail() {
-        return "<div>Đá chết cha giờ</div>";
-    }
-
     @Override
     public ResponsePayload createBooking(BookingDto bookingDto) {
         Booking booking = new Booking();
@@ -255,31 +247,7 @@ public class BookingService implements IBookingService {
             booking.setIsDeleted(false);
             booking.setCustomer(bookingDto.getUserEdit().getCustomer());
             iBookingRepository.save(booking);
-
-            String from = "mfdat2015@gmail.com";
-
-            MimeMessage message = emailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message);
-
-            try {
-                helper.setSubject("This is an HTML email");
-                helper.setFrom(from);
-                helper.setTo(bookingDto.getInfoUser().getEmail());
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }
-
-
-            boolean html = true;
-            try {
-                helper.setText(creatHTMLMail(), html);
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }
-
-            emailSender.send(message);
         }
         return createBookingResponsePayload("Success", HttpStatus.CREATED, booking);
     }
-
 }
