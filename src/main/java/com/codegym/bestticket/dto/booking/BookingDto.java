@@ -9,4 +9,5 @@ public class BookingDto {
     private InfoUserDto userEdit;
     private SeatTicketDto seatTickets;
     private InfoUserInputDto infoUser;
+    private String componentToString;
 }

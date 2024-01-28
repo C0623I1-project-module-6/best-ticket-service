@@ -22,6 +22,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+
+import org.springframework.mail.javamail.JavaMailSender;
+
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -237,6 +240,7 @@ public class BookingService implements IBookingService {
         return createBookingResponsePayload("Success", HttpStatus.OK, booking);
     }
 
+
     @Override
     public ResponsePayload createBooking(BookingDto bookingDto) {
         Booking booking = new Booking();
@@ -247,6 +251,7 @@ public class BookingService implements IBookingService {
             booking.setIsDeleted(false);
             booking.setCustomer(bookingDto.getUserEdit().getCustomer());
             iBookingRepository.save(booking);
+
         }
         return createBookingResponsePayload("Success", HttpStatus.CREATED, booking);
     }
