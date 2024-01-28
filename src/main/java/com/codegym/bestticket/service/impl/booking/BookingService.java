@@ -2,6 +2,7 @@ package com.codegym.bestticket.service.impl.booking;
 
 import com.codegym.bestticket.converter.user.impl.constant.EBookingStatus;
 import com.codegym.bestticket.dto.booking.BookingDto;
+import com.codegym.bestticket.entity.Message;
 import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.entity.booking.BookingDetail;
 import com.codegym.bestticket.entity.ticket.Ticket;
@@ -27,6 +28,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -122,6 +124,7 @@ public class BookingService implements IBookingService {
 
     private void updateBookingDetailAmount(BookingDetail bookingDetail) {
         double amount = 0.0;
+        bookingDetail.setAmount(amount);
         for (Ticket ticket1 : bookingDetail.getTickets()) {
             TicketType ticketType = ticket1.getTicketType();
             int quantityAvailable = countTicketTypeQuantity(ticket1, ticketType);
@@ -269,7 +272,6 @@ public class BookingService implements IBookingService {
                 throw new RuntimeException(e);
             }
 
-
             boolean html = true;
             try {
                 helper.setText(creatHTMLMail(), html);
@@ -282,4 +284,18 @@ public class BookingService implements IBookingService {
         return createBookingResponsePayload("Success", HttpStatus.CREATED, booking);
     }
 
+    @Override
+    public ResponsePayload sendEmail(Message message) {
+        try {
+            MimeMessage message1 = emailSender.createMimeMessage();
+            message1.setFrom(message.getSenderEmail());
+            message1.setRecipients(MimeMessage.RecipientType.TO, message.getRecipientEmail());
+            message1.setSubject("Test email from Spring");
+            message1.setContent(message.getContent(), "text/html; charset=utf-8");
+            emailSender.send(message1);
+            return createBookingResponsePayload("Mail sent!", HttpStatus.OK, message1);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -1,12 +1,14 @@
 package com.codegym.bestticket.service;
 
 import com.codegym.bestticket.dto.booking.BookingDto;
+import com.codegym.bestticket.entity.Message;
 import com.codegym.bestticket.entity.booking.Booking;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import javax.mail.internet.MimeMessage;
 import java.util.UUID;
 
 public interface IBookingService {
@@ -19,4 +21,5 @@ public interface IBookingService {
     ResponsePayload findAllByEventId(UUID eventId, Pageable pageable);
     ResponsePayload findBookingByTimeId(UUID timeId);
     ResponsePayload createBooking(BookingDto bookingDto);
+    ResponsePayload sendEmail(Message message);
 }
