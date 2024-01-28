@@ -1,7 +1,6 @@
 package com.codegym.bestticket.controller.booking;
 
 import com.codegym.bestticket.dto.booking.BookingDto;
-import com.codegym.bestticket.entity.Message;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.booking.BookingRequest;
 import com.codegym.bestticket.service.IBookingService;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.mail.internet.MimeMessage;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -94,11 +92,4 @@ public class BookingController {
         ResponsePayload responsePayload = bookingService.createBooking(bookingDto);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
-
-    @PostMapping("/send-email")
-    public ResponseEntity<ResponsePayload> sendEmail(@RequestBody Message message) {
-        ResponsePayload responsePayload = bookingService.sendEmail(message);
-        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
-    }
-
 }
