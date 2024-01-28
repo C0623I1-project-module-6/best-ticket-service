@@ -86,48 +86,17 @@ public class UserService implements IUserService {
     @Override
     public ResponsePayload register(RegisterRequest registerRequest) {
         try {
-            if (userRepository.existsByUsername(
-                    registerRequest.getUsername())) {
-                throw new UsernameAlreadyExistsException("Username already exists!");
-            }
-            if (userRepository.existsByEmail(
-                    registerRequest.getEmail())) {
-                throw new EmailAlreadyExistsException("Email already exists!");
-            }
-            String phoneNumber = registerRequest.getPhoneNumber();
-            if (phoneNumber != null) {
-                if (customerRepository.existsByPhoneNumber(phoneNumber)) {
-                    throw new PhoneNumberAlreadyExistsException("Phone number already exists!");
-                }
-            }
+            existsUser(registerRequest);
             User user = registerConverter.dtoToEntity(registerRequest);
             user.setOldPassword(user.getPassword());
             user.setPassword(encoder.encode(user.getPassword()));
             user.setIsDeleted(false);
             user.setIsActivated(true);
-            Set<Role> roles = new HashSet<>();
-            if (registerRequest.getPhoneNumber() != null) {
-                roles.add(roleRepository.findByName("CUSTOMER")
-                        .orElseThrow(() -> new RoleNotFoundException("Role CUSTOMER not found!")));
-            } else {
-                roles.add(roleRepository.findByName("USER")
-                        .orElseThrow(() -> new RoleNotFoundException("Role USER not found!")));
-            }
+            Set<Role> roles = setRoleForUser(registerRequest);
             user.setRoles(roles);
             userRepository.save(user);
             RegisterResponse registerResponse = registerConverter.entityToDto(user);
-            UUID userId = user.getId();
-            if (user.getId() == null) {
-                throw new UserNotFoundException("User by id not found!");
-            }
-            if (registerRequest.getPhoneNumber() != null) {
-                Customer customer = Customer.builder()
-                        .phoneNumber(registerRequest.getPhoneNumber())
-                        .user(userRepository.findById(userId).orElse(null))
-                        .isDeleted(false)
-                        .build();
-                customerRepository.save(customer);
-            }
+            checkPhoneNumberForCustomer(registerRequest);
             if (!registerRequest.getConfirmPassword().equals(registerRequest.getPassword())) {
                 throw new PasswordNotMatchException("Password not match!");
             }
@@ -148,9 +117,57 @@ public class UserService implements IUserService {
                     .build();
         } catch (RuntimeException e) {
             return ResponsePayload.builder()
-                    .message("Login failed!")
+                    .message("Register failed!")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
+        }
+    }
+
+    @Override
+    public void existsUser(RegisterRequest registerRequest) {
+        if (userRepository.existsByUsername(
+                registerRequest.getUsername())) {
+            throw new UsernameAlreadyExistsException("Username already exists!");
+        }
+        if (userRepository.existsByEmail(
+                registerRequest.getEmail())) {
+            throw new EmailAlreadyExistsException("Email already exists!");
+        }
+        String phoneNumber = registerRequest.getPhoneNumber();
+        if (phoneNumber != null) {
+            if (customerRepository.existsByPhoneNumber(phoneNumber)) {
+                throw new PhoneNumberAlreadyExistsException("Phone number already exists!");
+            }
+        }
+    }
+
+    @Override
+    public Set<Role> setRoleForUser(RegisterRequest registerRequest) {
+        Set<Role> roles = new HashSet<>();
+        if (registerRequest.getPhoneNumber() != null) {
+            roles.add(roleRepository.findByName("CUSTOMER")
+                    .orElseThrow(() -> new RoleNotFoundException("Role CUSTOMER not found!")));
+        } else {
+            roles.add(roleRepository.findByName("USER")
+                    .orElseThrow(() -> new RoleNotFoundException("Role USER not found!")));
+        }
+        return roles;
+    }
+
+    @Override
+    public void checkPhoneNumberForCustomer(RegisterRequest registerRequest) {
+        User user = registerConverter.dtoToEntity(registerRequest);
+        UUID userId = user.getId();
+        if (user.getId() == null) {
+            throw new UserNotFoundException("User by id not found!");
+        }
+        if (registerRequest.getPhoneNumber() != null) {
+            Customer customer = Customer.builder()
+                    .phoneNumber(registerRequest.getPhoneNumber())
+                    .user(userRepository.findById(userId).orElse(null))
+                    .isDeleted(false)
+                    .build();
+            customerRepository.save(customer);
         }
     }
 
@@ -422,7 +439,7 @@ public class UserService implements IUserService {
                 user.setOtpCodeExpiration(null);
                 userRepository.save(user);
             }
-        if (!verifyOtpRequest.getConfirmNewPassword().equals(verifyOtpRequest.getNewPassword())) {
+            if (!verifyOtpRequest.getConfirmNewPassword().equals(verifyOtpRequest.getNewPassword())) {
                 throw new PasswordNotMatchException("Password not match!");
             }
             return ResponsePayload.builder()
@@ -441,6 +458,42 @@ public class UserService implements IUserService {
             user.setOtpCode(otp);
             user.setOtpCodeExpiration(LocalDateTime.now().plusMinutes(2));
             userRepository.save(user);
+        }
+    }
+
+    @Override
+    public ResponsePayload lockUser(UUID id) {
+        try {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new UserNotFoundException("User not found!"));
+            if (!user.getIsActivated()) {
+                user.setIsActivated(false);
+                userRepository.save(user);
+            }
+            return ResponsePayload.builder()
+                    .message("Lock successfully!!!")
+                    .status(HttpStatus.OK).build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Override
+    public ResponsePayload unlockUser(UUID id) {
+        try {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new UserNotFoundException("User not found!"));
+            if (!user.getIsActivated()) {
+                user.setIsActivated(true);
+                userRepository.save(user);
+            }
+            return ResponsePayload.builder()
+                    .message("Unlock successfully!!!")
+                    .status(HttpStatus.OK).build();
+        } catch (RuntimeException e) {
+            return ResponsePayload.builder()
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

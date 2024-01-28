@@ -79,6 +79,24 @@ public class UserController {
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
+    @DeleteMapping("/lock/{id}")
+    public ResponseEntity<ResponsePayload> lock(@PathVariable UUID id) {
+        if (id == null) {
+            new ResponseEntity<>("Id not found!", HttpStatus.NOT_FOUND);
+        }
+        ResponsePayload responsePayload = userService.lockUser(id);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
+
+    @DeleteMapping("/unlock/{id}")
+    public ResponseEntity<ResponsePayload> unlock(@PathVariable UUID id) {
+        if (id == null) {
+            new ResponseEntity<>("Id not found!", HttpStatus.NOT_FOUND);
+        }
+        ResponsePayload responsePayload = userService.unlockUser(id);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
+
     @GetMapping("/exists")
     public ResponseEntity<ResponsePayload> showValidateExists() {
         return new ResponseEntity<>(userService.showExistsUsers(), HttpStatus.OK);
@@ -89,6 +107,7 @@ public class UserController {
         ResponsePayload responsePayload = userService.findById(id);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
+
     @GetMapping("/organizer/{id}")
     public ResponseEntity<ResponsePayload> findByUserId(@PathVariable UUID id) {
         return new ResponseEntity<>(organizerService.findByUserId(id), HttpStatus.OK);
