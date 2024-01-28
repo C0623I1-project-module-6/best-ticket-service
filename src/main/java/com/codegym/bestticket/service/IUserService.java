@@ -8,6 +8,7 @@ import com.codegym.bestticket.payload.request.VerifyOtpRequest;
 import com.codegym.bestticket.payload.request.user.LoginGoogleRequest;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
+import com.codegym.bestticket.payload.request.user.UnlockUserRequest;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.nio.file.AccessDeniedException;
@@ -29,7 +30,7 @@ public interface IUserService {
 
     ResponsePayload logout(HttpServletRequest request);
 
-    ResponsePayload delete(UUID id);
+    ResponsePayload delete();
 
     ResponsePayload findById(UUID id) throws AccessDeniedException;
 
@@ -43,9 +44,9 @@ public interface IUserService {
 
     void saveToDatabase(String email, String otp);
 
-    ResponsePayload lockUser(UUID id);
+    ResponsePayload lockUser();
 
-    ResponsePayload unlockUser(UUID id);
+    ResponsePayload unlockUser(UnlockUserRequest unlockUserRequest);
 
 
 }

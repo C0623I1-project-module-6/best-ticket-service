@@ -3,9 +3,11 @@ package com.codegym.bestticket.controller.user;
 import com.codegym.bestticket.dto.user.CustomerDto;
 import com.codegym.bestticket.dto.user.OrganizerDto;
 import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.request.user.UnlockUserRequest;
 import com.codegym.bestticket.service.ICustomerService;
 import com.codegym.bestticket.service.IOrganizerService;
 import com.codegym.bestticket.service.IUserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,30 +72,24 @@ public class UserController {
 
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponsePayload> remove(@PathVariable UUID id) {
-        if (id == null) {
-            new ResponseEntity<>("Id not found!", HttpStatus.NOT_FOUND);
-        }
-        ResponsePayload responsePayload = userService.delete(id);
+    @DeleteMapping("/remove")
+    public ResponseEntity<ResponsePayload> remove() {
+        ResponsePayload responsePayload = userService.delete();
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
-    @DeleteMapping("/lock/{id}")
-    public ResponseEntity<ResponsePayload> lock(@PathVariable UUID id) {
-        if (id == null) {
-            new ResponseEntity<>("Id not found!", HttpStatus.NOT_FOUND);
-        }
-        ResponsePayload responsePayload = userService.lockUser(id);
+    @DeleteMapping("/lock")
+    public ResponseEntity<ResponsePayload> lock() {
+        ResponsePayload responsePayload = userService.lockUser();
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
-    @DeleteMapping("/unlock/{id}")
-    public ResponseEntity<ResponsePayload> unlock(@PathVariable UUID id) {
-        if (id == null) {
-            new ResponseEntity<>("Id not found!", HttpStatus.NOT_FOUND);
+    @PostMapping("/unlock")
+    public ResponseEntity<ResponsePayload> unlock(@RequestBody UnlockUserRequest unlockUserRequest) {
+        if (unlockUserRequest == null) {
+            new ResponseEntity<>("Request not found!", HttpStatus.NOT_FOUND);
         }
-        ResponsePayload responsePayload = userService.unlockUser(id);
+        ResponsePayload responsePayload = userService.unlockUser(unlockUserRequest);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
