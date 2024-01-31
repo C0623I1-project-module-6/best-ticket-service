@@ -49,5 +49,5 @@ jobs:
         with:
           app-name: 'best-ticket'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3A407D9B089343AF80E32EAFBAA310A5 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F139C6A8C3404FCE8B131976FB69B11F }}
           package: '*.jar'
