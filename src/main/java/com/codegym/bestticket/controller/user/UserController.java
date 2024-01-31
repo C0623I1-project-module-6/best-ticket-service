@@ -3,9 +3,11 @@ package com.codegym.bestticket.controller.user;
 import com.codegym.bestticket.dto.user.CustomerDto;
 import com.codegym.bestticket.dto.user.OrganizerDto;
 import com.codegym.bestticket.payload.ResponsePayload;
+import com.codegym.bestticket.payload.request.user.UnlockUserRequest;
 import com.codegym.bestticket.service.ICustomerService;
 import com.codegym.bestticket.service.IOrganizerService;
 import com.codegym.bestticket.service.IUserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,12 +72,24 @@ public class UserController {
 
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponsePayload> remove(@PathVariable UUID id) {
-        if (id == null) {
-            new ResponseEntity<>("Id not found!", HttpStatus.NOT_FOUND);
+    @DeleteMapping("/remove")
+    public ResponseEntity<ResponsePayload> remove() {
+        ResponsePayload responsePayload = userService.delete();
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
+
+    @DeleteMapping("/lock")
+    public ResponseEntity<ResponsePayload> lock() {
+        ResponsePayload responsePayload = userService.lockUser();
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
+
+    @PostMapping("/unlock")
+    public ResponseEntity<ResponsePayload> unlock(@RequestBody UnlockUserRequest unlockUserRequest) {
+        if (unlockUserRequest == null) {
+            new ResponseEntity<>("Request not found!", HttpStatus.NOT_FOUND);
         }
-        ResponsePayload responsePayload = userService.delete(id);
+        ResponsePayload responsePayload = userService.unlockUser(unlockUserRequest);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
@@ -89,6 +103,7 @@ public class UserController {
         ResponsePayload responsePayload = userService.findById(id);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
+
     @GetMapping("/organizer/{id}")
     public ResponseEntity<ResponsePayload> findByUserId(@PathVariable UUID id) {
         return new ResponseEntity<>(organizerService.findByUserId(id), HttpStatus.OK);

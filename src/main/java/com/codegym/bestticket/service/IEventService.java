@@ -39,4 +39,11 @@ public interface IEventService {
             int pageSize);
 
     EventResponse findByOrganizerId(UUID id,int page, int pageSize);
+
+    EventResponse getAll(int page, int pageSize);
+
+    EventResponse findByStatusIsPendingApproval(int page, int pageSize);
+
+    void setEventActive(UUID eventId);
+
 }

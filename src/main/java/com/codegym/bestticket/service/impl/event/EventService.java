@@ -233,4 +233,28 @@ public class EventService implements IEventService {
         List<EventDTO> eventDTOs = eventConverter.entitiesToDTOs(eventsPage.getContent());
         return EventResponse.builder().data(eventDTOs).totalPages(eventsPage.getTotalPages()).httpStatus(HttpStatus.OK).build();
     }
+
+    @Override
+    public EventResponse getAll(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Event> eventsPage = eventRepository.findAll(pageable);
+        List<EventDTO> eventDTOs = eventConverter.entitiesToDTOs(eventsPage.getContent());
+        return EventResponse.builder().data(eventDTOs).totalPages(eventsPage.getTotalPages()).httpStatus(HttpStatus.OK).build();
+    }
+
+    @Override
+    public EventResponse findByStatusIsPendingApproval(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Event> eventsPage = eventRepository.findAllPendingApproval(pageable);
+        List<EventDTO> eventDTOs = eventConverter.entitiesToDTOs(eventsPage.getContent());
+        return EventResponse.builder().data(eventDTOs).totalPages(eventsPage.getTotalPages()).httpStatus(HttpStatus.OK).build();
+    }
+
+    @Override
+    public void setEventActive(UUID eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("Event is not found"));
+        event.setStatus("ACTIVE");
+        eventRepository.save(event);
+    }
 }
