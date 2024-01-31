@@ -5,6 +5,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 Users
+TestController
+
+application-dev.properties
 
 ### STS ###
 .apt_generated
@@ -36,3 +39,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+src/main/java/com/codegym/bestticket/controller/TestController.java
+/src/main/java/com/codegym/bestticket/service/test/
+/src/main/java/com/codegym/bestticket/controller/booking/TestController.java
