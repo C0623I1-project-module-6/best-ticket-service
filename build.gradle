@@ -3,6 +3,19 @@ plugins {
     id 'war'
     id 'org.springframework.boot' version '3.0.6'
     id 'io.spring.dependency-management' version '1.1.4'
+    id "com.microsoft.azure.azurewebapp" version "1.7.1"
+}
+azurewebapp {
+    subscription = 'cbef289f-a351-4a12-be69-c9d27c5a1a93'
+    resourceGroup = 'DefaultResourceGroup-EA'
+    appName = 'best-ticket'
+    pricingTier = 'P1v2'
+    region = 'eastasia'
+    runtime {
+        os = 'Windows'
+        webContainer = 'Tomcat 9.0'
+        javaVersion = 'Java 17'
+    }
 }
 
 group = 'com.codegym'
