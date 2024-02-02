@@ -1,9 +1,12 @@
 package com.codegym.bestticket.service.impl;
 
 import com.codegym.bestticket.converter.user.IUserConverter;
+import com.codegym.bestticket.converter.user.impl.constant.ETicketMessage;
 import com.codegym.bestticket.dto.admin.BookingAdminDto;
 import com.codegym.bestticket.dto.admin.UserAdminDto;
+import com.codegym.bestticket.dto.ticket.TicketDto;
 import com.codegym.bestticket.entity.booking.Booking;
+import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.Organizer;
 import com.codegym.bestticket.entity.user.User;
@@ -28,6 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 @Service
 @AllArgsConstructor
@@ -80,7 +84,21 @@ public class AdminService implements IAdminService {
 
     @Override
     public ResponsePayload showTickets(Pageable pageable) {
-        return null;
+        Page<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
+        Iterable<TicketDto> ticketDtos = StreamSupport.stream(tickets.spliterator(), true)
+                .map(ticket -> {
+                    TicketDto ticketDto = TicketDto
+                            .builder()
+                            .eventName(ticket.getEventTime().getEvent().getName())
+                            .customer(ticket.getBookingDetail().getBooking().getCustomer())
+                            .event(ticket.getEventTime().getEvent())
+                            .time(ticket.getEventTime().getTime())
+                            .build();
+                    BeanUtils.copyProperties(ticket, ticketDto);
+                    return ticketDto;
+                })
+                .toList();
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDtos);
     }
 
     @Override
@@ -96,10 +114,7 @@ public class AdminService implements IAdminService {
                     adminDto.setCustomerId(customer.get().getId());
                     adminDto.setCustomerName(customer.get().getFullName());
                 }
-                if (organizer.isPresent()) {
-                    adminDto.setOrganizerId(organizer.get().getId());
-//                    adminDto.setOrganizerName(organizer.get().getName());
-                }
+                organizer.ifPresent(value -> adminDto.setOrganizerId(value.getId()));
                 return adminDto;
             });
             return ResponsePayload.builder()

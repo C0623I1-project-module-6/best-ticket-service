@@ -9,16 +9,13 @@ import java.util.UUID;
 public class ExistsUserResponse {
     private String username;
     private String userEmail;
-
     private String customerPhoneNumber;
     private String customerIdCard;
     private String customerReceiptEmail;
-
     private String personPhoneNumber;
     private String personEmail;
     private String personIdCard;
     private String personTaxCode;
-
     private String companyBusinessCode;
     private String companyName;
     private String companyEmail;

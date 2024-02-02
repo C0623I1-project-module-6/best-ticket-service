@@ -37,10 +37,10 @@ public class AdminController {
 
     @GetMapping("/users")
     public ResponseEntity<ResponsePayload> shows(@PageableDefault(size = 8) Pageable pageable) {
-        System.out.println("Check git commit choi choi");
         ResponsePayload responsePayload = adminService.showUsers(pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
+
     @GetMapping("/bookings")
     public ResponseEntity<ResponsePayload> showBookings(@PageableDefault(size = 8) Pageable pageable) {
         ResponsePayload responsePayload = adminService.showBookings(pageable);
@@ -49,12 +49,12 @@ public class AdminController {
 
     @GetMapping("/tickets")
     public ResponseEntity<ResponsePayload> showTicket(@PageableDefault(size = 5) Pageable pageable) {
-
+        ResponsePayload responsePayload = adminService.showTickets(pageable);
         return new ResponseEntity<>(
                 ResponsePayload
                         .builder()
                         .status(HttpStatus.OK)
-                        .data(null)
+                        .data(responsePayload)
                         .build(),
                 HttpStatus.OK);
 
