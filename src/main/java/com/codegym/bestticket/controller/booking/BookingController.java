@@ -67,10 +67,7 @@ public class BookingController {
     }
 
     @GetMapping("/event/{eventId}/search")
-    public ResponseEntity<ResponsePayload> searchBooking(
-            @PathVariable("eventId") UUID eventId,
-            @RequestParam("keyword") String keyword,
-            @PageableDefault Pageable pageable) {
+    public ResponseEntity<ResponsePayload> searchBooking(@PathVariable("eventId") UUID eventId, @RequestParam("keyword") String keyword, @PageableDefault Pageable pageable) {
         ResponsePayload responsePayload = bookingService.search(eventId, keyword, pageable);
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }

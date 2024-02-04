@@ -93,7 +93,6 @@ public class BookingService implements IBookingService {
         updateBookingTotalAmount(booking);
         iBookingRepository.save(booking);
         BookingResponse bookingResponse = new BookingResponse();
-        bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
         BeanUtils.copyProperties(booking, bookingResponse);
         List<BookingDetail> bookingDetailList = booking.getBookingDetailList();
         bookingResponse.setBookingDetailResponseList(convertBookingDetailsToBookingDetailResponses(bookingDetailList));
@@ -218,7 +217,7 @@ public class BookingService implements IBookingService {
     @Override
     public ResponsePayload search(UUID eventId, String keyword, Pageable pageable) {
         try {
-            Page<Booking> searchedBookings = iBookingRepository.searchBookingsByEventIdAndCustomerFullNameContainingOrCustomerPhoneNumberContainingOrCustomerUserEmailContaining(eventId, keyword, pageable);
+            Page<Booking> searchedBookings = iBookingRepository.searchBookingsByEventIdAndCustomerFullNameContainingOrCustomerPhoneNumberContainingOrCustomerEmailContaining(eventId, keyword, pageable);
             if (!searchedBookings.iterator().hasNext()) {
                 return createBookingResponsePayload("No bookings found!", HttpStatus.NO_CONTENT, searchedBookings);
             }
