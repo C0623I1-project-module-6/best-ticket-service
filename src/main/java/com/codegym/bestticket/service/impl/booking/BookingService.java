@@ -22,9 +22,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-
-import org.springframework.mail.javamail.JavaMailSender;
-
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -78,12 +75,12 @@ public class BookingService implements IBookingService {
         try {
             Page<Booking> bookings = iBookingRepository.findAllByEventId(eventId, pageable);
             if (bookings.isEmpty()) {
-                return createBookingResponsePayload("There is no bookings.", HttpStatus.NO_CONTENT, bookings);
+                return createBookingResponsePayload("There are no bookings.", HttpStatus.NO_CONTENT, bookings);
             }
             return getBookingResponsePayload(bookings);
         } catch (Exception e) {
             log.log(Level.WARNING, e.getMessage(), e);
-            return createBookingResponsePayload("Fetch data failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
+            return createBookingResponsePayload("Failed to fetch data!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
     }
 
@@ -96,7 +93,6 @@ public class BookingService implements IBookingService {
         updateBookingTotalAmount(booking);
         iBookingRepository.save(booking);
         BookingResponse bookingResponse = new BookingResponse();
-        bookingResponse.setUserEmail(booking.getCustomer().getUser().getEmail());
         BeanUtils.copyProperties(booking, bookingResponse);
         List<BookingDetail> bookingDetailList = booking.getBookingDetailList();
         bookingResponse.setBookingDetailResponseList(convertBookingDetailsToBookingDetailResponses(bookingDetailList));
@@ -221,7 +217,7 @@ public class BookingService implements IBookingService {
     @Override
     public ResponsePayload search(UUID eventId, String keyword, Pageable pageable) {
         try {
-            Page<Booking> searchedBookings = iBookingRepository.searchBookingsByEventIdAndCustomerFullNameContainingOrCustomerPhoneNumberContainingOrCustomerUserEmailContaining(eventId, keyword, pageable);
+            Page<Booking> searchedBookings = iBookingRepository.searchBookingsByEventIdAndCustomerFullNameContainingOrCustomerPhoneNumberContainingOrCustomerEmailContaining(eventId, keyword, pageable);
             if (!searchedBookings.iterator().hasNext()) {
                 return createBookingResponsePayload("No bookings found!", HttpStatus.NO_CONTENT, searchedBookings);
             }

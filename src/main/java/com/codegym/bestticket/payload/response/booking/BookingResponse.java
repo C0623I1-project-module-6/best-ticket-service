@@ -17,7 +17,6 @@ public class BookingResponse {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Customer customer;
-    private String userEmail;
     private List<BookingDetailResponse> bookingDetailResponseList;
     private Boolean isDeleted;
 }
