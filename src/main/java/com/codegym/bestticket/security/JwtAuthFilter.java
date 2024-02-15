@@ -4,6 +4,7 @@ import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.service.IUserService;
 import com.codegym.bestticket.service.impl.user.UserDetailsService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,7 +61,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
-            } catch (Exception ex) {
+            } catch (ExpiredJwtException ex) {
                 Optional<User> user = userService.findUserByRememberToken(jwt);
                 if (user.isPresent()) {
                     LoginRequest loginRequest = LoginRequest.builder()
