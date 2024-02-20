@@ -1,5 +1,6 @@
 package com.codegym.bestticket.security;
 
+import com.codegym.bestticket.exception.user.ExpiredTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -68,21 +69,25 @@ public class JwtTokenProvider {
             MalformedJwtException,
             ExpiredJwtException,
             UnsupportedJwtException,
-            IllegalArgumentException {
+            IllegalArgumentException, ExpiredTokenException {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {
             logger.error("Invalid JWT signature", ex);
+            throw ex;
         } catch (MalformedJwtException ex) {
             logger.error("Invalid JWT token", ex);
+            throw ex;
         } catch (ExpiredJwtException ex) {
-            logger.error("Expired JWT token", ex);
+            throw new ExpiredTokenException("Expired JWT token");
         } catch (UnsupportedJwtException ex) {
             logger.error("Unsupported JWT token", ex);
+            throw ex;
         } catch (IllegalArgumentException ex) {
             logger.error("JWT claims string is empty", ex);
+            throw ex;
         }
-        return false;
+
     }
 }
