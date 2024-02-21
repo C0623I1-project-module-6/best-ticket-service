@@ -84,6 +84,20 @@ public class BookingService implements IBookingService {
         }
     }
 
+    @Override
+    public ResponsePayload findAllByEventIdNoPaged(UUID eventId) {
+        try {
+            Page<Booking> bookings = iBookingRepository.findAllByEventId(eventId, Pageable.unpaged());
+            if (bookings.isEmpty()) {
+                return createBookingResponsePayload("There are no bookings.", HttpStatus.NO_CONTENT, bookings);
+            }
+            return getBookingResponsePayload(bookings);
+        } catch (Exception e) {
+            log.log(Level.WARNING, e.getMessage(), e);
+            return createBookingResponsePayload("Failed to fetch data!", HttpStatus.INTERNAL_SERVER_ERROR, null);
+        }
+    }
+
     private ResponsePayload getBookingResponsePayload(@NotNull Page<Booking> bookings) {
         Page<BookingResponse> bookingResponses = bookings.map(this::createNewBookingResponse);
         return createBookingResponsePayload("Fetch data successfully!", HttpStatus.OK, bookingResponses);
