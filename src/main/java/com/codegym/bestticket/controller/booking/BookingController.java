@@ -78,6 +78,12 @@ public class BookingController {
         return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
     }
 
+    @GetMapping("/event/{eventId}/list")
+    public ResponseEntity<ResponsePayload> findAllByEventIdNoPaged(@PathVariable UUID eventId) {
+        ResponsePayload responsePayload = bookingService.findAllByEventIdNoPaged(eventId);
+        return new ResponseEntity<>(responsePayload, responsePayload.getStatus());
+    }
+
     @GetMapping("/event/time/{timeId}")
     public ResponseEntity<ResponsePayload> findBookingByTimeId(@PathVariable UUID timeId) {
         ResponsePayload responsePayload = bookingService.findBookingByTimeId(timeId);

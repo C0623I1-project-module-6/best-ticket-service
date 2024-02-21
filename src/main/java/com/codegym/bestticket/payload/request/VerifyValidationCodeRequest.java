@@ -1,12 +1,11 @@
 package com.codegym.bestticket.payload.request;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class VerifyOtpRequest {
+public class VerifyValidationCodeRequest {
     private String email;
-    private String otp;
+    private String validationCode;
     private String newPassword;
     private String confirmNewPassword;
 }

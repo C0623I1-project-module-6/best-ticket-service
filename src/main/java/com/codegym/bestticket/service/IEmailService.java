@@ -1,7 +1,7 @@
 package com.codegym.bestticket.service;
 
-import com.codegym.bestticket.payload.request.SendOtpRequest;
+import com.codegym.bestticket.payload.request.SendValidationCodeRequest;
 
 public interface IEmailService {
-    void sendOtp(SendOtpRequest sendOtpRequest);
+    void sendOtp(SendValidationCodeRequest sendValidationCodeRequest);
 }

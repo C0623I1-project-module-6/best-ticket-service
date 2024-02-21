@@ -17,8 +17,8 @@ import com.codegym.bestticket.exception.user.UserNotFoundException;
 import com.codegym.bestticket.exception.user.UsernameAlreadyExistsException;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.SendEmailRequest;
-import com.codegym.bestticket.payload.request.SendOtpRequest;
-import com.codegym.bestticket.payload.request.VerifyOtpRequest;
+import com.codegym.bestticket.payload.request.SendValidationCodeRequest;
+import com.codegym.bestticket.payload.request.VerifyValidationCodeRequest;
 import com.codegym.bestticket.payload.request.user.LoginGoogleRequest;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
@@ -31,7 +31,7 @@ import com.codegym.bestticket.repository.user.IOrganizerRepository;
 import com.codegym.bestticket.repository.user.IRoleRepository;
 import com.codegym.bestticket.repository.user.IUserRepository;
 import com.codegym.bestticket.security.JwtTokenProvider;
-import com.codegym.bestticket.security.OtpGenerate;
+import com.codegym.bestticket.security.ValidationCodeGenerate;
 import com.codegym.bestticket.service.IEmailService;
 import com.codegym.bestticket.service.IUserService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -80,7 +80,7 @@ public class UserService implements IUserService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final IEmailService emailService;
-    private final OtpGenerate otpGenerate;
+    private final ValidationCodeGenerate validationCodeGenerate;
     private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
     private static final JsonFactory JSON_FACTORY = new GsonFactory();
 
@@ -97,8 +97,8 @@ public class UserService implements IUserService {
             Set<Role> roles = setRoleForUser(registerRequest);
             user.setRoles(roles);
             userRepository.save(user);
-            RegisterResponse registerResponse = registerConverter.entityToDto(user);
             checkPhoneNumberForCustomer(registerRequest);
+            RegisterResponse registerResponse = registerConverter.entityToDto(user);
             if (!registerRequest.getConfirmPassword().equals(registerRequest.getPassword())) {
                 throw new PasswordNotMatchException("Password not match!");
             }
@@ -158,15 +158,13 @@ public class UserService implements IUserService {
 
     @Override
     public void checkPhoneNumberForCustomer(RegisterRequest registerRequest) {
-        User user = registerConverter.dtoToEntity(registerRequest);
-        UUID userId = user.getId();
-        if (user.getId() == null) {
-            throw new UserNotFoundException("User by id not found!");
-        }
+        String username = registerRequest.getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found!"));
         if (registerRequest.getPhoneNumber() != null) {
             Customer customer = Customer.builder()
                     .phoneNumber(registerRequest.getPhoneNumber())
-                    .user(userRepository.findById(userId).orElse(null))
+                    .user(user)
                     .isDeleted(false)
                     .build();
             customerRepository.save(customer);
@@ -243,9 +241,11 @@ public class UserService implements IUserService {
                             loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user = userRepository.findByUsername(authentication.getName())
-                    .orElseThrow(() -> new UserNotFoundException("User not found!"));
-            if (!user.getIsActivated() || user.getIsDeleted()) {
-                throw new UserLockedException("User locked or deleted!");
+                    .orElseThrow(() -> new UserNotFoundException(null));
+            if (!user.getIsActivated()) {
+                throw new UserLockedException("User locked!");
+            } else if (user.getIsDeleted()) {
+                throw new UserNotFoundException(null);
             }
             Set<Role> roles = user.getRoles();
             Set<String> listRoles = new HashSet<>();
@@ -270,7 +270,7 @@ public class UserService implements IUserService {
                     .message(e.getMessage())
                     .status(HttpStatus.LOCKED)
                     .build();
-        } catch (RuntimeException e) {
+        } catch (UserNotFoundException e) {
             return ResponsePayload.builder()
                     .message("Login failed!")
                     .status(HttpStatus.UNAUTHORIZED)
@@ -299,7 +299,7 @@ public class UserService implements IUserService {
                     loginResponse.setFullName(user.getCustomer().getFullName());
                 }
                 return ResponsePayload.builder()
-                        .message("Login successfully")
+                        .message("Login successfully!!!")
                         .status(HttpStatus.OK)
                         .data(loginResponse)
                         .build();
@@ -435,13 +435,13 @@ public class UserService implements IUserService {
 
 
     @Override
-    public ResponsePayload sendOtpAndSaveToDatabase(SendEmailRequest sendEmailRequest) {
+    public ResponsePayload sendValidationCodeAndSaveToDatabase(SendEmailRequest sendEmailRequest) {
         try {
-            SendOtpRequest sendOtpRequest = new SendOtpRequest();
-            sendOtpRequest.setTo(sendEmailRequest.getEmail());
-            sendOtpRequest.setOtp(otpGenerate.generateOtp());
-            emailService.sendOtp(sendOtpRequest);
-            saveToDatabase(sendOtpRequest.getTo(), sendOtpRequest.getOtp());
+            SendValidationCodeRequest sendValidationCodeRequest = new SendValidationCodeRequest();
+            sendValidationCodeRequest.setTo(sendEmailRequest.getEmail());
+            sendValidationCodeRequest.setValidationCode(validationCodeGenerate.generateValidationCode());
+            emailService.sendOtp(sendValidationCodeRequest);
+            saveToDatabase(sendValidationCodeRequest.getTo(), sendValidationCodeRequest.getValidationCode());
             return ResponsePayload.builder()
                     .status(HttpStatus.OK)
                     .build();
@@ -453,23 +453,24 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponsePayload verifyOtpAndResetPassword(VerifyOtpRequest verifyOtpRequest) {
+    public ResponsePayload verifyValidationCodeAndResetPassword(VerifyValidationCodeRequest verifyValidationCodeRequest) {
         try {
             Optional<User> optionalUser =
-                    userRepository.findUserByEmailAndOtpCodeAndOtpCodeExpirationAfter(
-                            verifyOtpRequest.getEmail(),
-                            verifyOtpRequest.getOtp(),
-                            LocalDateTime.now()
-                    );
+                    userRepository
+                            .findUserByEmailAndValidationCodeAndValidationCodeExpirationAfter(
+                                    verifyValidationCodeRequest.getEmail(),
+                                    verifyValidationCodeRequest.getValidationCode(),
+                                    LocalDateTime.now()
+                            );
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
-                user.setPassword(encoder.encode(verifyOtpRequest.getNewPassword()));
-                user.setOldPassword(verifyOtpRequest.getNewPassword());
-                user.setOtpCode(null);
-                user.setOtpCodeExpiration(null);
+                user.setPassword(encoder.encode(verifyValidationCodeRequest.getNewPassword()));
+                user.setOldPassword(verifyValidationCodeRequest.getNewPassword());
+                user.setValidationCode(null);
+                user.setValidationCodeExpiration(null);
                 userRepository.save(user);
             }
-            if (!verifyOtpRequest.getConfirmNewPassword().equals(verifyOtpRequest.getNewPassword())) {
+            if (!verifyValidationCodeRequest.getConfirmNewPassword().equals(verifyValidationCodeRequest.getNewPassword())) {
                 throw new PasswordNotMatchException("Password not match!");
             }
             return ResponsePayload.builder()
@@ -485,8 +486,8 @@ public class UserService implements IUserService {
     public void saveToDatabase(String email, String otp) {
         User user = userRepository.findByEmail(email);
         if (user != null) {
-            user.setOtpCode(otp);
-            user.setOtpCodeExpiration(LocalDateTime.now().plusMinutes(2));
+            user.setValidationCode(otp);
+            user.setValidationCodeExpiration(LocalDateTime.now().plusMinutes(2));
             userRepository.save(user);
         }
     }
@@ -517,11 +518,12 @@ public class UserService implements IUserService {
     public ResponsePayload unlockUser(UnlockUserRequest unlockUserRequest) {
         try {
             Optional<User> optionalUser =
-                    userRepository.findUserByEmailAndOtpCodeAndOtpCodeExpirationAfter(
-                            unlockUserRequest.getEmail(),
-                            unlockUserRequest.getOtp(),
-                            LocalDateTime.now()
-                    );
+                    userRepository
+                            .findUserByEmailAndValidationCodeAndValidationCodeExpirationAfter(
+                                    unlockUserRequest.getEmail(),
+                                    unlockUserRequest.getValidationCode(),
+                                    LocalDateTime.now()
+                            );
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
                 if (!user.getIsActivated()) {

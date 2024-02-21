@@ -1,6 +1,6 @@
 package com.codegym.bestticket.service.impl;
 
-import com.codegym.bestticket.payload.request.SendOtpRequest;
+import com.codegym.bestticket.payload.request.SendValidationCodeRequest;
 import com.codegym.bestticket.service.IEmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -19,12 +19,12 @@ public class EmailService implements IEmailService {
     }
 
     @Override
-    public void sendOtp(SendOtpRequest sendOtpRequest) {
+    public void sendOtp(SendValidationCodeRequest sendValidationCodeRequest) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailForm);
-        message.setTo(sendOtpRequest.getTo());
+        message.setTo(sendValidationCodeRequest.getTo());
         message.setSubject("Your OTP code.");
-        message.setText("Your OTP code is:" + sendOtpRequest.getOtp());
+        message.setText("Your OTP code is:" + sendValidationCodeRequest.getValidationCode());
         javaMailSender.send(message);
     }
 }

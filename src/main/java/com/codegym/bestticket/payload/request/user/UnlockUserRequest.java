@@ -10,5 +10,5 @@ public class UnlockUserRequest {
     @Email
     private String email;
     @NotBlank
-    private String otp;
+    private String validationCode;
 }
