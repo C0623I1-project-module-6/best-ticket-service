@@ -65,10 +65,11 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     @JsonIgnore
     private Set<Role> roles;
-    private String otpCode;
+    private String validationCode;
     @CreationTimestamp
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    private LocalDateTime otpCodeExpiration;
+    @Column(name = "validation_code_expiration")
+    private LocalDateTime validationCodeExpiration;
 
 
 }

@@ -48,8 +48,8 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
 
     boolean existsByEmail(String email);
 
-    Optional<User> findUserByEmailAndOtpCodeAndOtpCodeExpirationAfter(String email,
-                                                                  String otp,
-                                                                  LocalDateTime otpExpiration);
+    Optional<User> findUserByEmailAndValidationCodeAndValidationCodeExpirationAfter(String email,
+                                                                                    String validationCode,
+                                                                                    LocalDateTime validationCodeExpiration);
 }
 

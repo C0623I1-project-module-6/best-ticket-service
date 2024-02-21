@@ -13,7 +13,7 @@ ALTER TABLE organizers
     ADD COLUMN company_phone VARCHAR(20) UNIQUE;
 
 ALTER TABLE users
-    ADD COLUMN otp_code VARCHAR(255);
+    ADD COLUMN validation_code VARCHAR(255);
 
 ALTER TABLE users
-    ADD COLUMN otp_code_expiration VARCHAR(50);
+    ADD COLUMN validation_code_expiration VARCHAR(50);

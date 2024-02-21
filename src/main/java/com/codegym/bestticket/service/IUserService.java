@@ -4,7 +4,7 @@ import com.codegym.bestticket.entity.user.Role;
 import com.codegym.bestticket.entity.user.User;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.request.SendEmailRequest;
-import com.codegym.bestticket.payload.request.VerifyOtpRequest;
+import com.codegym.bestticket.payload.request.VerifyValidationCodeRequest;
 import com.codegym.bestticket.payload.request.user.LoginGoogleRequest;
 import com.codegym.bestticket.payload.request.user.LoginRequest;
 import com.codegym.bestticket.payload.request.user.RegisterRequest;
@@ -38,9 +38,9 @@ public interface IUserService {
 
     Optional<User> findUserByRememberToken(String token);
 
-    ResponsePayload sendOtpAndSaveToDatabase(SendEmailRequest sendEmailRequest);
+    ResponsePayload sendValidationCodeAndSaveToDatabase(SendEmailRequest sendEmailRequest);
 
-    ResponsePayload verifyOtpAndResetPassword(VerifyOtpRequest verifyOtpRequest);
+    ResponsePayload verifyValidationCodeAndResetPassword(VerifyValidationCodeRequest verifyValidationCodeRequest);
 
     void saveToDatabase(String email, String otp);
 

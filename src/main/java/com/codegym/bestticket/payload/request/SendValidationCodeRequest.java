@@ -3,7 +3,7 @@ package com.codegym.bestticket.payload.request;
 import lombok.Data;
 
 @Data
-public class SendOtpRequest {
+public class SendValidationCodeRequest {
     private String to;
-    private String otp;
+    private String validationCode;
 }
