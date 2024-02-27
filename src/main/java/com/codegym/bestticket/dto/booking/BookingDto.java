@@ -6,8 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class BookingDto {
-    private InfoUserDto userEdit;
+    private InfoUserDto infoUser;
     private SeatTicketDto seatTickets;
-    private InfoUserInputDto infoUser;
-    private String componentToString;
+    private InfoUserInputDto infoUserInput;
 }
