@@ -36,6 +36,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+
     public String getUsernameFromJWT(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
@@ -54,39 +55,21 @@ public class JwtTokenProvider {
         return claims.getSubject();
     }
 
-    public boolean isTokenExpired(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody();
-        Date expiration = claims.getExpiration();
-        return expiration != null && expiration.before(new Date());
-    }
-
-
     public boolean validateToken(String authToken)
-            throws SignatureException,
-            MalformedJwtException,
-            ExpiredJwtException,
-            UnsupportedJwtException,
-            IllegalArgumentException, ExpiredTokenException {
+            throws Exception {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {
-            logger.error("Invalid JWT signature", ex);
-            throw ex;
+            throw new Exception("Invalid JWT signature", ex);
         } catch (MalformedJwtException ex) {
-            logger.error("Invalid JWT token", ex);
-            throw ex;
+            throw new Exception("Invalid JWT token", ex);
         } catch (ExpiredJwtException ex) {
-            throw new ExpiredTokenException("Expired JWT token");
+            throw new Exception("Expired JWT token",ex);
         } catch (UnsupportedJwtException ex) {
-            logger.error("Unsupported JWT token", ex);
-            throw ex;
+            throw new Exception("Unsupported JWT token", ex);
         } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty", ex);
-            throw ex;
+            throw new Exception("JWT claims string is empty", ex);
         }
 
     }
