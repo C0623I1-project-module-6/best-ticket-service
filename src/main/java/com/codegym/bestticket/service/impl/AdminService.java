@@ -6,6 +6,7 @@ import com.codegym.bestticket.dto.admin.BookingAdminDto;
 import com.codegym.bestticket.dto.admin.UserAdminDto;
 import com.codegym.bestticket.dto.ticket.TicketDto;
 import com.codegym.bestticket.entity.booking.Booking;
+import com.codegym.bestticket.entity.event.Event;
 import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.entity.user.Customer;
 import com.codegym.bestticket.entity.user.Organizer;
@@ -85,20 +86,17 @@ public class AdminService implements IAdminService {
     @Override
     public ResponsePayload showTickets(Pageable pageable) {
         Page<Ticket> tickets = ticketRepository.findAllByIsDeletedFalse(pageable);
-        Iterable<TicketDto> ticketDtos = StreamSupport.stream(tickets.spliterator(), true)
-                .map(ticket -> {
-                    TicketDto ticketDto = TicketDto
-                            .builder()
-                            .eventName(ticket.getEventTime().getEvent().getName())
-                            .customer(ticket.getBookingDetail().getBooking().getCustomer())
-                            .event(ticket.getEventTime().getEvent())
-                            .time(ticket.getEventTime().getTime())
-                            .build();
-                    BeanUtils.copyProperties(ticket, ticketDto);
-                    return ticketDto;
-                })
-                .toList();
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDtos);
+        Page<TicketDto> ticketDtoPage = tickets.map(ticket -> {
+            TicketDto ticketDto = TicketDto.builder()
+                    .eventName(ticket.getEventTime().getEvent().getName())
+                    .customer(ticket.getBookingDetail().getBooking().getCustomer())
+                    .event(ticket.getEventTime().getEvent())
+                    .time(ticket.getEventTime().getTime())
+                    .build();
+            BeanUtils.copyProperties(ticket, ticketDto);
+            return ticketDto;
+        });
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDtoPage);
     }
 
     @Override
@@ -132,6 +130,11 @@ public class AdminService implements IAdminService {
 
     @Override
     public ResponsePayload showEvents(Pageable pageable) {
-        return null;
+        Page<Event> events = eventRepository.findAllByIsDeletedFalse(pageable);
+        return ResponsePayload.builder()
+                .data(events)
+                .status(HttpStatus.OK)
+                .message("Success")
+                .build();
     }
 }
