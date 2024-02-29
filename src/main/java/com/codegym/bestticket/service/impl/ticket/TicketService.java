@@ -171,17 +171,20 @@ public class TicketService implements ITicketService {
         return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
     }
 
-
     @Override
     public ResponsePayload findTicketByEventId(UUID eventId, Pageable pageable) {
         Page<Ticket> tickets = ticketRepository.findTicketByEventId(eventId, pageable);
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, tickets);
+        return getTicketResponsePayload(tickets);
     }
 
     @Override
     public ResponsePayload findTicketByTimeId(UUID timeId, Pageable pageable) {
         Page<Ticket> tickets = ticketRepository.findTicketByTimeId(timeId, pageable);
-        Iterable<TicketDto> ticketDto = StreamSupport.stream(tickets.spliterator(), true)
+        return getTicketResponsePayload(tickets);
+    }
+
+    private ResponsePayload getTicketResponsePayload(Page<Ticket> tickets) {
+        Iterable<TicketDto> ticketDtos = StreamSupport.stream(tickets.spliterator(), true)
                 .map(ticket -> {
                     TicketDto ticketDto1 = TicketDto
                             .builder()
@@ -196,7 +199,7 @@ public class TicketService implements ITicketService {
                     return ticketDto1;
                 })
                 .toList();
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDto);
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS), HttpStatus.OK, ticketDtos);
     }
 
     @Override
