@@ -194,6 +194,8 @@ public class TicketService implements ITicketService {
                             .description(ticket.getDescription())
                             .status(ticket.getStatus())
                             .ticketType(ticket.getTicketType())
+                            .time(ticket.getEventTime().getTime())
+                            .event(ticket.getEventTime().getEvent())
                             .build();
                     BeanUtils.copyProperties(ticket, ticketDto1);
                     return ticketDto1;
