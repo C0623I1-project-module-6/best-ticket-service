@@ -259,7 +259,7 @@ public class BookingService implements IBookingService {
             booking.setTotalAmount(bookingDto.getSeatTickets().getTotalPrice());
             booking.setStatus("ACTIVE");
             booking.setIsDeleted(false);
-//            booking.setCustomer(bookingDto.getInfoUser().getCustomer());
+            booking.setCustomer(bookingDto.getInfoUser().getCustomer());
             iBookingRepository.save(booking);
         }
         return createBookingResponsePayload("Success", HttpStatus.CREATED, booking);
