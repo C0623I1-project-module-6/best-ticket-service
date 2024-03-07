@@ -40,6 +40,10 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -54,13 +58,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -90,6 +98,8 @@ public class UserService implements IUserService {
         try {
             existsUser(registerRequest);
             User user = registerConverter.dtoToEntity(registerRequest);
+            String avatarUrl = generateDefaultAvatar(user.getUsername());
+            user.setAvatar(avatarUrl);
             user.setOldPassword(user.getPassword());
             user.setPassword(encoder.encode(user.getPassword()));
             user.setIsDeleted(false);
@@ -117,12 +127,34 @@ public class UserService implements IUserService {
                     .message(e.getMessage())
                     .status(HttpStatus.CONFLICT)
                     .build();
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | NoSuchAlgorithmException e) {
             return ResponsePayload.builder()
                     .message("Register failed!")
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
+    }
+
+    @Override
+    public String generateDefaultAvatar(String username) throws NoSuchAlgorithmException {
+        char firstChar = username.charAt(0);
+        Random random = new Random();
+        int colorCode = random.nextInt(0xFFFFFF + 1);
+        String color = String.format("#%06x", colorCode);
+        String hash = getMd5Hash(firstChar);
+        String url = "https://www.gravatar.com/avatar/" + hash + "?d=mp&f=y&bg=" + color;
+        return url;
+    }
+
+    private String getMd5Hash(char firstChar) throws NoSuchAlgorithmException {
+        String firstCharString = String.valueOf(firstChar);
+        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+        byte[] hashInBytes = messageDigest.digest(firstCharString.getBytes(StandardCharsets.UTF_8));
+        StringBuilder stringBuilder = new StringBuilder();
+        for (byte b : hashInBytes) {
+            stringBuilder.append(String.format("%02x", b));
+        }
+        return stringBuilder.toString();
     }
 
     @Override
@@ -260,6 +292,7 @@ public class UserService implements IUserService {
                 loginResponse.setFullName(user.getCustomer().getFullName());
             }
             loginResponse.setListRole(listRoles);
+            loginResponse.setAvatar(user.getAvatar());
             return ResponsePayload.builder()
                     .message("Login successfully!!!")
                     .status(HttpStatus.OK)
@@ -313,6 +346,14 @@ public class UserService implements IUserService {
                 .build();
     }
 
+    private String authFirebaseToken(String idToken) throws FirebaseAuthException {
+        FirebaseApp.initializeApp();
+        FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+        UUID uid = UUID.fromString(firebaseToken.getUid());
+        User user = userRepository.findById(uid)
+                .orElseThrow(() -> new UserNotFoundException("User not found!"));
+        return user.getAvatar();
+    }
 
     @Override
     public ResponsePayload logout(HttpServletRequest request) {
@@ -392,6 +433,7 @@ public class UserService implements IUserService {
             userDto.setId(user.getId());
             userDto.setUsername(user.getUsername());
             userDto.setEmail(user.getEmail());
+            userDto.setAvatar(user.getAvatar());
             userDto.setCustomer(customer);
             userDto.setOrganizer(organizer);
             return ResponsePayload.builder()
@@ -539,6 +581,7 @@ public class UserService implements IUserService {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
 }
 

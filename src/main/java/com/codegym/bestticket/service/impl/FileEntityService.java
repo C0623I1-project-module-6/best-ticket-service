@@ -3,6 +3,8 @@ package com.codegym.bestticket.service.impl;
 import com.codegym.bestticket.entity.FileEntity;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.repository.IFileEntityRepository;
+import com.codegym.bestticket.repository.user.IUserRepository;
+import com.codegym.bestticket.security.JwtTokenProvider;
 import com.codegym.bestticket.service.IFileEntityService;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
@@ -20,6 +22,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class FileEntityService implements IFileEntityService {
     private final IFileEntityRepository iFileEntityRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final IUserRepository userRepository;
 
     public ResponsePayload createFileEntityPayload(String message, HttpStatus status, Object data) {
         return ResponsePayload.builder().message(message).status(status).data(data).build();
@@ -47,9 +51,9 @@ public class FileEntityService implements IFileEntityService {
             fileEntity.setFileType(file.getContentType());
             fileEntity.setUrl(downloadUrl);
             iFileEntityRepository.save(fileEntity);
-            return createFileEntityPayload("Upload successfully.", HttpStatus.OK, fileEntity);
+            return createFileEntityPayload("Upload successfully!!!", HttpStatus.OK, fileEntity);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return createFileEntityPayload("Upload failed!", HttpStatus.INTERNAL_SERVER_ERROR, null);
         }
     }
 
@@ -64,7 +68,7 @@ public class FileEntityService implements IFileEntityService {
     }
 
     @Override
-    public ResponsePayload findById(Long id) {
+    public ResponsePayload findById(UUID id) {
         return null;
     }
 }
