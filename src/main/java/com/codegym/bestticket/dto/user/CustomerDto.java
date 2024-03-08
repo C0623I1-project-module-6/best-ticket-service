@@ -10,6 +10,7 @@ import java.util.Map;
 
 @Data
 public class CustomerDto {
+    private String avatar;
     @NotBlank(message = "Full name is mandatory!")
     private String fullName;
     @NotBlank(message = "Receipt email is mandatory!")

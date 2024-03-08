@@ -42,6 +42,8 @@ public class CustomerService implements ICustomerService {
             String username = userDetails.getUsername();
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found"));
+            user.setAvatar(customerDto.getAvatar());
+            userRepository.save(user);
             Customer customer = customerConverter.dtoToEntity(customerDto);
             customer.setIsDeleted(false);
             customer.setUser(user);
@@ -74,6 +76,8 @@ public class CustomerService implements ICustomerService {
             String username = userDetails.getUsername();
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found!"));
+            user.setAvatar(customerDto.getAvatar());
+            userRepository.save(user);
             Customer customer = customerRepository.findByUserId(user.getId())
                     .orElseThrow(() -> new CustomerNotFoundException("Customer not found!"));
             customerConverter.dtoToEntity(customerDto);
