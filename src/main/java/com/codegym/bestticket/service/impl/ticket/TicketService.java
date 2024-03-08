@@ -194,6 +194,7 @@ public class TicketService implements ITicketService {
                             .description(ticket.getDescription())
                             .status(ticket.getStatus())
                             .ticketType(ticket.getTicketType())
+                            .bookingDetailId(ticket.getBookingDetail().getId())
                             .time(ticket.getEventTime().getTime())
                             .event(ticket.getEventTime().getEvent())
                             .build();
