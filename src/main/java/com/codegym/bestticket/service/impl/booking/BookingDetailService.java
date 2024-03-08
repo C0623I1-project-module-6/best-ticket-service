@@ -81,6 +81,7 @@ public class BookingDetailService implements IBookingDetailService {
                         ticketInBookingDetailResponse.setBookingDetailId(bookingDetail.getId());
                         ticketInBookingDetailResponse.setTicketTypeName(ticket.getTicketType().getName());
                         ticketInBookingDetailResponse.setTicketTypePrice(ticket.getTicketType().getPrice());
+                        ticketInBookingDetailResponse.setTime(ticket.getEventTime().getTime());
                         return ticketInBookingDetailResponse;
                     }
                     return null;
