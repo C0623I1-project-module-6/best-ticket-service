@@ -90,6 +90,11 @@ public class TicketController {
         ResponsePayload responsePayload = ticketService.findAllTicketFinishedByCustomerId(customerId, pageable, status);
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
+    @GetMapping("/show-ticket/{customerId}")
+    public ResponseEntity<ResponsePayload> showTicketByCustomerId(@PathVariable UUID customerId, @PageableDefault(page = 0, size = 200) Pageable pageable) {
+        ResponsePayload responsePayload = ticketService.findAllTicketByCustomerId(customerId, pageable);
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
+    }
 
     @GetMapping("/findTicketByEventId/{eventId}")
     public ResponseEntity<ResponsePayload> showTicketByEventId(@PathVariable UUID eventId, @PageableDefault(page = 0, size = 200) Pageable pageable) {
