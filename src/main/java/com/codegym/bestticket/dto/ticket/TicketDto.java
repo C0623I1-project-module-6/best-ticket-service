@@ -1,5 +1,6 @@
 package com.codegym.bestticket.dto.ticket;
 
+import com.codegym.bestticket.entity.booking.BookingDetail;
 import com.codegym.bestticket.entity.event.Event;
 import com.codegym.bestticket.entity.event.Time;
 import com.codegym.bestticket.entity.location.Location;
@@ -23,6 +24,7 @@ public class TicketDto {
     private String eventName;
     private Time time;
     private Event event;
+    private UUID bookingDetailId;
     private Customer customer;
     private TicketType ticketType;
 }

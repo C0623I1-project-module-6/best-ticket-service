@@ -12,14 +12,19 @@ import com.codegym.bestticket.payload.request.user.UnlockUserRequest;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.nio.file.AccessDeniedException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 public interface IUserService {
     ResponsePayload register(RegisterRequest registerRequest);
+    String generateDefaultAvatar(String username) throws NoSuchAlgorithmException;
+
     void existsUser(RegisterRequest registerRequest);
+
     Set<Role> setRoleForUser(RegisterRequest registerRequest);
+
     void checkPhoneNumberForCustomer(RegisterRequest registerRequest);
 
     ResponsePayload loginGoogle(LoginGoogleRequest loginGoogleRequest);
@@ -47,6 +52,7 @@ public interface IUserService {
     ResponsePayload lockUser();
 
     ResponsePayload unlockUser(UnlockUserRequest unlockUserRequest);
+
 
 
 }
