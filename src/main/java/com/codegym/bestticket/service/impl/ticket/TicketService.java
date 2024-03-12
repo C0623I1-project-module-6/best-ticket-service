@@ -132,6 +132,7 @@ public class TicketService implements ITicketService {
                             .builder()
                             .eventName(ticket.getEventTime().getEvent().getName())
                             .event(ticket.getEventTime().getEvent())
+                            .time(ticket.getEventTime().getTime())
                             .customer(ticket.getBookingDetail().getBooking().getCustomer())
                             .build();
                     BeanUtils.copyProperties(ticket, ticketDto1);
@@ -163,6 +164,7 @@ public class TicketService implements ITicketService {
                             .builder()
                             .eventName(ticket.getEventTime().getEvent().getName())
                             .customer(ticket.getBookingDetail().getBooking().getCustomer())
+                            .time(ticket.getEventTime().getTime())
                             .build();
                     BeanUtils.copyProperties(ticket, ticketDto1);
                     return ticketDto1;
