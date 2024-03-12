@@ -132,6 +132,7 @@ public class TicketService implements ITicketService {
                             .builder()
                             .eventName(ticket.getEventTime().getEvent().getName())
                             .event(ticket.getEventTime().getEvent())
+                            .time(ticket.getEventTime().getTime())
                             .customer(ticket.getBookingDetail().getBooking().getCustomer())
                             .build();
                     BeanUtils.copyProperties(ticket, ticketDto1);
@@ -163,6 +164,7 @@ public class TicketService implements ITicketService {
                             .builder()
                             .eventName(ticket.getEventTime().getEvent().getName())
                             .customer(ticket.getBookingDetail().getBooking().getCustomer())
+                            .time(ticket.getEventTime().getTime())
                             .build();
                     BeanUtils.copyProperties(ticket, ticketDto1);
                     return ticketDto1;
@@ -174,7 +176,20 @@ public class TicketService implements ITicketService {
     @Override
     public ResponsePayload findAllTicketByCustomerId(UUID customerId, Pageable pageable) {
         Page<Ticket> tickets = ticketRepository.findAllTicketByCustomerId(customerId,pageable);
-        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS),HttpStatus.OK,tickets);
+        Iterable<TicketDto> ticketDto = StreamSupport.stream(tickets.spliterator(), true)
+                .map(ticket -> {
+                    TicketDto ticketDto1 = TicketDto
+                            .builder()
+                            .eventName(ticket.getEventTime().getEvent().getName())
+                            .customer(ticket.getBookingDetail().getBooking().getCustomer())
+                            .time(ticket.getEventTime().getTime())
+                            .build();
+                    BeanUtils.copyProperties(ticket, ticketDto1);
+                    return ticketDto1;
+                })
+                .toList();
+
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS),HttpStatus.OK,ticketDto);
     }
 
     @Override
