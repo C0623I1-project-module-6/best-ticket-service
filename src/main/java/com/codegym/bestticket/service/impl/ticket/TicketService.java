@@ -172,6 +172,12 @@ public class TicketService implements ITicketService {
     }
 
     @Override
+    public ResponsePayload findAllTicketByCustomerId(UUID customerId, Pageable pageable) {
+        Page<Ticket> tickets = ticketRepository.findAllTicketByCustomerId(customerId,pageable);
+        return createResponsePayload(String.valueOf(ETicketMessage.SUCCESS),HttpStatus.OK,tickets);
+    }
+
+    @Override
     public ResponsePayload findTicketByEventId(UUID eventId, Pageable pageable) {
         Page<Ticket> tickets = ticketRepository.findTicketByEventId(eventId, pageable);
         return getTicketResponsePayload(tickets);
@@ -194,6 +200,7 @@ public class TicketService implements ITicketService {
                             .description(ticket.getDescription())
                             .status(ticket.getStatus())
                             .ticketType(ticket.getTicketType())
+                            .bookingDetailId(ticket.getBookingDetail().getId())
                             .time(ticket.getEventTime().getTime())
                             .event(ticket.getEventTime().getEvent())
                             .build();

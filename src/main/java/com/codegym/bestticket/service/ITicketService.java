@@ -20,6 +20,7 @@ public interface ITicketService {
 
     ResponsePayload findAllTicketFinishedByCustomerId(UUID customerId, Pageable pageable, String status);
     ResponsePayload findAllTicketUpcomingByCustomerId(UUID customerId, Pageable pageable, String status);
+    ResponsePayload findAllTicketByCustomerId(UUID customerId, Pageable pageable);
 
     ResponsePayload findTicketByEventId(UUID eventId,Pageable pageable);
     ResponsePayload findTicketByTimeId(UUID eventId,Pageable pageable);
