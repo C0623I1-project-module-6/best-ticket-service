@@ -36,7 +36,7 @@ public interface IUserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByUsername(String username);
 
-    User findByEmail(String email);
+    Optional<User> findByEmail(String email);
 
     Optional<User> findUserByRememberToken(String token);
 

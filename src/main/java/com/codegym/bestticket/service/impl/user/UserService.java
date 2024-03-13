@@ -40,10 +40,6 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -135,15 +131,13 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
-    public String generateDefaultAvatar(String username) throws NoSuchAlgorithmException {
+    private String generateDefaultAvatar(String username) throws NoSuchAlgorithmException {
         char firstChar = username.charAt(0);
         Random random = new Random();
         int colorCode = random.nextInt(0xFFFFFF + 1);
         String color = String.format("#%06x", colorCode);
         String hash = getMd5Hash(firstChar);
-        String url = "https://www.gravatar.com/avatar/" + hash + "?d=mp&f=y&bg=" + color;
-        return url;
+        return "https://www.gravatar.com/avatar/" + hash + "?d=mp&f=y&bg=" + color;
     }
 
     private String getMd5Hash(char firstChar) throws NoSuchAlgorithmException {
@@ -157,8 +151,7 @@ public class UserService implements IUserService {
         return stringBuilder.toString();
     }
 
-    @Override
-    public void existsUser(RegisterRequest registerRequest) {
+    private void existsUser(RegisterRequest registerRequest) {
         if (userRepository.existsByUsername(
                 registerRequest.getUsername())) {
             throw new UsernameAlreadyExistsException("Username already exists!");
@@ -175,8 +168,7 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
-    public Set<Role> setRoleForUser(RegisterRequest registerRequest) {
+    private Set<Role> setRoleForUser(RegisterRequest registerRequest) {
         Set<Role> roles = new HashSet<>();
         if (registerRequest.getPhoneNumber() != null) {
             roles.add(roleRepository.findByName("CUSTOMER")
@@ -188,8 +180,7 @@ public class UserService implements IUserService {
         return roles;
     }
 
-    @Override
-    public void checkPhoneNumberForCustomer(RegisterRequest registerRequest) {
+    private void checkPhoneNumberForCustomer(RegisterRequest registerRequest) {
         String username = registerRequest.getUsername();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found!"));
@@ -344,15 +335,6 @@ public class UserService implements IUserService {
                 .status(HttpStatus.UNAUTHORIZED)
                 .data(null)
                 .build();
-    }
-
-    private String authFirebaseToken(String idToken) throws FirebaseAuthException {
-        FirebaseApp.initializeApp();
-        FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-        UUID uid = UUID.fromString(firebaseToken.getUid());
-        User user = userRepository.findById(uid)
-                .orElseThrow(() -> new UserNotFoundException("User not found!"));
-        return user.getAvatar();
     }
 
     @Override
@@ -524,11 +506,11 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
-    public void saveToDatabase(String email, String otp) {
-        User user = userRepository.findByEmail(email);
+    private void saveToDatabase(String email, String validationCode) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()->new UserNotFoundException("User not found!"));
         if (user != null) {
-            user.setValidationCode(otp);
+            user.setValidationCode(validationCode);
             user.setValidationCodeExpiration(LocalDateTime.now().plusMinutes(2));
             userRepository.save(user);
         }

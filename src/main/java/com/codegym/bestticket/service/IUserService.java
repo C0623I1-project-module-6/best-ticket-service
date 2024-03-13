@@ -19,13 +19,6 @@ import java.util.UUID;
 
 public interface IUserService {
     ResponsePayload register(RegisterRequest registerRequest);
-    String generateDefaultAvatar(String username) throws NoSuchAlgorithmException;
-
-    void existsUser(RegisterRequest registerRequest);
-
-    Set<Role> setRoleForUser(RegisterRequest registerRequest);
-
-    void checkPhoneNumberForCustomer(RegisterRequest registerRequest);
 
     ResponsePayload loginGoogle(LoginGoogleRequest loginGoogleRequest);
 
@@ -46,8 +39,6 @@ public interface IUserService {
     ResponsePayload sendValidationCodeAndSaveToDatabase(SendEmailRequest sendEmailRequest);
 
     ResponsePayload verifyValidationCodeAndResetPassword(VerifyValidationCodeRequest verifyValidationCodeRequest);
-
-    void saveToDatabase(String email, String otp);
 
     ResponsePayload lockUser();
 
