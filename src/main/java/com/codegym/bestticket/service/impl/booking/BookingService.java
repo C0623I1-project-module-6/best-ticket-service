@@ -14,7 +14,9 @@ import com.codegym.bestticket.payload.response.booking.BookingResponse;
 import com.codegym.bestticket.payload.response.ticket.TicketInBookingDetailResponse;
 import com.codegym.bestticket.repository.booking.IBookingDetailRepository;
 import com.codegym.bestticket.repository.booking.IBookingRepository;
+import com.codegym.bestticket.repository.ticket.ITicketRepository;
 import com.codegym.bestticket.service.IBookingService;
+import com.codegym.bestticket.service.impl.ticket.TicketService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +39,8 @@ import java.util.logging.Level;
 public class BookingService implements IBookingService {
     private final IBookingRepository iBookingRepository;
     private final IBookingDetailRepository iBookingDetailRepository;
+    private final ITicketRepository iTicketRepository;
+    private final TicketService ticketService;
 
     public ResponsePayload createBookingResponsePayload(String message, HttpStatus status, Object data) {
         return ResponsePayload.builder().message(message).status(status).data(data).build();
@@ -254,13 +258,22 @@ public class BookingService implements IBookingService {
     @Override
     public ResponsePayload createBooking(BookingDto bookingDto) {
         Booking booking = new Booking();
+        BookingDetail bookingDetail = new BookingDetail();
         if (bookingDto != null) {
+
             booking.setCreatedAt(Timestamp.from(Instant.now()));
             booking.setTotalAmount(bookingDto.getSeatTickets().getTotalPrice());
             booking.setStatus("ACTIVE");
             booking.setIsDeleted(false);
             booking.setCustomer(bookingDto.getInfoUser().getCustomer());
             iBookingRepository.save(booking);
+            bookingDetail.setBooking(booking);
+            iBookingDetailRepository.save(bookingDetail);
+            for (String ticket : bookingDto.getSeatTickets().getIdSeats()) {
+                Ticket ticket1 = iTicketRepository.findByIdAndIsDeletedFalse(UUID.fromString(ticket));
+                ticket1.setBookingDetail(bookingDetail);
+                iTicketRepository.save(ticket1);
+            }
         }
         return createBookingResponsePayload("Success", HttpStatus.CREATED, booking);
     }
