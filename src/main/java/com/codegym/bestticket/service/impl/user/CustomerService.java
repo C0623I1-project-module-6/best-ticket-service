@@ -76,7 +76,8 @@ public class CustomerService implements ICustomerService {
             String username = userDetails.getUsername();
             User user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found!"));
-            user.setAvatar(customerDto.getAvatar());
+            String oldUrlAvatar = user.getAvatar();
+            user.setAvatar(ObjectUtils.defaultIfNull(customerDto.getAvatar(), oldUrlAvatar));
             userRepository.save(user);
             Customer customer = customerRepository.findByUserId(user.getId())
                     .orElseThrow(() -> new CustomerNotFoundException("Customer not found!"));
