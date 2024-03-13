@@ -63,7 +63,6 @@ public class TicketService implements ITicketService {
         TicketDto ticketDto = TicketDto
                 .builder()
                 .eventName(ticket.getEventTime().getEvent().getName())
-                .customer(ticket.getBookingDetail().getBooking().getCustomer())
                 .event(ticket.getEventTime().getEvent())
                 .time(ticket.getEventTime().getTime())
                 .build();
@@ -215,7 +214,6 @@ public class TicketService implements ITicketService {
                             .description(ticket.getDescription())
                             .status(ticket.getStatus())
                             .ticketType(ticket.getTicketType())
-                            .bookingDetailId(ticket.getBookingDetail().getId())
                             .time(ticket.getEventTime().getTime())
                             .event(ticket.getEventTime().getEvent())
                             .build();
@@ -232,6 +230,7 @@ public class TicketService implements ITicketService {
         tickets.forEach(ticket -> selectedSeats.forEach(seat -> {
             // So sánh ticket với seat
             if (ticket.getSeat().equals(seat)) {
+
                 ticket.setStatus("Success");
                 ticketRepository.save(ticket);
             }
