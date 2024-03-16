@@ -23,7 +23,7 @@ public interface ITicketService {
     ResponsePayload findAllTicketByCustomerId(UUID customerId, Pageable pageable);
 
     ResponsePayload findTicketByEventId(UUID eventId,Pageable pageable);
-    ResponsePayload findTicketByTimeId(UUID eventId,Pageable pageable);
+    ResponsePayload findTicketByTimeId(UUID timeId,Pageable pageable);
     ResponsePayload updateStatusSuccess(List<String> selectedSeats,Pageable pageable);
     ResponsePayload updateStatusFail(List<String> selectedSeats,Pageable pageable);
 }

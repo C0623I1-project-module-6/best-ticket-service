@@ -108,28 +108,14 @@ public class SecurityConfiguration {
                 .permitAll();
 
 
-//        http.authorizeHttpRequests()
-//                .requestMatchers("/api/admins/**", "/api/customers/**", "/api/organizers/**")
-//                .hasRole("ADMIN");
-//
-//        http.authorizeHttpRequests()
-//                .requestMatchers("/api/customers/**")
-//                .hasRole("CUSTOMER");
-//
-//        http.authorizeHttpRequests()
-//                .requestMatchers("/api/organizers/**")
-//                .hasRole("ORGANIZER");
-
-
         http.authorizeHttpRequests().and().exceptionHandling()
                 .accessDeniedPage("/access-denied");
-
 
         http.authorizeHttpRequests()
                 .and()
                 .rememberMe()
                 .tokenRepository(this.persistentTokenRepository())
-                .tokenValiditySeconds(24 * 60 * 60);//24 hours
+                .tokenValiditySeconds(24 * 60 * 60);
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
