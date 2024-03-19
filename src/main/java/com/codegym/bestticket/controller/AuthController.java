@@ -72,7 +72,7 @@ public class AuthController {
         return new ResponseEntity<>(userService.logout(request), HttpStatus.OK);
     }
 
-    @PostMapping("/send-otp")
+    @PostMapping("/send-validation-code")
     public ResponseEntity<ResponsePayload> sendOtp(@RequestBody SendEmailRequest sendEmailRequest) {
         if (sendEmailRequest == null) {
             new ResponseEntity<>("Request not found", HttpStatus.BAD_REQUEST);
