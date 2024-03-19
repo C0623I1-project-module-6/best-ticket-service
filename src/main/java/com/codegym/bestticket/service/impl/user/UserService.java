@@ -12,6 +12,7 @@ import com.codegym.bestticket.exception.user.EmailAlreadyExistsException;
 import com.codegym.bestticket.exception.user.PasswordNotMatchException;
 import com.codegym.bestticket.exception.user.PhoneNumberAlreadyExistsException;
 import com.codegym.bestticket.exception.user.RoleNotFoundException;
+import com.codegym.bestticket.exception.user.UserDeletedException;
 import com.codegym.bestticket.exception.user.UserLockedException;
 import com.codegym.bestticket.exception.user.UserNotFoundException;
 import com.codegym.bestticket.exception.user.UsernameAlreadyExistsException;
@@ -264,26 +265,9 @@ public class UserService implements IUserService {
                             loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user = userRepository.findByUsername(authentication.getName())
-                    .orElseThrow(() -> new UserNotFoundException(null));
-            if (!user.getIsActivated()) {
-                throw new UserLockedException("User locked!");
-            } else if (user.getIsDeleted()) {
-                throw new UserNotFoundException(null);
-            }
-            Set<Role> roles = user.getRoles();
-            Set<String> listRoles = new HashSet<>();
-            for (Role role : roles) {
-                listRoles.add(role.getName());
-            }
-            String token = jwtTokenProvider.generateToken(authentication);
-            user.setRememberToken(token);
-            userRepository.save(user);
-            LoginResponse loginResponse = loginConverter.entityToDto(user, token);
-            if (user.getCustomer() != null) {
-                loginResponse.setFullName(user.getCustomer().getFullName());
-            }
-            loginResponse.setListRole(listRoles);
-            loginResponse.setAvatar(user.getAvatar());
+                    .orElseThrow(() -> new UserNotFoundException("User not found!"));
+            checkUserStatus(user);
+            LoginResponse loginResponse = buildLoginResponse(user, authentication);
             return ResponsePayload.builder()
                     .message("Login successfully!!!")
                     .status(HttpStatus.OK)
@@ -294,34 +278,48 @@ public class UserService implements IUserService {
                     .message(e.getMessage())
                     .status(HttpStatus.LOCKED)
                     .build();
-        } catch (UserNotFoundException e) {
+        } catch (UserNotFoundException | UserDeletedException e) {
             return ResponsePayload.builder()
-                    .message("Login failed!")
+                    .message(e.getMessage())
                     .status(HttpStatus.UNAUTHORIZED)
                     .build();
         }
     }
 
+    private LoginResponse buildLoginResponse(User user, Authentication authentication) {
+        Set<String> roles = user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+        String token = jwtTokenProvider.generateToken(authentication);
+        user.setRememberToken(token);
+        userRepository.save(user);
+        LoginResponse loginResponse = loginConverter.entityToDto(user);
+        if (user.getCustomer() != null) {
+            loginResponse.setFullName(user.getCustomer().getFullName());
+        }
+        loginResponse.setListRole(roles);
+        loginResponse.setToken(token);
+        return loginResponse;
+    }
+
+    private void checkUserStatus(User user) {
+        if (!user.getIsActivated()) {
+            throw new UserLockedException("User is locked!");
+        } else if (user.getIsDeleted()) {
+            throw new UserDeletedException("User is deleted!");
+        }
+    }
+
     @Override
     public ResponsePayload keepLogin(HttpServletRequest request) {
-
         try {
             String token = request.getHeader("Authorization").substring(7);
             if (jwtTokenProvider.validateToken(token)) {
                 Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                 String username = ((org.springframework.security.core.userdetails.User) object).getUsername();
                 User user = userRepository.findByUsername(username)
-                        .orElseThrow(() -> new UserNotFoundException("User not found"));
-                Set<Role> roles = user.getRoles();
-                Set<String> listRoles = new HashSet<>();
-                for (Role role : roles) {
-                    listRoles.add(role.getName());
-                }
-                LoginResponse loginResponse = loginConverter.entityToDto(user, token);
-                loginResponse.setListRole(listRoles);
-                if (user.getCustomer() != null) {
-                    loginResponse.setFullName(user.getCustomer().getFullName());
-                }
+                        .orElseThrow(() -> new UserNotFoundException("User not found!"));
+                LoginResponse loginResponse = buildKeepLoginResponse(user, token);
                 return ResponsePayload.builder()
                         .message("Login successfully!!!")
                         .status(HttpStatus.OK)
@@ -335,6 +333,19 @@ public class UserService implements IUserService {
                 .status(HttpStatus.UNAUTHORIZED)
                 .data(null)
                 .build();
+    }
+
+    private LoginResponse buildKeepLoginResponse(User user, String token) {
+        Set<String> roles = user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+        LoginResponse loginResponse = loginConverter.entityToDto(user);
+        loginResponse.setListRole(roles);
+        loginResponse.setToken(token);
+        if (user.getCustomer() != null) {
+            loginResponse.setFullName(user.getCustomer().getFullName());
+        }
+        return loginResponse;
     }
 
     @Override
@@ -508,7 +519,7 @@ public class UserService implements IUserService {
 
     private void saveToDatabase(String email, String validationCode) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(()->new UserNotFoundException("User not found!"));
+                .orElseThrow(() -> new UserNotFoundException("User not found!"));
         if (user != null) {
             user.setValidationCode(validationCode);
             user.setValidationCodeExpiration(LocalDateTime.now().plusMinutes(2));

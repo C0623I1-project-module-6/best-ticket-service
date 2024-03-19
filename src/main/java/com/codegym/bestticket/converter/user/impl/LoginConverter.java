@@ -16,9 +16,8 @@ import java.util.stream.Collectors;
 
 public class LoginConverter implements ILoginConverter {
 
-    public LoginResponse entityToDto(User user, String token) {
+    public LoginResponse entityToDto(User user) {
         LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(token);
         BeanUtils.copyProperties(user, loginResponse);
         return loginResponse;
     }
