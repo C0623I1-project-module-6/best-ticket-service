@@ -1,6 +1,5 @@
 package com.codegym.bestticket.controller.ticket;
 
-import com.codegym.bestticket.entity.ticket.Ticket;
 import com.codegym.bestticket.payload.ResponsePayload;
 import com.codegym.bestticket.payload.response.ticket.TicketResponse;
 import com.codegym.bestticket.service.ITicketService;
@@ -90,6 +89,7 @@ public class TicketController {
         ResponsePayload responsePayload = ticketService.findAllTicketFinishedByCustomerId(customerId, pageable, status);
         return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
+
     @GetMapping("/show-ticket/{customerId}")
     public ResponseEntity<ResponsePayload> showTicketByCustomerId(@PathVariable UUID customerId, @PageableDefault(page = 0, size = 200) Pageable pageable) {
         ResponsePayload responsePayload = ticketService.findAllTicketByCustomerId(customerId, pageable);
@@ -109,14 +109,14 @@ public class TicketController {
     }
 
     @PutMapping("/updateStatusSuccess")
-    public ResponseEntity<ResponsePayload> updateTicketStatusSuccess(@RequestBody List<String> selectedSeats,@PageableDefault(size = 200, page = 0) Pageable pageable) {
-        ResponsePayload responsePayload = ticketService.updateStatusSuccess(selectedSeats,pageable);
-        return new ResponseEntity<>(responsePayload,HttpStatus.OK);
+    public ResponseEntity<ResponsePayload> updateTicketStatusSuccess(@RequestBody List<String> selectedSeats, @PageableDefault(size = 200, page = 0) Pageable pageable) {
+        ResponsePayload responsePayload = ticketService.updateStatusSuccess(selectedSeats, pageable);
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 
     @PutMapping("/updateStatusFail")
-    public ResponseEntity<ResponsePayload> updateTicketStatusFail(@RequestBody List<String> selectedSeats,@PageableDefault(size = 200, page = 0) Pageable pageable) {
-        ResponsePayload responsePayload = ticketService.updateStatusFail(selectedSeats,pageable);
-        return new ResponseEntity<>(responsePayload,HttpStatus.OK);
+    public ResponseEntity<ResponsePayload> updateTicketStatusFail(@RequestBody List<String> selectedSeats, @PageableDefault(size = 200, page = 0) Pageable pageable) {
+        ResponsePayload responsePayload = ticketService.updateStatusFail(selectedSeats, pageable);
+        return new ResponseEntity<>(responsePayload, HttpStatus.OK);
     }
 }
